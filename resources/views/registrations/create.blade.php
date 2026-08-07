@@ -9,50 +9,110 @@
 
 @push('styles')
 <style>
-    .mode-tab { border-radius:12px;padding:14px 18px;border:2px solid #e5e0d0;cursor:pointer;transition:all .2s;user-select:none; }
-    .mode-tab.active { border-color:var(--accent);background:#fdf7e6; }
-    .mode-tab .icon { font-size:1.5rem;display:block;margin-bottom:6px; }
-    .mode-tab h6 { margin:0;font-size:.85rem;font-weight:700; }
-    .mode-tab p  { margin:0;font-size:.75rem;color:#64766D; }
+    /* Mode selection cards (Pasien Lama / Pasien Baru) */
+    .mode-tab {
+        position:relative; border-radius:14px; padding:20px 16px; border:1.5px solid #e7ece9;
+        cursor:pointer; transition:all .2s ease; user-select:none; background:#fff;
+    }
+    .mode-tab:hover { border-color:#cfe0d8; }
+    .mode-tab.active { border-color:var(--primary); background:#f0f9f5; }
+    .mode-tab .icon-circle {
+        width:44px; height:44px; border-radius:50%; margin:0 auto 10px; display:flex;
+        align-items:center; justify-content:center; font-size:1.15rem;
+        background:#eef2f0; color:#8fa39a; transition:all .2s ease;
+    }
+    .mode-tab.active .icon-circle { background:var(--primary); color:#fff; }
+    .mode-tab h6 { margin:0; font-size:.88rem; font-weight:700; color:#1f2d27; }
+    .mode-tab p  { margin:2px 0 0; font-size:.75rem; color:#64766D; }
+    .mode-tab .check-badge {
+        position:absolute; top:10px; right:10px; width:20px; height:20px; border-radius:50%;
+        background:#10b981; color:#fff; display:none; align-items:center; justify-content:center; font-size:.65rem;
+    }
+    .mode-tab.active .check-badge { display:flex; }
 
-    /* Search result dropdown */
-    #search-result { position:absolute;top:100%;left:0;right:0;z-index:1000;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(11,107,79,.15); }
-    .search-item { padding:12px 16px;cursor:pointer;border-bottom:1px solid #f1efe4;background:#fff;transition:background .15s; }
+    /* Search input + dropdown */
+    .search-wrap { position:relative; }
+    .search-wrap .bi-search {
+        position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9ca8a2; pointer-events:none;
+    }
+    .search-wrap input {
+        border-radius:12px; border:1.5px solid #dfe6e2; padding:.65rem .9rem .65rem 2.4rem;
+    }
+    #search-result { position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:1000; border-radius:12px; overflow:hidden; box-shadow:0 8px 30px rgba(15,23,20,.12); border:1px solid #eef2f0; }
+    .search-item { padding:12px 16px; cursor:pointer; border-bottom:1px solid #f1f4f2; background:#fff; transition:background .15s; }
     .search-item:hover { background:#f6faf7; }
     .search-item:last-child { border-bottom:none; }
 
-    /* Preview antrian */
-    #antrian-preview { background:linear-gradient(135deg,#eaf4ef,#f4f9f6);border:2px solid #d7ead9;border-radius:14px;padding:18px;text-align:center;display:none; }
-    .antrian-number { font-size:3rem;font-weight:900;color:var(--primary);line-height:1; }
-    .kuota-bar { height:8px;border-radius:4px;background:#ece6d6;overflow:hidden;margin-top:8px; }
-    .kuota-fill { height:100%;border-radius:4px;background:var(--accent);transition:width .5s; }
+    .info-banner {
+        display:flex; gap:10px; align-items:flex-start; background:#f0f9f5; border:1px solid #d7ead9;
+        border-radius:12px; padding:12px 14px; font-size:.8rem; color:#3f5c4f;
+    }
 
-    #selected-patient-card { background:linear-gradient(135deg,#eaf4ef,#f4f9f6);border:2px solid #a9d9b8;border-radius:14px;padding:16px;display:none; }
+    /* Preview antrian */
+    #antrian-preview {
+        background:linear-gradient(135deg,#eaf4ef,#f4f9f6); border:1.5px solid #d7ead9; border-radius:14px;
+        padding:18px; text-align:center; display:none;
+    }
+    .antrian-number { font-size:2.75rem; font-weight:900; color:var(--primary); line-height:1; }
+    .kuota-bar { height:8px; border-radius:4px; background:#e5ece8; overflow:hidden; margin-top:10px; }
+    .kuota-fill { height:100%; border-radius:4px; background:var(--primary); transition:width .5s; }
+
+    #selected-patient-card {
+        background:#f0f9f5; border:1.5px solid #a9d9b8; border-radius:14px; padding:16px; display:none;
+    }
+
+    /* Shared field styling to match reference screenshot */
+    .form-select, .form-control { border-radius:12px; border:1.5px solid #dfe6e2; padding:.65rem .9rem; }
+    .form-select:disabled { background:#f6faf7; color:#9ca8a2; }
+    .card { border:1px solid #e7ece9; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,20,.04); }
+    .card-header { background:#fff; border-bottom:1px solid #eef2f0; font-weight:700; }
+
+    .keluhan-wrap { position:relative; }
+    .char-counter { position:absolute; right:12px; bottom:10px; font-size:.72rem; color:#9ca8a2; }
 </style>
 @endpush
 
 @section('content')
-<form action="{{ route('registrations.store') }}" method="POST" id="form-pendaftaran">
+
+<div class="row g-4">
+
+    {{-- ===== Header: date pill, kept consistent with other pages ===== --}}
+    <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div></div>
+        <span class="badge d-flex align-items-center" style="background:#eff6ff;color:var(--primary);font-weight:600;padding:.55rem .9rem;">
+            <i class="bi bi-calendar3 me-2"></i>{{ now()->translatedFormat('l, d F Y') }}
+        </span>
+    </div>
+
+<form action="{{ route('registrations.store') }}" method="POST" id="form-pendaftaran" class="col-12">
 @csrf
 <div class="row g-4">
+
     <!-- Kolom Kiri: Data Pasien -->
     <div class="col-lg-6">
         <div class="card fade-in">
-            <div class="card-header"><i class="bi bi-person me-2"></i>Data Pasien</div>
+            <div class="card-header d-flex align-items-center gap-2">
+                <span style="width:32px;height:32px;border-radius:9px;background:#eff6ff;color:var(--primary);display:flex;align-items:center;justify-content:center;">
+                    <i class="bi bi-person"></i>
+                </span>
+                Data Pasien
+            </div>
             <div class="card-body">
 
                 <!-- Mode Pasien: Baru / Lama -->
                 <div class="row g-2 mb-4">
                     <div class="col-6">
                         <div class="mode-tab active text-center" id="tab-lama" onclick="setMode('lama')">
-                            <span class="icon">🔍</span>
+                            <span class="check-badge"><i class="bi bi-check-lg"></i></span>
+                            <span class="icon-circle"><i class="bi bi-search"></i></span>
                             <h6>Pasien Lama</h6>
                             <p>Cari berdasarkan NIK / No. RM</p>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="mode-tab text-center" id="tab-baru" onclick="setMode('baru')">
-                            <span class="icon">➕</span>
+                            <span class="check-badge"><i class="bi bi-check-lg"></i></span>
+                            <span class="icon-circle"><i class="bi bi-plus-lg"></i></span>
                             <h6>Pasien Baru</h6>
                             <p>Belum pernah berobat</p>
                         </div>
@@ -64,7 +124,8 @@
                 <div id="panel-lama">
                     <div class="mb-3">
                         <label class="form-label">Cari Pasien <span class="text-danger">*</span></label>
-                        <div style="position:relative;">
+                        <div class="search-wrap">
+                            <i class="bi bi-search"></i>
                             <input type="text" id="q-pasien" class="form-control" placeholder="Ketik NIK, No. RM, atau nama..." autocomplete="off">
                             <div id="search-result"></div>
                         </div>
@@ -88,6 +149,11 @@
                         @endif
                     </div>
                     @error('patient_id')<div class="text-danger mt-1" style="font-size:.78rem;">{{ $message }}</div>@enderror
+
+                    <div class="info-banner mt-3">
+                        <i class="bi bi-info-circle" style="margin-top:1px;"></i>
+                        <span>Pastikan data pasien sudah benar sebelum melanjutkan pendaftaran.</span>
+                    </div>
                 </div>
 
                 <!-- PANEL: Pasien Baru -->
@@ -135,7 +201,12 @@
     <!-- Kolom Kanan: Data Pendaftaran -->
     <div class="col-lg-6">
         <div class="card fade-in fade-in-delay-1">
-            <div class="card-header"><i class="bi bi-calendar2-check me-2"></i>Data Kunjungan</div>
+            <div class="card-header d-flex align-items-center gap-2">
+                <span style="width:32px;height:32px;border-radius:9px;background:#d1fae5;color:#065f46;display:flex;align-items:center;justify-content:center;">
+                    <i class="bi bi-calendar2-check"></i>
+                </span>
+                Data Kunjungan
+            </div>
             <div class="card-body">
                 <div class="row g-3">
                     <!-- Pilih Poli -->
@@ -182,7 +253,7 @@
                     <!-- Preview Antrian -->
                     <div class="col-12">
                         <div id="antrian-preview">
-                            <div style="font-size:.75rem;font-weight:700;color:var(--primary-dark, #063D2C);text-transform:uppercase;letter-spacing:.05em;">Nomor Antrian Anda</div>
+                            <div style="font-size:.72rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;">Nomor Antrian Anda</div>
                             <div class="antrian-number" id="nomor-preview">—</div>
                             <div id="kuota-info" style="font-size:.8rem;color:#475d52;margin-top:4px;"></div>
                             <div class="kuota-bar"><div class="kuota-fill" id="kuota-fill" style="width:0%"></div></div>
@@ -192,21 +263,27 @@
                     <!-- Keluhan -->
                     <div class="col-12">
                         <label class="form-label">Keluhan / Keterangan</label>
-                        <textarea name="keluhan" class="form-control" rows="3" placeholder="Tuliskan keluhan atau alasan kunjungan (opsional)">{{ old('keluhan') }}</textarea>
+                        <div class="keluhan-wrap">
+                            <textarea name="keluhan" id="keluhan" class="form-control" rows="3" maxlength="500"
+                                      placeholder="Tuliskan keluhan atau alasan kunjungan (opsional)"
+                                      style="padding-bottom:1.6rem;">{{ old('keluhan') }}</textarea>
+                            <span class="char-counter" id="keluhan-counter">0/500</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="mt-3 d-flex gap-2 justify-content-end">
-            <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;">Batal</a>
-            <button type="submit" class="btn btn-accent px-4" id="btn-submit" disabled>
+            <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;border-radius:10px;">Batal</a>
+            <button type="submit" class="btn btn-accent px-4" id="btn-submit" disabled style="border-radius:10px;">
                 <i class="bi bi-check2-circle me-1"></i> Simpan Pendaftaran
             </button>
         </div>
     </div>
 </div>
 </form>
+</div>
 @endsection
 
 @push('scripts')
@@ -355,5 +432,12 @@ function checkSubmitReady() {
 document.addEventListener('click', e => {
     if (!e.target.closest('#panel-lama')) document.getElementById('search-result').innerHTML = '';
 });
+
+// ── Keluhan character counter ────────────────────────────────────────────────
+const keluhanEl = document.getElementById('keluhan');
+const counterEl = document.getElementById('keluhan-counter');
+function updateCounter() { counterEl.textContent = keluhanEl.value.length + '/500'; }
+keluhanEl.addEventListener('input', updateCounter);
+updateCounter();
 </script>
 @endpush

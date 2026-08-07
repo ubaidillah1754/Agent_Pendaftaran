@@ -5,21 +5,45 @@
     <li class="breadcrumb-item"><a href="{{ route('registrations.index') }}">Pendaftaran</a></li>
     <li class="breadcrumb-item active">{{ $registration->nomor_antrian }}</li>
 @endsection
+
+@push('styles')
+<style>
+    .card { border:1px solid #e7ece9; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,20,.04); }
+    .card-header { background:#fff; border-bottom:1px solid #eef2f0; font-weight:700; }
+    .info-row { display:flex; justify-content:space-between; gap:12px; padding:.5rem 0; border-bottom:1px dashed #eef2f0; font-size:.83rem; }
+    .info-row:last-child { border-bottom:none; }
+    .info-row .label { color:#6b7c74; flex:0 0 40%; }
+    .info-row .value { text-align:right; font-weight:600; color:#1f2d27; }
+</style>
+@endpush
+
 @section('content')
 <div class="row g-4 justify-content-center">
 <div class="col-lg-8">
 
+    {{-- ===== Header: date pill, kept consistent with other pages ===== --}}
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div></div>
+        <span class="badge d-flex align-items-center" style="background:#eff6ff;color:var(--primary);font-weight:600;padding:.55rem .9rem;">
+            <i class="bi bi-calendar3 me-2"></i>{{ now()->translatedFormat('l, d F Y') }}
+        </span>
+    </div>
+
     <!-- Nomor Antrian Hero -->
-    <div class="card mb-4 fade-in text-center" style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;border:none;position:relative;overflow:hidden;">
+    <div class="card mb-4 fade-in text-center" style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;border:none;border-radius:16px;position:relative;overflow:hidden;">
         <div style="position:absolute;inset:0;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.08'%3E%3Crect x='16' y='16' width='32' height='32' transform='rotate(45 32 32)'/%3E%3Crect x='16' y='16' width='32' height='32'/%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
         <div class="card-body py-4" style="position:relative;z-index:1;">
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;opacity:.65;">Nomor Antrian</div>
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;opacity:.7;">
+                <i class="bi bi-ticket-perforated me-1"></i>Nomor Antrian
+            </div>
             <div style="font-size:5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->nomor_antrian }}</div>
-            <span class="badge mt-2" style="background:rgba(232,199,102,.28);border:1px solid rgba(232,199,102,.5);font-size:.85rem;padding:6px 16px;">
+            <span class="badge mt-2" style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);font-size:.85rem;padding:6px 16px;border-radius:999px;">
                 {{ $registration->status_label }}
             </span>
-            <div class="mt-3" style="font-size:.82rem;opacity:.75;">
-                {{ $registration->department->nama_poli }} · {{ $registration->tanggal_daftar->format('d F Y') }}
+            <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.82rem;opacity:.8;">
+                <i class="bi bi-hospital"></i>{{ $registration->department->nama_poli }}
+                <span>&middot;</span>
+                <i class="bi bi-calendar-event"></i>{{ $registration->tanggal_daftar->format('d F Y') }}
             </div>
         </div>
     </div>
@@ -28,18 +52,24 @@
         <!-- Info Pasien -->
         <div class="col-md-6">
             <div class="card h-100 fade-in">
-                <div class="card-header"><i class="bi bi-person-fill me-2"></i>Informasi Pasien</div>
-                <div class="card-body">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <span style="width:32px;height:32px;border-radius:9px;background:#eff6ff;color:var(--primary);display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-person-fill"></i>
+                    </span>
+                    Informasi Pasien
+                </div>
+                <div class="card-body py-3">
                     @php $p = $registration->patient; @endphp
-                    <table class="table table-borderless mb-0" style="font-size:.85rem;">
-                        <tr><td class="text-muted fw-600 ps-0" width="40%">No. RM</td><td class="fw-700" style="color:var(--primary);">{{ $p->no_rm }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Nama</td><td class="fw-600">{{ $p->nama_pasien }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">NIK</td><td style="font-family:monospace;">{{ $p->nik }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Tgl Lahir</td><td>{{ $p->tanggal_lahir->format('d M Y') }} ({{ $p->umur }} thn)</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Jenis Kel.</td><td>{{ $p->jenis_kelamin_label }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Pembayaran</td><td><span class="badge" style="background:#eaf4ef;color:var(--primary);">{{ strtoupper($p->jenis_pembayaran) }}</span></td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">No. HP</td><td>{{ $p->no_telepon ?? '-' }}</td></tr>
-                    </table>
+                    <div class="info-row"><span class="label">No. RM</span><span class="value" style="color:var(--primary);font-family:monospace;">{{ $p->no_rm }}</span></div>
+                    <div class="info-row"><span class="label">Nama</span><span class="value">{{ $p->nama_pasien }}</span></div>
+                    <div class="info-row"><span class="label">NIK</span><span class="value" style="font-family:monospace;font-weight:400;">{{ $p->nik }}</span></div>
+                    <div class="info-row"><span class="label">Tgl Lahir</span><span class="value" style="font-weight:400;">{{ $p->tanggal_lahir->format('d M Y') }} ({{ $p->umur }} thn)</span></div>
+                    <div class="info-row"><span class="label">Jenis Kel.</span><span class="value" style="font-weight:400;">{{ $p->jenis_kelamin_label }}</span></div>
+                    <div class="info-row">
+                        <span class="label">Pembayaran</span>
+                        <span class="value"><span class="badge" style="background:#d1fae5;color:#065f46;">{{ strtoupper($p->jenis_pembayaran) }}</span></span>
+                    </div>
+                    <div class="info-row"><span class="label">No. HP</span><span class="value" style="font-weight:400;">{{ $p->no_telepon ?? '-' }}</span></div>
                 </div>
             </div>
         </div>
@@ -47,36 +77,40 @@
         <!-- Info Kunjungan -->
         <div class="col-md-6">
             <div class="card h-100 fade-in fade-in-delay-1">
-                <div class="card-header"><i class="bi bi-calendar2-check me-2"></i>Info Kunjungan</div>
-                <div class="card-body">
-                    <table class="table table-borderless mb-0" style="font-size:.85rem;">
-                        <tr><td class="text-muted fw-600 ps-0" width="40%">Poli</td><td class="fw-600">{{ $registration->department->nama_poli }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Dokter</td><td class="fw-600">{{ $registration->doctor->nama_dokter }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Jadwal</td>
-                            <td>{{ $registration->doctorSchedule->hari }}, {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}</td>
-                        </tr>
-                        <tr><td class="text-muted fw-600 ps-0">Tgl Daftar</td><td>{{ $registration->tanggal_daftar->format('d M Y') }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Urutan</td><td>#{{ $registration->urutan_antrian }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Keluhan</td><td>{{ $registration->keluhan ?? '-' }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Petugas</td><td>{{ $registration->createdBy->name }}</td></tr>
-                        <tr><td class="text-muted fw-600 ps-0">Waktu Daftar</td><td>{{ $registration->created_at->format('d M Y H:i') }}</td></tr>
-                    </table>
+                <div class="card-header d-flex align-items-center gap-2">
+                    <span style="width:32px;height:32px;border-radius:9px;background:#d1fae5;color:#065f46;display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-calendar2-check"></i>
+                    </span>
+                    Info Kunjungan
+                </div>
+                <div class="card-body py-3">
+                    <div class="info-row"><span class="label">Poli</span><span class="value">{{ $registration->department->nama_poli }}</span></div>
+                    <div class="info-row"><span class="label">Dokter</span><span class="value">{{ $registration->doctor->nama_dokter }}</span></div>
+                    <div class="info-row">
+                        <span class="label">Jadwal</span>
+                        <span class="value" style="font-weight:400;">{{ $registration->doctorSchedule->hari }}, {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}</span>
+                    </div>
+                    <div class="info-row"><span class="label">Tgl Daftar</span><span class="value" style="font-weight:400;">{{ $registration->tanggal_daftar->format('d M Y') }}</span></div>
+                    <div class="info-row"><span class="label">Urutan</span><span class="value" style="font-weight:400;">#{{ $registration->urutan_antrian }}</span></div>
+                    <div class="info-row"><span class="label">Keluhan</span><span class="value" style="font-weight:400;">{{ $registration->keluhan ?? '-' }}</span></div>
+                    <div class="info-row"><span class="label">Petugas</span><span class="value" style="font-weight:400;">{{ $registration->createdBy->name }}</span></div>
+                    <div class="info-row"><span class="label">Waktu Daftar</span><span class="value" style="font-weight:400;">{{ $registration->created_at->format('d M Y H:i') }}</span></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="mt-3 d-flex gap-2 flex-wrap">
-        <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;">
+        <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;border-radius:10px;">
             <i class="bi bi-arrow-left me-1"></i>Kembali
         </a>
         @if($registration->status === 'menunggu')
         <form action="{{ route('registrations.batal', $registration) }}" method="POST" onsubmit="return confirm('Batalkan pendaftaran ini?')">
             @csrf @method('PATCH')
-            <button class="btn" style="background:#fef2f2;color:#ef4444;"><i class="bi bi-x-circle me-1"></i>Batalkan</button>
+            <button class="btn" style="background:#fef2f2;color:#ef4444;border-radius:10px;"><i class="bi bi-x-circle me-1"></i>Batalkan</button>
         </form>
         @endif
-        <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eaf4ef;color:var(--primary);">
+        <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
             <i class="bi bi-person me-1"></i>Profil Pasien
         </a>
     </div>

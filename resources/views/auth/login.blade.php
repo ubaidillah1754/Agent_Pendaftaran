@@ -7,26 +7,29 @@
     <title>Masuk — Sistem Pendaftaran Rawat Jalan RSI Sakinah</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Spectral:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #0F766E;
-            --primary-dark: #0B544E;
-            --islamic-green: #15803D;
-            --white: #FFFFFF;
-            --soft-gray: #F1F5F4;
-            --light-green: #ECFDF5;
-            --gold: #D4AF37;
-            --sky: #0EA5E9;
-            --ink: #1E293B;
-            --muted: #64748B;
-            --danger: #DC2626;
-            --radius-lg: 28px;
-            --radius-md: 16px;
-            --radius-sm: 12px;
+            --primary:      #0B6B4F;
+            --primary-dark: #063D2C;
+            --primary-light:#12885F;
+            --primary-soft: #E9F3EE;
+            --gold:         #C9A227;
+            --gold-light:   #E8C766;
+            --accent-soft:  #FBF6E9;
+            --white:        #FFFFFF;
+            --bg:           #F7F8FA;
+            --ink:          #1B2430;
+            --muted:        #6B7684;
+            --border:       #E7EAEF;
+            --danger:       #DC2626;
+            --focus-ring:   #0EA5E9;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
         }
 
         * {
@@ -40,7 +43,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
-            background: var(--soft-gray);
+            background: var(--bg);
             color: var(--ink);
         }
 
@@ -51,12 +54,6 @@
         }
 
         /* ---------- LEFT PANEL ---------- */
-        /*
-         * Ilustrasi gedung di sini pakai SVG (dari kode awal kamu) sebagai fallback yang
-         * selalu tampil rapi. Kalau nanti kamu punya foto asli gedung RSI Sakinah, tinggal
-         * uncomment baris background-image di bawah dan arahkan ke path foto kamu — SVG-nya
-         * bisa dihapus atau dibiarkan (akan otomatis tertutup foto).
-         */
         .auth-visual {
             position: relative;
             overflow: hidden;
@@ -64,15 +61,22 @@
             align-items: center;
             padding: 56px 64px;
             background:
-                linear-gradient(105deg, rgba(248, 250, 252, .94) 0%, rgba(236, 253, 245, .88) 42%, rgba(21, 128, 61, .30) 100%);
-            /* background-image: linear-gradient(105deg, rgba(248,250,252,.94) 0%, rgba(236,253,245,.62) 40%, rgba(21,128,61,.35) 100%), url('/images/gedung-rsi-sakinah.jpg');
-               background-size: cover; background-position: left bottom; */
+                radial-gradient(ellipse 700px 420px at 8% -8%, rgba(232,199,102,.14), transparent 60%),
+                linear-gradient(150deg, var(--primary-dark) 0%, var(--primary) 100%);
+        }
+
+        /* geometric tile texture — same motif as the TV display / monitor pages */
+        .auth-visual::before {
+            content: "";
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Cg fill='none' stroke='%23E8C766' stroke-width='1' opacity='0.08'%3E%3Cpath d='M42 4 L80 42 L42 80 L4 42 Z'/%3E%3Ccircle cx='42' cy='42' r='18'/%3E%3C/g%3E%3C/svg%3E");
         }
 
         .auth-visual .building {
             position: absolute;
             inset: 0;
             z-index: 0;
+            opacity: .55;
         }
 
         .auth-visual .building svg {
@@ -83,20 +87,6 @@
             height: 88%;
         }
 
-        .auth-visual .deco-plus {
-            position: absolute;
-            color: rgba(15, 118, 110, .18);
-            font-weight: 800;
-            pointer-events: none;
-        }
-
-        .auth-visual .deco-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(15, 118, 110, .15);
-            pointer-events: none;
-        }
-
         .visual-content {
             position: relative;
             z-index: 2;
@@ -105,33 +95,33 @@
         }
 
         .visual-content .eyebrow {
-            font-size: 1.05rem;
-            color: #334155;
-            font-weight: 500;
-            margin-bottom: 2px;
+            font-size: .8rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--gold-light);
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .visual-content h1 {
-            font-size: 2.35rem;
-            font-weight: 800;
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
             line-height: 1.15;
-            margin: 0 0 18px;
-            background: linear-gradient(120deg, var(--primary-dark), var(--islamic-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            margin: 0 0 16px;
+            color: #fff;
         }
 
         .visual-content .lead {
             font-size: 1rem;
             font-weight: 700;
-            color: var(--ink);
+            color: rgba(255, 255, 255, .92);
             margin-bottom: 6px;
         }
 
         .visual-content .desc {
-            font-size: .92rem;
-            color: var(--muted);
+            font-size: .9rem;
+            color: rgba(255, 255, 255, .68);
             margin-bottom: 32px;
             line-height: 1.6;
         }
@@ -139,33 +129,33 @@
         .feature-row {
             display: flex;
             gap: 14px;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .feature-icon {
             flex: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 13px;
-            background: linear-gradient(135deg, var(--primary), var(--islamic-green));
+            width: 42px;
+            height: 42px;
+            border-radius: 21px 21px 6px 6px;
+            background: rgba(232, 199, 102, .1);
+            border: 1px solid rgba(232, 199, 102, .3);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
-            font-size: 1.1rem;
-            box-shadow: 0 6px 16px rgba(15, 118, 110, .25);
+            color: var(--gold-light);
+            font-size: 1.05rem;
         }
 
         .feature-text strong {
             display: block;
-            font-size: .92rem;
-            color: var(--ink);
+            font-size: .9rem;
+            color: #fff;
             margin-bottom: 2px;
         }
 
         .feature-text span {
-            font-size: .82rem;
-            color: var(--muted);
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .62);
             line-height: 1.5;
         }
 
@@ -174,38 +164,38 @@
             left: 64px;
             bottom: 40px;
             z-index: 2;
-            background: rgba(255, 255, 255, .9);
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(232, 199, 102, .22);
             backdrop-filter: blur(6px);
             border-radius: var(--radius-md);
             padding: 14px 20px;
             display: flex;
             align-items: center;
             gap: 14px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, .1);
         }
 
         .help-float .icon {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: var(--light-green);
-            color: var(--primary);
+            background: rgba(232, 199, 102, .14);
+            color: var(--gold-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
 
         .help-float strong {
             display: block;
-            font-size: .84rem;
-            color: var(--ink);
+            font-size: .82rem;
+            color: #fff;
         }
 
         .help-float a {
-            font-size: .82rem;
-            color: var(--primary);
-            font-weight: 700;
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .8);
+            font-weight: 600;
             text-decoration: none;
         }
 
@@ -214,21 +204,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--soft-gray);
+            background: var(--bg);
             padding: 40px 32px;
         }
 
         .auth-card {
             width: 100%;
-            max-width: 460px;
+            max-width: 440px;
             background: var(--white);
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 40px 40px 32px;
-            box-shadow:
-                0 30px 60px -25px rgba(15, 23, 42, .18),
-                0 10px 24px -8px rgba(15, 23, 42, .08);
+            box-shadow: 0 1px 2px rgba(16,24,32,.04), 0 20px 40px -20px rgba(16,24,32,.14);
         }
 
+        /* arch-topped brand badge — echoes the mihrab motif used across the app */
         .brand-mark {
             display: flex;
             justify-content: center;
@@ -236,20 +226,21 @@
         }
 
         .brand-mark .ring {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--light-green), var(--white));
-            border: 1.5px solid #BBF7D0;
+            width: 68px;
+            height: 68px;
+            border-radius: 34px 34px 8px 8px;
+            background: var(--primary-soft);
+            border: 1.5px solid var(--gold);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(201,162,39,.07);
         }
 
         .brand-mark svg {
-            width: 42px;
-            height: 42px;
+            width: 32px;
+            height: 32px;
         }
 
         .auth-card h2 {
@@ -257,19 +248,31 @@
             font-size: 1.4rem;
             font-weight: 800;
             margin: 0 0 6px;
+            color: var(--ink);
         }
 
         .auth-card .sub {
             text-align: center;
-            font-size: .87rem;
+            font-size: .86rem;
             color: var(--muted);
-            margin-bottom: 24px;
+            margin-bottom: 10px;
+        }
+
+        .sub-divider {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 22px;
+        }
+        .sub-divider span {
+            width: 6px; height: 6px; background: var(--gold);
+            transform: rotate(45deg);
         }
 
         .form-label {
             font-size: .82rem;
             font-weight: 600;
-            color: #334155;
+            color: var(--ink);
             margin-bottom: 6px;
         }
 
@@ -282,7 +285,7 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94A3B8;
+            color: #A2ACB8;
             font-size: 1rem;
             z-index: 5;
             transition: color .2s;
@@ -294,19 +297,19 @@
 
         .form-control {
             border-radius: var(--radius-sm);
-            border: 1.5px solid #E2E8F0;
+            border: 1.5px solid var(--border);
             padding: 12px 16px 12px 46px;
             font-size: .9rem;
             font-family: inherit;
             transition: all .2s;
             min-height: 48px;
-            background: var(--soft-gray);
+            background: var(--bg);
         }
 
         .form-control:focus {
             border-color: var(--primary);
             background: var(--white);
-            box-shadow: 0 0 0 4px rgba(15, 118, 110, .12);
+            box-shadow: 0 0 0 4px rgba(11, 107, 79, .12);
         }
 
         .input-toggle {
@@ -314,7 +317,7 @@
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94A3B8;
+            color: #A2ACB8;
             cursor: pointer;
             z-index: 5;
             background: none;
@@ -328,7 +331,7 @@
         }
 
         .btn-login {
-            background: linear-gradient(120deg, var(--primary-dark) 0%, var(--islamic-green) 100%);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: var(--white);
             border: none;
             border-radius: var(--radius-sm);
@@ -337,22 +340,18 @@
             font-size: .95rem;
             width: 100%;
             min-height: 48px;
-            transition: transform .18s, box-shadow .18s;
-            box-shadow: 0 4px 14px rgba(15, 118, 110, .3);
+            transition: all .18s;
+            box-shadow: 0 8px 20px -6px rgba(11,107,79,.45);
         }
 
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(15, 118, 110, .38);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
+            background: var(--primary-dark);
+            box-shadow: 0 8px 20px -6px rgba(11,107,79,.6);
         }
 
         .btn-login:focus-visible,
         .btn-demo:focus-visible {
-            outline: 3px solid var(--sky);
+            outline: 3px solid var(--focus-ring);
             outline-offset: 2px;
         }
 
@@ -360,7 +359,7 @@
             width: 100%;
             min-height: 48px;
             border-radius: var(--radius-sm);
-            border: 1.5px solid #E2E8F0;
+            border: 1.5px solid var(--border);
             background: var(--white);
             color: var(--ink);
             font-weight: 700;
@@ -369,9 +368,9 @@
         }
 
         .btn-demo:hover {
-            border-color: var(--primary);
-            background: var(--light-green);
-            color: var(--primary-dark);
+            border-color: var(--gold);
+            background: var(--accent-soft);
+            color: #8a6c1e;
         }
 
         .divider {
@@ -388,7 +387,7 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: #E2E8F0;
+            background: var(--border);
         }
 
         .form-check-input:checked {
@@ -397,7 +396,7 @@
         }
 
         .form-check-input:focus {
-            box-shadow: 0 0 0 3px rgba(15, 118, 110, .15);
+            box-shadow: 0 0 0 3px rgba(11, 107, 79, .15);
         }
 
         .alert {
@@ -414,9 +413,9 @@
         }
 
         .alert-success {
-            background: var(--light-green);
-            color: #14532D;
-            border-left: 4px solid var(--islamic-green);
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            border-left: 4px solid var(--primary);
         }
 
         .footer-note {
@@ -452,12 +451,9 @@
         <div class="auth-visual">
             <div class="building" aria-hidden="true">
                 <svg viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
-                    <!-- ground shadow -->
-                    <ellipse cx="210" cy="550" rx="200" ry="10" fill="#0B544E" opacity=".08"/>
-
                     <!-- low side wing -->
-                    <rect x="20" y="360" width="140" height="190" fill="#CBD5E1" opacity=".55" rx="3"/>
-                    <g fill="#0F766E" opacity=".35">
+                    <rect x="20" y="360" width="140" height="190" fill="#ffffff" opacity=".08" rx="3"/>
+                    <g fill="#ffffff" opacity=".14">
                         <rect x="36" y="380" width="20" height="26" rx="2"/>
                         <rect x="66" y="380" width="20" height="26" rx="2"/>
                         <rect x="96" y="380" width="20" height="26" rx="2"/>
@@ -472,14 +468,13 @@
                         <rect x="126" y="456" width="20" height="26" rx="2"/>
                     </g>
 
-                    <!-- main tower -->
-                    <rect x="120" y="70" width="230" height="480" fill="#E2E8F0" opacity=".75" rx="4"/>
-                    <rect x="120" y="70" width="230" height="480" fill="none" stroke="#0F766E" stroke-opacity=".25" stroke-width="2" rx="4"/>
+                    <!-- main tower, arch-topped like a mihrab silhouette -->
+                    <path d="M120 130 A115 115 0 0 1 350 130 L350 550 L120 550 Z" fill="#ffffff" opacity=".1"/>
+                    <path d="M120 130 A115 115 0 0 1 350 130 L350 550 L120 550 Z" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="2"/>
+                    <path d="M120 130 A115 115 0 0 1 350 130" fill="none" stroke="#E8C766" stroke-opacity=".55" stroke-width="2"/>
 
                     <!-- window grid -->
-                    <g fill="#15803D" opacity=".32">
-                        <rect x="136" y="90" width="26" height="20" rx="2"/><rect x="170" y="90" width="26" height="20" rx="2"/><rect x="204" y="90" width="26" height="20" rx="2"/><rect x="238" y="90" width="26" height="20" rx="2"/><rect x="272" y="90" width="26" height="20" rx="2"/><rect x="306" y="90" width="26" height="20" rx="2"/>
-                        <rect x="136" y="120" width="26" height="20" rx="2"/><rect x="170" y="120" width="26" height="20" rx="2"/><rect x="204" y="120" width="26" height="20" rx="2"/><rect x="238" y="120" width="26" height="20" rx="2"/><rect x="272" y="120" width="26" height="20" rx="2"/><rect x="306" y="120" width="26" height="20" rx="2"/>
+                    <g fill="#ffffff" opacity=".16">
                         <rect x="136" y="150" width="26" height="20" rx="2"/><rect x="170" y="150" width="26" height="20" rx="2"/><rect x="204" y="150" width="26" height="20" rx="2"/><rect x="238" y="150" width="26" height="20" rx="2"/><rect x="272" y="150" width="26" height="20" rx="2"/><rect x="306" y="150" width="26" height="20" rx="2"/>
                         <rect x="136" y="180" width="26" height="20" rx="2"/><rect x="170" y="180" width="26" height="20" rx="2"/><rect x="204" y="180" width="26" height="20" rx="2"/><rect x="238" y="180" width="26" height="20" rx="2"/><rect x="272" y="180" width="26" height="20" rx="2"/><rect x="306" y="180" width="26" height="20" rx="2"/>
                         <rect x="136" y="210" width="26" height="20" rx="2"/><rect x="170" y="210" width="26" height="20" rx="2"/><rect x="204" y="210" width="26" height="20" rx="2"/><rect x="238" y="210" width="26" height="20" rx="2"/><rect x="272" y="210" width="26" height="20" rx="2"/><rect x="306" y="210" width="26" height="20" rx="2"/>
@@ -493,21 +488,17 @@
                     </g>
 
                     <!-- rooftop cross sign -->
-                    <rect x="215" y="30" width="10" height="34" fill="#D4AF37"/>
-                    <rect x="203" y="42" width="34" height="10" fill="#D4AF37"/>
+                    <rect x="215" y="24" width="10" height="34" fill="#E8C766"/>
+                    <rect x="203" y="36" width="34" height="10" fill="#E8C766"/>
 
                     <!-- entrance canopy + glass door -->
-                    <rect x="190" y="460" width="80" height="90" fill="#0B544E" opacity=".55" rx="2"/>
-                    <rect x="150" y="450" width="160" height="12" fill="#15803D" opacity=".6" rx="2"/>
+                    <rect x="190" y="460" width="80" height="90" fill="#ffffff" opacity=".08" rx="2"/>
+                    <rect x="150" y="450" width="160" height="12" fill="#ffffff" opacity=".18" rx="2"/>
 
                     <!-- ground line -->
-                    <rect x="0" y="550" width="420" height="10" fill="#15803D" opacity=".28"/>
+                    <rect x="0" y="550" width="420" height="10" fill="#ffffff" opacity=".1"/>
                 </svg>
             </div>
-            <div class="deco-ring" style="width:260px;height:260px;top:-60px;left:20%;"></div>
-            <div class="deco-ring" style="width:160px;height:160px;bottom:80px;right:8%;"></div>
-            <i class="bi bi-plus-lg deco-plus" style="font-size:1.4rem;top:14%;left:28%;"></i>
-            <i class="bi bi-plus-lg deco-plus" style="font-size:1.1rem;bottom:32%;right:22%;"></i>
 
             <div class="visual-content">
                 <p class="eyebrow">Selamat Datang di</p>
@@ -574,6 +565,7 @@
                 </div>
                 <h2>Masuk ke Sistem</h2>
                 <p class="sub">Silakan masuk untuk mengelola pendaftaran pasien</p>
+                <div class="sub-divider"><span></span><span></span><span></span></div>
 
                 @if ($errors->any())
                     <div class="alert alert-danger mb-3">
@@ -614,7 +606,7 @@
 
                     <div class="form-check mb-4">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label" for="remember" style="font-size:.82rem;color:#64748B;">
+                        <label class="form-check-label" for="remember" style="font-size:.82rem;color:var(--muted);">
                             Ingat saya di perangkat ini
                         </label>
                     </div>

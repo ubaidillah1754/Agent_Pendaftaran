@@ -7,32 +7,37 @@
 @endsection
 
 @push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Spectral:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --rs-green:  #0B6B4F;
+        --rs-green:      #0B6B4F;
         --rs-green-dark: #063D2C;
-        --rs-gold:   #C9A227;
+        --rs-gold:       #C9A227;
         --rs-gold-light: #E8C766;
-        --rs-tile:   #0E7490;
+        --rs-tile:       #0E7490;
     }
 
+    /* ===== Poli filter tabs — compact pills ===== */
+    .poli-tabs { display:flex; flex-wrap:wrap; gap:8px; }
     .poli-tab {
-        padding:10px 18px;border-radius:12px;border:2px solid #e5e0d0;cursor:pointer;
-        transition:all .2s;background:#fff;font-size:.83rem;font-weight:600;
+        padding:8px 14px;border-radius:10px;border:1.5px solid #e5e0d0;cursor:pointer;
+        transition:all .2s;background:#fff;font-size:.78rem;font-weight:600;
         color:#475d52;text-decoration:none;white-space:nowrap;
     }
-    .poli-tab.active { border-color:var(--rs-gold);background:var(--rs-gold);color:#fff; }
+    .poli-tab.active { border-color:var(--rs-gold);background:linear-gradient(135deg,var(--rs-gold),var(--rs-gold-light));color:#fff;box-shadow:0 4px 14px rgba(201,162,39,.28); }
     .poli-tab:hover:not(.active) { border-color:var(--rs-green);color:var(--rs-green); }
 
     .antrian-row { display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px dashed #ece6d6;transition:background .2s; }
     .antrian-row:last-child { border-bottom:none; }
     .antrian-row:hover { background:#f6faf7;border-radius:10px;padding-left:8px;padding-right:8px; }
 
-    /* dome-shaped queue number badges */
+    /* dome-shaped queue number badges, echoing the arch motif on the TV display */
     .no-antrian {
         width:52px;height:52px;border-radius:50% 50% 12px 12px;
         display:flex;align-items:center;justify-content:center;
-        font-weight:900;font-size:.85rem;flex-shrink:0;
+        font-family:'Spectral',serif; font-weight:800;font-size:.95rem;flex-shrink:0;
         border: 1px solid rgba(0,0,0,.05);
     }
     .no-menunggu  { background:#fef3c7;color:#92400e; }
@@ -42,20 +47,71 @@
 
     @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(14,116,144,.4)} 50%{box-shadow:0 0 0 8px rgba(14,116,144,0)} }
 
-    .stat-mini { border-radius:14px;padding:14px;text-align:center;position:relative;overflow:hidden; }
-    .stat-mini::after {
-        content:"";position:absolute;top:-14px;right:-14px;width:52px;height:52px;opacity:.25;
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23000000' stroke-width='2'%3E%3Crect x='16' y='16' width='32' height='32' transform='rotate(45 32 32)'/%3E%3Crect x='16' y='16' width='32' height='32'/%3E%3C/g%3E%3C/svg%3E");
+    /* ===== Stat cards — horizontal, icon + detail link ===== */
+    .stat-card {
+        border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;
+        border:1.5px solid; position:relative; overflow:hidden;
     }
+    .stat-card .icon {
+        width:44px;height:44px;border-radius:22px 22px 6px 6px;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#fff;
+    }
+    .stat-card .stat-num { font-family:'Spectral',serif;font-size:1.6rem;font-weight:800;line-height:1; }
+    .stat-card .stat-lbl { font-size:.76rem;font-weight:600;margin-top:2px; }
+    .stat-card .stat-detail {
+        display:block;font-size:.72rem;font-weight:700;text-decoration:none;margin-top:6px;
+    }
+    .stat-card .stat-detail:hover { text-decoration:underline; }
+
     .btn-action { border-radius:10px;font-size:.78rem;font-weight:600;padding:6px 12px; }
 
-    .rs-star-bullet { color: var(--rs-gold); font-size:.7rem; }
+    .rs-diamond {
+        display:inline-block;width:7px;height:7px;background:var(--rs-gold);
+        transform:rotate(45deg);margin:0 2px;vertical-align:middle;
+    }
+
+    /* ===== Panggil pasien — mini arch signature, matching the TV display ===== */
+    .call-arch-stage { position:relative; width:150px; height:150px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; }
+    .call-arch-ring {
+        position:absolute; inset:0; border-radius:50%; border:1px solid rgba(201,162,39,.35);
+        animation: call-pulse 2.6s ease-out infinite;
+    }
+    .call-arch-ring.r2 { animation-delay:.9s; }
+    @keyframes call-pulse {
+        0%   { transform: scale(.75); opacity:0; }
+        30%  { opacity:.8; }
+        100% { transform: scale(1.15); opacity:0; }
+    }
+    .call-arch-frame {
+        position:relative; z-index:2; width:118px; height:130px;
+        background:linear-gradient(180deg,#eaf4ef,#f4f9f6);
+        border:1.5px solid var(--rs-gold);
+        border-radius: 59px 59px 10px 10px;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow: 0 6px 20px rgba(11,107,79,.1);
+    }
+    .call-arch-frame .stat-num-big {
+        font-family:'Spectral',serif; font-size:2.3rem;font-weight:800;color:var(--rs-green);line-height:1;
+    }
+
+    /* ===== Empty states ===== */
+    .empty-illus {
+        width:64px;height:64px;border-radius:32px 32px 8px 8px;margin:0 auto 16px;
+        background:var(--primary-soft,#E9F3EE);display:flex;align-items:center;justify-content:center;
+    }
+    .empty-illus i { font-size:1.7rem;color:var(--rs-green); }
+    .empty-illus.success { background:#d1fae5; }
+    .empty-illus.success i { color:#059669; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .call-arch-ring, .no-dipanggil { animation:none; }
+    }
 </style>
 @endpush
 
 @section('content')
 <!-- Filter Poli -->
-<div class="mb-4 d-flex gap-2 flex-wrap fade-in">
+<div class="mb-4 poli-tabs fade-in">
     @foreach($departments as $dept)
     <a href="{{ route('antrian.index', ['department_id' => $dept->id]) }}"
        class="poli-tab {{ $selectedDept?->id == $dept->id ? 'active' : '' }}">
@@ -66,29 +122,45 @@
 
 @if($selectedDept)
 <div class="row g-3 mb-4">
-    <!-- Stat Mini -->
+    <!-- Stat Cards -->
     <div class="col-6 col-md-3">
-        <div class="stat-mini card" style="background:#fef3c7;border:2px solid #fde68a;">
-            <div style="font-size:1.8rem;font-weight:900;color:#92400e;">{{ $stats['menunggu'] }}</div>
-            <div style="font-size:.75rem;color:#92400e;font-weight:600;">Menunggu</div>
+        <div class="stat-card" style="background:#fef3c7;border-color:#fde68a;">
+            <div class="icon" style="color:#92400e;"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <div class="stat-num" style="color:#92400e;">{{ $stats['menunggu'] }}</div>
+                <div class="stat-lbl" style="color:#92400e;">Menunggu</div>
+                <a href="{{ route('registrations.index', ['department_id' => $selectedDept->id, 'status' => 'menunggu']) }}" class="stat-detail" style="color:#92400e;">Lihat Detail &rarr;</a>
+            </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-mini card" style="background:#e0f2f6;border:2px solid #a5d8e6;">
-            <div style="font-size:1.8rem;font-weight:900;color:#0c5c73;">{{ $stats['dipanggil'] }}</div>
-            <div style="font-size:.75rem;color:#0c5c73;font-weight:600;">Dipanggil</div>
+        <div class="stat-card" style="background:#e0f2f6;border-color:#a5d8e6;">
+            <div class="icon" style="color:#0c5c73;"><i class="bi bi-megaphone-fill"></i></div>
+            <div>
+                <div class="stat-num" style="color:#0c5c73;">{{ $stats['dipanggil'] }}</div>
+                <div class="stat-lbl" style="color:#0c5c73;">Dipanggil</div>
+                <a href="{{ route('registrations.index', ['department_id' => $selectedDept->id, 'status' => 'dipanggil']) }}" class="stat-detail" style="color:#0c5c73;">Lihat Detail &rarr;</a>
+            </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-mini card" style="background:#d1fae5;border:2px solid #6ee7b7;">
-            <div style="font-size:1.8rem;font-weight:900;color:#065f46;">{{ $stats['selesai'] }}</div>
-            <div style="font-size:.75rem;color:#065f46;font-weight:600;">Selesai</div>
+        <div class="stat-card" style="background:#d1fae5;border-color:#6ee7b7;">
+            <div class="icon" style="color:#065f46;"><i class="bi bi-check2-circle"></i></div>
+            <div>
+                <div class="stat-num" style="color:#065f46;">{{ $stats['selesai'] }}</div>
+                <div class="stat-lbl" style="color:#065f46;">Selesai</div>
+                <a href="{{ route('registrations.index', ['department_id' => $selectedDept->id, 'status' => 'selesai']) }}" class="stat-detail" style="color:#065f46;">Lihat Detail &rarr;</a>
+            </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-mini card" style="background:#fee2e2;border:2px solid #fca5a5;">
-            <div style="font-size:1.8rem;font-weight:900;color:#991b1b;">{{ $stats['batal'] }}</div>
-            <div style="font-size:.75rem;color:#991b1b;font-weight:600;">Batal</div>
+        <div class="stat-card" style="background:#fee2e2;border-color:#fca5a5;">
+            <div class="icon" style="color:#991b1b;"><i class="bi bi-x-circle-fill"></i></div>
+            <div>
+                <div class="stat-num" style="color:#991b1b;">{{ $stats['batal'] }}</div>
+                <div class="stat-lbl" style="color:#991b1b;">Batal</div>
+                <a href="{{ route('registrations.index', ['department_id' => $selectedDept->id, 'status' => 'batal']) }}" class="stat-detail" style="color:#991b1b;">Lihat Detail &rarr;</a>
+            </div>
         </div>
     </div>
 </div>
@@ -98,7 +170,7 @@
     <div class="col-lg-8">
         <div class="card fade-in">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-list-ol me-2"></i>Antrian — {{ $selectedDept->nama_poli }} <span class="rs-star-bullet">✦</span></span>
+                <span><i class="bi bi-list-ol me-2"></i>Antrian &mdash; {{ $selectedDept->nama_poli }} <span class="rs-diamond"></span></span>
                 <a href="{{ route('antrian.display', $selectedDept) }}" target="_blank"
                    class="btn btn-sm" style="background:#eaf4ef;color:var(--rs-green-dark);border-radius:8px;font-size:.75rem;font-weight:700;">
                     <i class="bi bi-display me-1"></i>Display TV
@@ -135,8 +207,9 @@
                 </div>
                 @empty
                 <div class="text-center py-5 text-muted">
-                    <i class="bi bi-calendar-x" style="font-size:3rem;display:block;"></i>
-                    <p class="mt-2">Belum ada antrian hari ini untuk {{ $selectedDept->nama_poli }}</p>
+                    <div class="empty-illus"><i class="bi bi-clipboard-x"></i></div>
+                    <p class="mb-1 fw-600" style="color:var(--ink,#1B2430);">Belum ada antrian hari ini untuk {{ $selectedDept->nama_poli }}</p>
+                    <p class="mb-3" style="font-size:.82rem;">Silakan daftarkan pasien baru untuk menambah antrian.</p>
                     <a href="{{ route('registrations.create') }}" class="btn btn-accent btn-sm">Daftarkan Pasien</a>
                 </div>
                 @endforelse
@@ -147,22 +220,32 @@
     <!-- Panel Panggil Berikutnya -->
     <div class="col-lg-4">
         <div class="card fade-in fade-in-delay-1 text-center">
-            <div class="card-header"><i class="bi bi-megaphone me-2"></i>Panggil Pasien <span class="rs-star-bullet">✦</span></div>
+            <div class="card-header"><i class="bi bi-megaphone me-2"></i>Panggil Pasien <span class="rs-diamond"></span></div>
             <div class="card-body">
                 @php $berikutnya = $antrian->firstWhere('status', 'menunggu'); @endphp
                 @if($berikutnya)
-                <div class="mb-3" style="background:linear-gradient(135deg,#eaf4ef,#f4f9f6);border:1px solid #d7ead9;border-radius:14px;padding:20px;">
-                    <div style="font-size:.72rem;font-weight:700;color:#64766D;text-transform:uppercase;letter-spacing:.1em;">Berikutnya</div>
-                    <div style="font-size:3rem;font-weight:900;color:var(--rs-green);line-height:1.1;">{{ $berikutnya->nomor_antrian }}</div>
-                    <div class="fw-600 mt-1" style="font-size:.9rem;">{{ $berikutnya->patient->nama_pasien }}</div>
+                <div class="mb-3" style="background:linear-gradient(135deg,#eaf4ef,#f4f9f6);border:1px solid #d7ead9;border-radius:14px;padding:22px 20px;">
+                    <div style="font-size:.72rem;font-weight:700;color:#64766D;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">Berikutnya</div>
+                    <div class="call-arch-stage">
+                        <div class="call-arch-ring r1"></div>
+                        <div class="call-arch-ring r2"></div>
+                        <div class="call-arch-frame">
+                            <div class="stat-num-big">{{ $berikutnya->nomor_antrian }}</div>
+                        </div>
+                    </div>
+                    <div class="fw-600 mt-1" style="font-size:.95rem;">{{ $berikutnya->patient->nama_pasien }}</div>
                 </div>
-                <button onclick="updateStatus({{ $berikutnya->id }},'dipanggil')" class="btn w-100" style="background:linear-gradient(135deg,var(--rs-gold),var(--rs-gold-light));color:#fff;border-radius:12px;padding:12px;font-weight:700;">
+                <button onclick="updateStatus({{ $berikutnya->id }},'dipanggil')" class="btn w-100" style="background:linear-gradient(135deg,var(--rs-gold),var(--rs-gold-light));color:#fff;border-radius:12px;padding:12px;font-weight:700;box-shadow:0 6px 18px rgba(201,162,39,.3);">
                     <i class="bi bi-megaphone me-2"></i>Panggil Sekarang
                 </button>
                 @else
-                <div class="py-4 text-muted">
-                    <i class="bi bi-check-circle-fill" style="font-size:3rem;color:#10b981;display:block;margin-bottom:8px;"></i>
-                    <p class="mb-0 fw-600">Semua antrian sudah dilayani!</p>
+                <div class="py-3">
+                    <div class="empty-illus success"><i class="bi bi-check-circle-fill"></i></div>
+                    <p class="mb-1 fw-700" style="color:var(--ink,#1B2430);">Semua antrian sudah dilayani!</p>
+                    <p class="mb-3 text-muted" style="font-size:.82rem;">Tidak ada pasien dalam antrian saat ini.</p>
+                    <a href="{{ route('antrian.index', ['department_id' => $selectedDept->id]) }}" class="btn btn-sm" style="background:var(--bg,#F7F8FA);color:#64766D;border-radius:10px;">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh Data
+                    </a>
                 </div>
                 @endif
             </div>
