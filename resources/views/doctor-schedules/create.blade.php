@@ -86,7 +86,7 @@
                     <label class="form-label fw-600">Poli <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
-                        <select name="department_id" class="form-select @error('department_id') is-invalid @enderror" required>
+                        <select name="department_id" class="form-select searchable @error('department_id') is-invalid @enderror" required placeholder="— Pilih Poli —">
                             <option value="">— Pilih Poli —</option>
                             @foreach($departments as $d)
                                 <option value="{{ $d->id }}" {{ old('department_id') == $d->id ? 'selected' : '' }}>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-person-badge"></i></span>
-                        <select name="doctor_id" id="doctor_id" class="form-select @error('doctor_id') is-invalid @enderror" required>
+                        <select name="doctor_id" id="doctor_id" class="form-select searchable @error('doctor_id') is-invalid @enderror" required placeholder="— Pilih Dokter —">
                             <option value="">— Pilih Dokter —</option>
                             @foreach($doctors as $i => $d)
                                 @php $p = jpParseDoctorName($d->nama_dokter); @endphp
@@ -130,7 +130,7 @@
                     <label class="form-label fw-600">Hari <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-calendar3"></i></span>
-                        <select name="hari" class="form-select @error('hari') is-invalid @enderror" required>
+                        <select name="hari" class="form-select searchable @error('hari') is-invalid @enderror" required placeholder="— Pilih Hari —">
                             <option value="">— Pilih Hari —</option>
                             @foreach($hariList as $hari)
                                 <option value="{{ $hari }}" {{ old('hari') === $hari ? 'selected' : '' }}>{{ $hari }}</option>

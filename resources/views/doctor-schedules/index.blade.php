@@ -16,11 +16,11 @@
         min-width:130px;
     }
     .jp-stat-icon {
-        width:36px; height:36px; border-radius:10px;
+        width:36px; height:36px; border-radius: var(--arch-sm, 10px);
         display:flex; align-items:center; justify-content:center;
         font-size:.95rem; flex-shrink:0;
     }
-    .jp-stat-value { font-size:1.05rem; font-weight:700; line-height:1.1; color:#111827; }
+    .jp-stat-value { font-family:'Spectral', serif; font-size:1.05rem; font-weight:800; line-height:1.1; color:#111827; }
     .jp-stat-label { font-size:.68rem; color:#8a93a3; font-weight:600; }
 
     .jp-tabs {
@@ -54,7 +54,7 @@
     }
     .jp-table tbody td { padding:.75rem .9rem; border-bottom:1px solid #f3f4f6; vertical-align:middle; }
     .jp-table tbody tr:last-child td { border-bottom:none; }
-    .jp-table tbody tr:hover { background:#f8fdfb; }
+    .jp-table tbody tr:hover { background: var(--primary-soft); }
 
     .jp-avatar {
         width:36px; height:36px; border-radius:50%; flex-shrink:0;
@@ -74,7 +74,7 @@
     .jp-status-dot { width:6px; height:6px; border-radius:50%; display:inline-block; margin-right:.35rem; }
 
     .btn-icon-soft {
-        width:30px; height:30px; border-radius:8px; border:none;
+        width:30px; height:30px; border-radius: var(--arch-sm, 8px); border:none;
         display:inline-flex; align-items:center; justify-content:center;
         transition:filter .12s ease, transform .12s ease;
     }
@@ -87,18 +87,19 @@
         display:flex; align-items:center; gap:.5rem; width:100%;
         border-radius:8px; transition:background .12s ease;
     }
-    .jp-doctor-trigger:hover { background:#f1f9f6; }
+    .jp-doctor-trigger:hover { background: var(--primary-soft); }
     .jp-doctor-trigger:hover .jp-doctor-name { color:var(--primary); text-decoration:underline; }
     .jp-doctor-name { color:#111827; transition:color .12s ease; }
 
     .jp-profile-spec-badge {
         font-size:.72rem; font-weight:600; padding:.25rem .6rem; border-radius:999px;
-        background:#e6f7f1; color:#0f9d76; display:inline-block;
+        background: var(--primary-soft); color: var(--primary); display:inline-block;
     }
     .jp-modal-poli-chip {
         font-size:.72rem; font-weight:600; padding:.25rem .6rem; border-radius:999px;
-        background:#eff6ff; color:#1e40af; display:inline-block; margin:0 .3rem .3rem 0;
+        background: var(--tile-soft); color: var(--tile); display:inline-block; margin:0 .3rem .3rem 0;
     }
+    .jp-modal-header { background: var(--bg); border-bottom:1px solid #eef1f4; }
 </style>
 @endpush
 
@@ -119,7 +120,9 @@
     $todayName = $hariMap[now()->dayOfWeek];
     $jadwalHariIniCount = $jadwalHariIni ?? ($schedules[$todayName] ?? collect())->count();
 
-    $avatarColors = ['#2563eb','#c2410c','#0f9d76','#7c3aed','#db2777','#0891b2','#ca8a04'];
+    // Palet yang sama dipakai di donut "Per Poli" pada dashboard — supaya kategori
+    // dokter/poli terasa satu sistem warna di seluruh aplikasi, bukan palet acak baru.
+    $avatarColors = ['#0F7B63','#0E7490','#B8912E','#B54545','#7C3AED','#6C7A76'];
     $urutanHari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
 
     // Tab pertama yang punya data jadi default aktif.
@@ -155,21 +158,21 @@
 
     <div class="d-flex align-items-center gap-2 flex-wrap">
         <div class="jp-stat-card">
-            <div class="jp-stat-icon" style="background:#e6f7f1;color:#0f9d76;"><i class="bi bi-person-badge"></i></div>
+            <div class="jp-stat-icon" style="background:var(--primary-soft);color:var(--primary);"><i class="bi bi-person-badge"></i></div>
             <div>
                 <div class="jp-stat-value">{{ $totalDokterCount }}</div>
                 <div class="jp-stat-label">Total Dokter</div>
             </div>
         </div>
         <div class="jp-stat-card">
-            <div class="jp-stat-icon" style="background:#eaf2ff;color:#2563eb;"><i class="bi bi-building"></i></div>
+            <div class="jp-stat-icon" style="background:var(--tile-soft);color:var(--tile);"><i class="bi bi-building"></i></div>
             <div>
                 <div class="jp-stat-value">{{ $totalPoliCount }}</div>
                 <div class="jp-stat-label">Total Poli</div>
             </div>
         </div>
         <div class="jp-stat-card">
-            <div class="jp-stat-icon" style="background:#f3e8fd;color:#7c3aed;"><i class="bi bi-clock-history"></i></div>
+            <div class="jp-stat-icon" style="background:var(--accent-soft);color:var(--accent);"><i class="bi bi-clock-history"></i></div>
             <div>
                 <div class="jp-stat-value">{{ $jadwalHariIniCount }}</div>
                 <div class="jp-stat-label">Jadwal Hari Ini</div>
@@ -200,7 +203,7 @@
     <div class="jp-panel {{ $hari === $firstActiveDay ? 'active' : '' }}" data-day-panel="{{ $hari }}">
         @if(isset($schedules[$hari]) && $schedules[$hari]->count() > 0)
         <div class="table-responsive">
-            <table class="table jp-table align-middle mb-0">
+            <table class="table jp-table align-middle mb-0 datatable">
                 <thead><tr>
                     <th>Dokter</th>
                     <th>Poli</th>
@@ -236,14 +239,14 @@
                             {{ substr($sch->jam_mulai,0,5) }} — {{ substr($sch->jam_selesai,0,5) }}
                         </td>
                         <td class="text-center">
-                            <span class="badge rounded-pill" style="background:#eff6ff;color:#1e40af;padding:.35rem .6rem;">
+                            <span class="badge rounded-pill" style="background:var(--tile-soft);color:var(--tile);padding:.35rem .6rem;">
                                 {{ $sch->kuota }} pasien
                             </span>
                         </td>
                         <td class="text-center">
                             @if($sch->is_active)
                                 <span class="badge rounded-pill" style="background:#d1fae5;color:#065f46;padding:.35rem .6rem;">
-                                    <span class="jp-status-dot" style="background:#0f9d76;"></span>Aktif
+                                    <span class="jp-status-dot" style="background:var(--primary);"></span>Aktif
                                 </span>
                             @else
                                 <span class="badge rounded-pill" style="background:#fee2e2;color:#991b1b;padding:.35rem .6rem;">
@@ -253,7 +256,7 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex gap-1 justify-content-center">
-                                <a href="{{ route('doctor-schedules.edit', $sch) }}" class="btn-icon-soft" style="background:#eff6ff;color:var(--primary);" title="Edit">
+                                <a href="{{ route('doctor-schedules.edit', $sch) }}" class="btn-icon-soft" style="background:var(--primary-soft);color:var(--primary);" title="Edit">
                                     <i class="bi bi-pencil-fill"></i>
                                 </a>
                                 <form action="{{ route('doctor-schedules.destroy', $sch) }}" method="POST" onsubmit="return confirm('Hapus jadwal ini?')">
@@ -303,7 +306,7 @@
             <div class="modal-content" style="border-radius:16px; border:none; overflow:hidden;">
 
                 <div class="modal-body p-0">
-                    <div class="p-4 d-flex align-items-center gap-3" style="background:#f8fdfb; border-bottom:1px solid #eef1f4;">
+                    <div class="p-4 d-flex align-items-center gap-3 jp-modal-header">
                         @if($doctor->photo ?? null)
                             <img src="{{ asset('storage/'.$doctor->photo) }}" class="jp-avatar-lg" alt="{{ $parsed['nama'] }}">
                         @else

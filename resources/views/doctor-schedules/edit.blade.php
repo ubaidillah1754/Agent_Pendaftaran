@@ -93,7 +93,7 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-building"></i></span>
                         <select name="department_id" id="department_id"
-                                class="form-select @error('department_id') is-invalid @enderror" required>
+                                class="form-select searchable @error('department_id') is-invalid @enderror" required placeholder="— Pilih Poli —">
                             @foreach($departments as $d)
                                 <option value="{{ $d->id }}" {{ old('department_id', $doctorSchedule->department_id) == $d->id ? 'selected' : '' }}>
                                     {{ $d->kode_poli }} — {{ $d->nama_poli }}
@@ -117,7 +117,7 @@
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-person-badge"></i></span>
                         <select name="doctor_id" id="doctor_id"
-                                class="form-select @error('doctor_id') is-invalid @enderror" required>
+                                class="form-select searchable @error('doctor_id') is-invalid @enderror" required placeholder="— Pilih Dokter —">
                             @foreach($doctors as $d)
                                 <option value="{{ $d->id }}"
                                     data-department="{{ $d->department_id ?? '' }}"
@@ -137,7 +137,7 @@
                     <label class="form-label fw-600">Hari <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-calendar3"></i></span>
-                        <select name="hari" class="form-select @error('hari') is-invalid @enderror" required>
+                        <select name="hari" class="form-select searchable @error('hari') is-invalid @enderror" required placeholder="— Pilih Hari —">
                             @foreach($hariList as $hari)
                                 <option value="{{ $hari }}" {{ old('hari', $doctorSchedule->hari) === $hari ? 'selected' : '' }}>{{ $hari }}</option>
                             @endforeach

@@ -10,7 +10,7 @@ use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PointController;
 // ── Redirect root ke dashboard atau login ────────────────────────────────────
 Route::get('/', fn() => redirect()->route('dashboard'));
 
@@ -102,6 +102,10 @@ Route::middleware('auth')->group(function () {
     // Batalkan pendaftaran
     Route::patch('registrations/{registration}/batal', [RegistrationController::class, 'batal'])
         ->name('registrations.batal');
+        
+    // Cetak antrian
+    Route::get('registrations/{registration}/cetak', [RegistrationController::class, 'cetak'])
+        ->name('registrations.cetak');
 
     // ── Modul Antrian ─────────────────────────────────────────────────────────
     Route::get('/antrian',                                      [AntrianController::class, 'index'])->name('antrian.index');
@@ -125,4 +129,20 @@ Route::middleware('auth')->group(function () {
         // Data antrian real-time per poli (untuk display antrian)
         Route::get('antrian/{department}',[AjaxController::class, 'getAntrianPoli'])->name('antrian-poli');
     });
+    
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/poin', [PointController::class, 'index'])
+        ->name('points.index')
+        ->middleware('role:petugas');
+
+    Route::get('/poin/karyawan', [PointController::class, 'admin'])
+        ->name('points.admin')
+        ->middleware('role:admin');
+
+    Route::post('/poin/tukar', [PointController::class, 'redeem'])
+        ->name('points.redeem')
+        ->middleware('role:admin');
+
+});
 });

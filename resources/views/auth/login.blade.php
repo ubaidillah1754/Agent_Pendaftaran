@@ -7,27 +7,28 @@
     <title>Masuk — Sistem Pendaftaran Rawat Jalan RSI Sakinah</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Spectral:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Spectral:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --primary:      #0B6B4F;
-            --primary-dark: #063D2C;
-            --primary-light:#12885F;
+            --primary: #0B6B4F;
+            --primary-dark: #06291D;
+            --primary-light: #12885F;
             --primary-soft: #E9F3EE;
-            --gold:         #C9A227;
-            --gold-light:   #E8C766;
-            --accent-soft:  #FBF6E9;
-            --white:        #FFFFFF;
-            --bg:           #F7F8FA;
-            --ink:          #1B2430;
-            --muted:        #6B7684;
-            --border:       #E7EAEF;
-            --danger:       #DC2626;
-            --focus-ring:   #0EA5E9;
-            --radius-lg: 20px;
+            --gold: #C9A227;
+            --gold-light: #E8C766;
+            --accent-soft: #FBF6E9;
+            --white: #FFFFFF;
+            --bg: #F7F8FA;
+            --ink: #142019;
+            --muted: #6B7684;
+            --border: #E7EAEF;
+            --danger: #DC2626;
+            --focus-ring: #0EA5E9;
+            --radius-lg: 22px;
             --radius-md: 14px;
             --radius-sm: 10px;
         }
@@ -36,7 +37,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
         }
 
@@ -50,86 +52,166 @@
         .auth-shell {
             min-height: 100vh;
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
+            grid-template-columns: 1.2fr 1fr;
         }
 
-        /* ---------- LEFT PANEL ---------- */
+        /* ================= LEFT: institutional panel ================= */
         .auth-visual {
             position: relative;
             overflow: hidden;
             display: flex;
-            align-items: center;
-            padding: 56px 64px;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 44px 60px 36px;
             background:
-                radial-gradient(ellipse 700px 420px at 8% -8%, rgba(232,199,102,.14), transparent 60%),
-                linear-gradient(150deg, var(--primary-dark) 0%, var(--primary) 100%);
+                radial-gradient(ellipse 800px 480px at 6% -10%, rgba(232, 199, 102, .16), transparent 60%),
+                linear-gradient(155deg, var(--primary-dark) 0%, var(--primary) 78%);
         }
 
-        /* geometric tile texture — same motif as the TV display / monitor pages */
         .auth-visual::before {
             content: "";
-            position: absolute; inset: 0; z-index: 0; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Cg fill='none' stroke='%23E8C766' stroke-width='1' opacity='0.08'%3E%3Cpath d='M42 4 L80 42 L42 80 L4 42 Z'/%3E%3Ccircle cx='42' cy='42' r='18'/%3E%3C/g%3E%3C/svg%3E");
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84'%3E%3Cg fill='none' stroke='%23E8C766' stroke-width='1' opacity='0.07'%3E%3Cpath d='M42 4 L80 42 L42 80 L4 42 Z'/%3E%3Ccircle cx='42' cy='42' r='18'/%3E%3C/g%3E%3C/svg%3E");
         }
 
         .auth-visual .building {
             position: absolute;
             inset: 0;
             z-index: 0;
-            opacity: .55;
+            opacity: .5;
         }
 
         .auth-visual .building svg {
             position: absolute;
             bottom: 0;
-            left: -20px;
-            width: 52%;
-            height: 88%;
+            right: -40px;
+            width: 58%;
+            height: 92%;
+        }
+
+        /* ---- top bar: accreditation strip (this is what signals "rumah sakit besar") ---- */
+        .accred-bar {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding-bottom: 22px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, .14);
+        }
+
+        .accred-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            color: rgba(255, 255, 255, .82);
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(232, 199, 102, .28);
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
+
+        .accred-badge i {
+            color: var(--gold-light);
+            font-size: .9rem;
         }
 
         .visual-content {
             position: relative;
             z-index: 2;
-            max-width: 460px;
-            margin-left: auto;
+            max-width: 480px;
         }
 
         .visual-content .eyebrow {
-            font-size: .8rem;
-            letter-spacing: .16em;
+            font-size: .78rem;
+            letter-spacing: .18em;
             text-transform: uppercase;
             color: var(--gold-light);
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .visual-content h1 {
             font-family: 'Amiri', serif;
-            font-size: 2.5rem;
+            font-size: 2.7rem;
             font-weight: 700;
-            line-height: 1.15;
-            margin: 0 0 16px;
+            line-height: 1.12;
+            margin: 0 0 14px;
             color: #fff;
         }
 
         .visual-content .lead {
-            font-size: 1rem;
+            font-size: 1.02rem;
             font-weight: 700;
-            color: rgba(255, 255, 255, .92);
-            margin-bottom: 6px;
+            color: rgba(255, 255, 255, .94);
+            margin-bottom: 8px;
         }
 
         .visual-content .desc {
             font-size: .9rem;
-            color: rgba(255, 255, 255, .68);
-            margin-bottom: 32px;
-            line-height: 1.6;
+            color: rgba(255, 255, 255, .66);
+            margin-bottom: 28px;
+            line-height: 1.65;
+            max-width: 400px;
+        }
+
+        /* ---- stat strip: the credibility signature of a major hospital ---- */
+        .stat-strip {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            margin-bottom: 30px;
+            padding: 18px 0;
+            border-top: 1px solid rgba(255, 255, 255, .14);
+            border-bottom: 1px solid rgba(255, 255, 255, .14);
+        }
+
+        .stat-strip .stat+.stat {
+            border-left: 1px solid rgba(255, 255, 255, .14);
+        }
+
+        .stat-strip .stat {
+            padding-left: 20px;
+        }
+
+        .stat-strip .stat:first-child {
+            padding-left: 0;
+        }
+
+        .stat-num {
+            font-family: 'Spectral', serif;
+            font-weight: 800;
+            font-size: 1.7rem;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-num sup {
+            font-size: .95rem;
+            color: var(--gold-light);
+            top: -.6em;
+        }
+
+        .stat-label {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .6);
+            line-height: 1.4;
         }
 
         .feature-row {
             display: flex;
             gap: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .feature-icon {
@@ -155,20 +237,25 @@
 
         .feature-text span {
             font-size: .8rem;
-            color: rgba(255, 255, 255, .62);
+            color: rgba(255, 255, 255, .6);
             line-height: 1.5;
         }
 
         .help-float {
-            position: absolute;
-            left: 64px;
-            bottom: 40px;
+            position: relative;
             z-index: 2;
-            background: rgba(255, 255, 255, .08);
+            background: rgba(255, 255, 255, .07);
             border: 1px solid rgba(232, 199, 102, .22);
             backdrop-filter: blur(6px);
             border-radius: var(--radius-md);
             padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .help-float .left {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -194,12 +281,34 @@
 
         .help-float a {
             font-size: .8rem;
-            color: rgba(255, 255, 255, .8);
+            color: rgba(255, 255, 255, .78);
             font-weight: 600;
             text-decoration: none;
         }
 
-        /* ---------- RIGHT PANEL ---------- */
+        .igd-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .72rem;
+            font-weight: 700;
+            color: #FFEAB0;
+            background: rgba(220, 38, 38, .16);
+            border: 1px solid rgba(255, 255, 255, .18);
+            padding: 6px 12px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .igd-pill .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #FF6B6B;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, .25);
+        }
+
+        /* ================= RIGHT: form panel ================= */
         .auth-form-panel {
             display: flex;
             align-items: center;
@@ -215,10 +324,9 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 40px 40px 32px;
-            box-shadow: 0 1px 2px rgba(16,24,32,.04), 0 20px 40px -20px rgba(16,24,32,.14);
+            box-shadow: 0 1px 2px rgba(16, 24, 32, .04), 0 24px 48px -20px rgba(16, 24, 32, .16);
         }
 
-        /* arch-topped brand badge — echoes the mihrab motif used across the app */
         .brand-mark {
             display: flex;
             justify-content: center;
@@ -235,7 +343,7 @@
             align-items: center;
             justify-content: center;
             color: var(--primary);
-            box-shadow: 0 0 0 5px rgba(201,162,39,.07);
+            box-shadow: 0 0 0 5px rgba(201, 162, 39, .07);
         }
 
         .brand-mark svg {
@@ -245,7 +353,8 @@
 
         .auth-card h2 {
             text-align: center;
-            font-size: 1.4rem;
+            font-family: 'Spectral', serif;
+            font-size: 1.5rem;
             font-weight: 800;
             margin: 0 0 6px;
             color: var(--ink);
@@ -264,8 +373,11 @@
             gap: 5px;
             margin-bottom: 22px;
         }
+
         .sub-divider span {
-            width: 6px; height: 6px; background: var(--gold);
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
             transform: rotate(45deg);
         }
 
@@ -341,12 +453,12 @@
             width: 100%;
             min-height: 48px;
             transition: all .18s;
-            box-shadow: 0 8px 20px -6px rgba(11,107,79,.45);
+            box-shadow: 0 8px 20px -6px rgba(11, 107, 79, .45);
         }
 
         .btn-login:hover {
             background: var(--primary-dark);
-            box-shadow: 0 8px 20px -6px rgba(11,107,79,.6);
+            box-shadow: 0 8px 20px -6px rgba(11, 107, 79, .6);
         }
 
         .btn-login:focus-visible,
@@ -425,6 +537,16 @@
             font-size: .78rem;
         }
 
+        .footer-note .seal {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
         @media (max-width: 991px) {
             .auth-shell {
                 grid-template-columns: 1fr;
@@ -447,64 +569,128 @@
 
 <body>
     <div class="auth-shell">
-        <!-- LEFT: Visual / brand panel -->
+        <!-- LEFT: institutional / trust panel -->
         <div class="auth-visual">
             <div class="building" aria-hidden="true">
                 <svg viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
-                    <!-- low side wing -->
-                    <rect x="20" y="360" width="140" height="190" fill="#ffffff" opacity=".08" rx="3"/>
-                    <g fill="#ffffff" opacity=".14">
-                        <rect x="36" y="380" width="20" height="26" rx="2"/>
-                        <rect x="66" y="380" width="20" height="26" rx="2"/>
-                        <rect x="96" y="380" width="20" height="26" rx="2"/>
-                        <rect x="126" y="380" width="20" height="26" rx="2"/>
-                        <rect x="36" y="418" width="20" height="26" rx="2"/>
-                        <rect x="66" y="418" width="20" height="26" rx="2"/>
-                        <rect x="96" y="418" width="20" height="26" rx="2"/>
-                        <rect x="126" y="418" width="20" height="26" rx="2"/>
-                        <rect x="36" y="456" width="20" height="26" rx="2"/>
-                        <rect x="66" y="456" width="20" height="26" rx="2"/>
-                        <rect x="96" y="456" width="20" height="26" rx="2"/>
-                        <rect x="126" y="456" width="20" height="26" rx="2"/>
+                    <rect x="20" y="360" width="140" height="190" fill="#ffffff" opacity=".08" rx="3" />
+                    <g fill="#ffffff" opacity=".13">
+                        <rect x="36" y="380" width="20" height="26" rx="2" />
+                        <rect x="66" y="380" width="20" height="26" rx="2" />
+                        <rect x="96" y="380" width="20" height="26" rx="2" />
+                        <rect x="126" y="380" width="20" height="26" rx="2" />
+                        <rect x="36" y="418" width="20" height="26" rx="2" />
+                        <rect x="66" y="418" width="20" height="26" rx="2" />
+                        <rect x="96" y="418" width="20" height="26" rx="2" />
+                        <rect x="126" y="418" width="20" height="26" rx="2" />
+                        <rect x="36" y="456" width="20" height="26" rx="2" />
+                        <rect x="66" y="456" width="20" height="26" rx="2" />
+                        <rect x="96" y="456" width="20" height="26" rx="2" />
+                        <rect x="126" y="456" width="20" height="26" rx="2" />
                     </g>
-
-                    <!-- main tower, arch-topped like a mihrab silhouette -->
-                    <path d="M120 130 A115 115 0 0 1 350 130 L350 550 L120 550 Z" fill="#ffffff" opacity=".1"/>
-                    <path d="M120 130 A115 115 0 0 1 350 130 L350 550 L120 550 Z" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="2"/>
-                    <path d="M120 130 A115 115 0 0 1 350 130" fill="none" stroke="#E8C766" stroke-opacity=".55" stroke-width="2"/>
-
-                    <!-- window grid -->
-                    <g fill="#ffffff" opacity=".16">
-                        <rect x="136" y="150" width="26" height="20" rx="2"/><rect x="170" y="150" width="26" height="20" rx="2"/><rect x="204" y="150" width="26" height="20" rx="2"/><rect x="238" y="150" width="26" height="20" rx="2"/><rect x="272" y="150" width="26" height="20" rx="2"/><rect x="306" y="150" width="26" height="20" rx="2"/>
-                        <rect x="136" y="180" width="26" height="20" rx="2"/><rect x="170" y="180" width="26" height="20" rx="2"/><rect x="204" y="180" width="26" height="20" rx="2"/><rect x="238" y="180" width="26" height="20" rx="2"/><rect x="272" y="180" width="26" height="20" rx="2"/><rect x="306" y="180" width="26" height="20" rx="2"/>
-                        <rect x="136" y="210" width="26" height="20" rx="2"/><rect x="170" y="210" width="26" height="20" rx="2"/><rect x="204" y="210" width="26" height="20" rx="2"/><rect x="238" y="210" width="26" height="20" rx="2"/><rect x="272" y="210" width="26" height="20" rx="2"/><rect x="306" y="210" width="26" height="20" rx="2"/>
-                        <rect x="136" y="240" width="26" height="20" rx="2"/><rect x="170" y="240" width="26" height="20" rx="2"/><rect x="204" y="240" width="26" height="20" rx="2"/><rect x="238" y="240" width="26" height="20" rx="2"/><rect x="272" y="240" width="26" height="20" rx="2"/><rect x="306" y="240" width="26" height="20" rx="2"/>
-                        <rect x="136" y="270" width="26" height="20" rx="2"/><rect x="170" y="270" width="26" height="20" rx="2"/><rect x="204" y="270" width="26" height="20" rx="2"/><rect x="238" y="270" width="26" height="20" rx="2"/><rect x="272" y="270" width="26" height="20" rx="2"/><rect x="306" y="270" width="26" height="20" rx="2"/>
-                        <rect x="136" y="300" width="26" height="20" rx="2"/><rect x="170" y="300" width="26" height="20" rx="2"/><rect x="204" y="300" width="26" height="20" rx="2"/><rect x="238" y="300" width="26" height="20" rx="2"/><rect x="272" y="300" width="26" height="20" rx="2"/><rect x="306" y="300" width="26" height="20" rx="2"/>
-                        <rect x="136" y="330" width="26" height="20" rx="2"/><rect x="170" y="330" width="26" height="20" rx="2"/><rect x="204" y="330" width="26" height="20" rx="2"/><rect x="238" y="330" width="26" height="20" rx="2"/><rect x="272" y="330" width="26" height="20" rx="2"/><rect x="306" y="330" width="26" height="20" rx="2"/>
-                        <rect x="136" y="360" width="26" height="20" rx="2"/><rect x="170" y="360" width="26" height="20" rx="2"/><rect x="204" y="360" width="26" height="20" rx="2"/><rect x="238" y="360" width="26" height="20" rx="2"/><rect x="272" y="360" width="26" height="20" rx="2"/><rect x="306" y="360" width="26" height="20" rx="2"/>
-                        <rect x="136" y="390" width="26" height="20" rx="2"/><rect x="170" y="390" width="26" height="20" rx="2"/><rect x="204" y="390" width="26" height="20" rx="2"/><rect x="238" y="390" width="26" height="20" rx="2"/><rect x="272" y="390" width="26" height="20" rx="2"/><rect x="306" y="390" width="26" height="20" rx="2"/>
-                        <rect x="136" y="420" width="26" height="20" rx="2"/><rect x="170" y="420" width="26" height="20" rx="2"/><rect x="204" y="420" width="26" height="20" rx="2"/><rect x="238" y="420" width="26" height="20" rx="2"/><rect x="272" y="420" width="26" height="20" rx="2"/><rect x="306" y="420" width="26" height="20" rx="2"/>
+                    <path d="M120 130 A115 115 0 0 1 350 130 L350 550 L120 550 Z" fill="#ffffff" opacity=".1" />
+                    <path d="M120 130 A115 115 0 0 1 350 130 L350 550 L120 550 Z" fill="none" stroke="#ffffff"
+                        stroke-opacity=".18" stroke-width="2" />
+                    <path d="M120 130 A115 115 0 0 1 350 130" fill="none" stroke="#E8C766" stroke-opacity=".55"
+                        stroke-width="2" />
+                    <g fill="#ffffff" opacity=".15">
+                        <rect x="136" y="150" width="26" height="20" rx="2" />
+                        <rect x="170" y="150" width="26" height="20" rx="2" />
+                        <rect x="204" y="150" width="26" height="20" rx="2" />
+                        <rect x="238" y="150" width="26" height="20" rx="2" />
+                        <rect x="272" y="150" width="26" height="20" rx="2" />
+                        <rect x="306" y="150" width="26" height="20" rx="2" />
+                        <rect x="136" y="180" width="26" height="20" rx="2" />
+                        <rect x="170" y="180" width="26" height="20" rx="2" />
+                        <rect x="204" y="180" width="26" height="20" rx="2" />
+                        <rect x="238" y="180" width="26" height="20" rx="2" />
+                        <rect x="272" y="180" width="26" height="20" rx="2" />
+                        <rect x="306" y="180" width="26" height="20" rx="2" />
+                        <rect x="136" y="210" width="26" height="20" rx="2" />
+                        <rect x="170" y="210" width="26" height="20" rx="2" />
+                        <rect x="204" y="210" width="26" height="20" rx="2" />
+                        <rect x="238" y="210" width="26" height="20" rx="2" />
+                        <rect x="272" y="210" width="26" height="20" rx="2" />
+                        <rect x="306" y="210" width="26" height="20" rx="2" />
+                        <rect x="136" y="240" width="26" height="20" rx="2" />
+                        <rect x="170" y="240" width="26" height="20" rx="2" />
+                        <rect x="204" y="240" width="26" height="20" rx="2" />
+                        <rect x="238" y="240" width="26" height="20" rx="2" />
+                        <rect x="272" y="240" width="26" height="20" rx="2" />
+                        <rect x="306" y="240" width="26" height="20" rx="2" />
+                        <rect x="136" y="270" width="26" height="20" rx="2" />
+                        <rect x="170" y="270" width="26" height="20" rx="2" />
+                        <rect x="204" y="270" width="26" height="20" rx="2" />
+                        <rect x="238" y="270" width="26" height="20" rx="2" />
+                        <rect x="272" y="270" width="26" height="20" rx="2" />
+                        <rect x="306" y="270" width="26" height="20" rx="2" />
+                        <rect x="136" y="300" width="26" height="20" rx="2" />
+                        <rect x="170" y="300" width="26" height="20" rx="2" />
+                        <rect x="204" y="300" width="26" height="20" rx="2" />
+                        <rect x="238" y="300" width="26" height="20" rx="2" />
+                        <rect x="272" y="300" width="26" height="20" rx="2" />
+                        <rect x="306" y="300" width="26" height="20" rx="2" />
+                        <rect x="136" y="330" width="26" height="20" rx="2" />
+                        <rect x="170" y="330" width="26" height="20" rx="2" />
+                        <rect x="204" y="330" width="26" height="20" rx="2" />
+                        <rect x="238" y="330" width="26" height="20" rx="2" />
+                        <rect x="272" y="330" width="26" height="20" rx="2" />
+                        <rect x="306" y="330" width="26" height="20" rx="2" />
+                        <rect x="136" y="360" width="26" height="20" rx="2" />
+                        <rect x="170" y="360" width="26" height="20" rx="2" />
+                        <rect x="204" y="360" width="26" height="20" rx="2" />
+                        <rect x="238" y="360" width="26" height="20" rx="2" />
+                        <rect x="272" y="360" width="26" height="20" rx="2" />
+                        <rect x="306" y="360" width="26" height="20" rx="2" />
+                        <rect x="136" y="390" width="26" height="20" rx="2" />
+                        <rect x="170" y="390" width="26" height="20" rx="2" />
+                        <rect x="204" y="390" width="26" height="20" rx="2" />
+                        <rect x="238" y="390" width="26" height="20" rx="2" />
+                        <rect x="272" y="390" width="26" height="20" rx="2" />
+                        <rect x="306" y="390" width="26" height="20" rx="2" />
+                        <rect x="136" y="420" width="26" height="20" rx="2" />
+                        <rect x="170" y="420" width="26" height="20" rx="2" />
+                        <rect x="204" y="420" width="26" height="20" rx="2" />
+                        <rect x="238" y="420" width="26" height="20" rx="2" />
+                        <rect x="272" y="420" width="26" height="20" rx="2" />
+                        <rect x="306" y="420" width="26" height="20" rx="2" />
                     </g>
-
-                    <!-- rooftop cross sign -->
-                    <rect x="215" y="24" width="10" height="34" fill="#E8C766"/>
-                    <rect x="203" y="36" width="34" height="10" fill="#E8C766"/>
-
-                    <!-- entrance canopy + glass door -->
-                    <rect x="190" y="460" width="80" height="90" fill="#ffffff" opacity=".08" rx="2"/>
-                    <rect x="150" y="450" width="160" height="12" fill="#ffffff" opacity=".18" rx="2"/>
-
-                    <!-- ground line -->
-                    <rect x="0" y="550" width="420" height="10" fill="#ffffff" opacity=".1"/>
+                    <rect x="215" y="24" width="10" height="34" fill="#E8C766" />
+                    <rect x="203" y="36" width="34" height="10" fill="#E8C766" />
+                    <rect x="190" y="460" width="80" height="90" fill="#ffffff" opacity=".08" rx="2" />
+                    <rect x="150" y="450" width="160" height="12" fill="#ffffff" opacity=".18" rx="2" />
+                    <rect x="0" y="550" width="420" height="10" fill="#ffffff" opacity=".1" />
                 </svg>
+            </div>
+
+            <!-- accreditation strip: signals this is an established, standards-certified hospital -->
+            <div class="accred-bar">
+                <span class="accred-badge"><i class="bi bi-patch-check-fill"></i>Akreditasi Paripurna KARS</span>
+                <span class="accred-badge"><i class="bi bi-award-fill"></i>ISO 9001:2015</span>
+                <span class="igd-pill" style="margin-left:auto;"><span class="dot"></span>IGD Siaga 24 Jam</span>
             </div>
 
             <div class="visual-content">
                 <p class="eyebrow">Selamat Datang di</p>
-                <h1>RSI Sakinah</h1>
+                <h1>My Sakinah Agent</h1>
                 <p class="lead">Sistem Pendaftaran Rawat Jalan</p>
-                <p class="desc">Mudah, cepat, dan aman untuk pelayanan kesehatan yang lebih baik.</p>
+                <p class="desc">Melayani dengan standar mutu rumah sakit rujukan — mudah, cepat, dan aman untuk
+                    pelayanan kesehatan keluarga Anda.</p>
+
+                <div class="stat-strip">
+                    <div class="stat">
+                        <div class="stat-num">120<sup>+</sup></div>
+                        <div class="stat-label">Dokter spesialis &amp; sub-spesialis</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num">30<sup>+</sup></div>
+                        <div class="stat-label">Tahun melayani masyarakat</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num">98<sup>%</sup></div>
+                        <div class="stat-label">Kepuasan pasien rawat jalan</div>
+                    </div>
+                </div>
 
                 <div class="feature-row">
                     <div class="feature-icon"><i class="bi bi-people-fill"></i></div>
@@ -520,45 +706,39 @@
                         <span>Keamanan data pasien menjadi prioritas kami</span>
                     </div>
                 </div>
-                <div class="feature-row">
-                    <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
-                    <div class="feature-text">
-                        <strong>Akses 24/7</strong>
-                        <span>Daftar dan kelola pendaftaran kapan saja, di mana saja</span>
-                    </div>
-                </div>
             </div>
 
             <div class="help-float">
-                <div class="icon"><i class="bi bi-headset"></i></div>
-                <div>
-                    <strong>Butuh Bantuan?</strong>
-                    <a href="tel:0211234567">Hubungi Kami: (021) 1234 5678</a>
+                <div class="left">
+                    <div class="icon"><i class="bi bi-headset"></i></div>
+                    <div>
+                        <strong>Butuh Bantuan?</strong>
+                        <a href="tel:0211234567">Hubungi Kami: (021) 1234 5678</a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT: Login form panel (kartu putih melayang) -->
+        <!-- RIGHT: login form panel -->
         <div class="auth-form-panel">
             <div class="auth-card">
                 <div class="brand-mark">
                     <div class="ring">
-                        <!-- Logo mandala + plus, ganti dengan logo resmi RSI Sakinah kalau sudah ada file SVG/PNG-nya -->
                         <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <g fill="currentColor">
-                                <circle cx="24" cy="9" r="7.2"/>
-                                <circle cx="24" cy="39" r="7.2"/>
-                                <circle cx="9" cy="24" r="7.2"/>
-                                <circle cx="39" cy="24" r="7.2"/>
-                                <circle cx="13.5" cy="13.5" r="6.6"/>
-                                <circle cx="34.5" cy="13.5" r="6.6"/>
-                                <circle cx="13.5" cy="34.5" r="6.6"/>
-                                <circle cx="34.5" cy="34.5" r="6.6"/>
+                                <circle cx="24" cy="9" r="7.2" />
+                                <circle cx="24" cy="39" r="7.2" />
+                                <circle cx="9" cy="24" r="7.2" />
+                                <circle cx="39" cy="24" r="7.2" />
+                                <circle cx="13.5" cy="13.5" r="6.6" />
+                                <circle cx="34.5" cy="13.5" r="6.6" />
+                                <circle cx="13.5" cy="34.5" r="6.6" />
+                                <circle cx="34.5" cy="34.5" r="6.6" />
                             </g>
-                            <circle cx="24" cy="24" r="12.5" fill="#FFFFFF"/>
+                            <circle cx="24" cy="24" r="12.5" fill="#FFFFFF" />
                             <g fill="currentColor">
-                                <rect x="20.8" y="15" width="6.4" height="18" rx="2"/>
-                                <rect x="15" y="20.8" width="18" height="6.4" rx="2"/>
+                                <rect x="20.8" y="15" width="6.4" height="18" rx="2" />
+                                <rect x="15" y="20.8" width="18" height="6.4" rx="2" />
                             </g>
                         </svg>
                     </div>
@@ -598,7 +778,8 @@
                             <i class="bi bi-lock icon"></i>
                             <input type="password" name="password" id="password" class="form-control"
                                 placeholder="••••••••" required>
-                            <button type="button" class="input-toggle" onclick="togglePwd()" aria-label="Tampilkan password">
+                            <button type="button" class="input-toggle" onclick="togglePwd()"
+                                aria-label="Tampilkan password">
                                 <i class="bi bi-eye" id="pwd-icon"></i>
                             </button>
                         </div>
@@ -622,7 +803,10 @@
                     <i class="bi bi-people-fill me-2"></i>Akun Demo
                 </button>
 
-                <p class="footer-note">&copy; {{ date('Y') }} RSI Sakinah. Semua hak dilindungi.</p>
+                <p class="footer-note">
+                    <span class="seal"><i class="bi bi-patch-check-fill"></i>Terakreditasi Paripurna KARS</span><br>
+                    &copy; {{ date('Y') }} RSI Sakinah. Semua hak dilindungi.
+                </p>
             </div>
         </div>
     </div>

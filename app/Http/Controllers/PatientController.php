@@ -21,7 +21,7 @@ class PatientController extends Controller
             });
         }
 
-        $patients = $query->paginate(15)->withQueryString();
+        $patients = $query->get();
 
         return view('patients.index', compact('patients'));
     }

@@ -9,27 +9,52 @@
 @push('styles')
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Spectral:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Spectral:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
         --rs-green:      #0B6B4F;
         --rs-green-dark: #063D2C;
+        --rs-green-pale: #EAF4EF;
         --rs-gold:       #C9A227;
         --rs-gold-light: #E8C766;
         --rs-tile:       #0E7490;
+        --rs-ink:        #16241E;
+        --rs-body-font:  'Plus Jakarta Sans', system-ui, sans-serif;
     }
 
-    /* ===== Poli filter tabs — compact pills ===== */
-    .poli-tabs { display:flex; flex-wrap:wrap; gap:8px; }
+    #content-wrap, .card, .poli-tab, .stat-card, .btn-action { font-family: var(--rs-body-font); }
+
+    /* ===== Trust / status strip — the "known hospital" credibility cue ===== */
+    .rs-trust-bar {
+        display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;
+        background:linear-gradient(90deg,var(--rs-green-dark),var(--rs-green));
+        color:#fff;border-radius:14px;padding:12px 20px;margin-bottom:18px;
+        box-shadow:0 8px 22px rgba(6,61,44,.18);
+    }
+    .rs-trust-bar .rs-trust-items { display:flex;flex-wrap:wrap;gap:18px;align-items:center; }
+    .rs-trust-item { display:flex;align-items:center;gap:7px;font-size:.74rem;font-weight:600;color:#dff2e8;letter-spacing:.02em; }
+    .rs-trust-item i { color:var(--rs-gold-light);font-size:.85rem; }
+    .rs-trust-live { display:flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;color:#fff; }
+    .rs-live-dot { width:7px;height:7px;border-radius:50%;background:#5EEAA0;box-shadow:0 0 0 0 rgba(94,234,160,.6);animation:live-ping 1.8s infinite; }
+    @keyframes live-ping { 0%{box-shadow:0 0 0 0 rgba(94,234,160,.55)} 70%{box-shadow:0 0 0 7px rgba(94,234,160,0)} 100%{box-shadow:0 0 0 0 rgba(94,234,160,0)} }
+
+    /* ===== Poli filter tabs — arch-badge pills ===== */
+    .poli-tabs { display:flex; flex-wrap:wrap; gap:9px; }
     .poli-tab {
-        padding:8px 14px;border-radius:10px;border:1.5px solid #e5e0d0;cursor:pointer;
-        transition:all .2s;background:#fff;font-size:.78rem;font-weight:600;
+        display:inline-flex;align-items:center;gap:8px;
+        padding:9px 16px 9px 10px;border-radius:32px 32px 10px 10px;border:1.5px solid #e5e0d0;cursor:pointer;
+        transition:all .2s;background:#fff;font-size:.78rem;font-weight:700;
         color:#475d52;text-decoration:none;white-space:nowrap;
     }
+    .poli-tab .poli-tab-ic {
+        width:24px;height:24px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+        background:var(--rs-green-pale);color:var(--rs-green);font-size:.72rem;flex-shrink:0;
+    }
     .poli-tab.active { border-color:var(--rs-gold);background:linear-gradient(135deg,var(--rs-gold),var(--rs-gold-light));color:#fff;box-shadow:0 4px 14px rgba(201,162,39,.28); }
+    .poli-tab.active .poli-tab-ic { background:rgba(255,255,255,.25);color:#fff; }
     .poli-tab:hover:not(.active) { border-color:var(--rs-green);color:var(--rs-green); }
 
-    .antrian-row { display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px dashed #ece6d6;transition:background .2s; }
+    .antrian-row { display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px dashed #ece6d6;transition:background .2s; }
     .antrian-row:last-child { border-bottom:none; }
     .antrian-row:hover { background:#f6faf7;border-radius:10px;padding-left:8px;padding-right:8px; }
 
@@ -47,17 +72,21 @@
 
     @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(14,116,144,.4)} 50%{box-shadow:0 0 0 8px rgba(14,116,144,0)} }
 
-    /* ===== Stat cards — horizontal, icon + detail link ===== */
+    .patient-doctor { display:flex; align-items:center; gap:6px; font-size:.75rem; color:#64766D; }
+    .patient-doctor i { color:var(--rs-tile); font-size:.72rem; }
+
+    /* ===== Stat cards — horizontal, arch icon + detail link ===== */
     .stat-card {
-        border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;
-        border:1.5px solid; position:relative; overflow:hidden;
+        border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;
+        border:1.5px solid; position:relative; overflow:hidden; transition:transform .18s, box-shadow .18s;
     }
+    .stat-card:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(6,61,44,.08); }
     .stat-card .icon {
-        width:44px;height:44px;border-radius:22px 22px 6px 6px;flex-shrink:0;
-        display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#fff;
+        width:46px;height:46px;border-radius:23px 23px 7px 7px;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:#fff;
     }
-    .stat-card .stat-num { font-family:'Spectral',serif;font-size:1.6rem;font-weight:800;line-height:1; }
-    .stat-card .stat-lbl { font-size:.76rem;font-weight:600;margin-top:2px; }
+    .stat-card .stat-num { font-family:'Spectral',serif;font-size:1.65rem;font-weight:800;line-height:1; }
+    .stat-card .stat-lbl { font-size:.76rem;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:.04em; }
     .stat-card .stat-detail {
         display:block;font-size:.72rem;font-weight:700;text-decoration:none;margin-top:6px;
     }
@@ -70,8 +99,8 @@
         transform:rotate(45deg);margin:0 2px;vertical-align:middle;
     }
 
-    /* ===== Panggil pasien — mini arch signature, matching the TV display ===== */
-    .call-arch-stage { position:relative; width:150px; height:150px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; }
+    /* ===== Panggil pasien — arch signature, matching the TV display ===== */
+    .call-arch-stage { position:relative; width:158px; height:158px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; }
     .call-arch-ring {
         position:absolute; inset:0; border-radius:50%; border:1px solid rgba(201,162,39,.35);
         animation: call-pulse 2.6s ease-out infinite;
@@ -83,16 +112,17 @@
         100% { transform: scale(1.15); opacity:0; }
     }
     .call-arch-frame {
-        position:relative; z-index:2; width:118px; height:130px;
+        position:relative; z-index:2; width:122px; height:134px;
         background:linear-gradient(180deg,#eaf4ef,#f4f9f6);
         border:1.5px solid var(--rs-gold);
-        border-radius: 59px 59px 10px 10px;
+        border-radius: 61px 61px 10px 10px;
         display:flex; align-items:center; justify-content:center;
         box-shadow: 0 6px 20px rgba(11,107,79,.1);
     }
     .call-arch-frame .stat-num-big {
         font-family:'Spectral',serif; font-size:2.3rem;font-weight:800;color:var(--rs-green);line-height:1;
     }
+    .rs-eta { font-size:.72rem;color:#64766D;margin-top:8px; }
 
     /* ===== Empty states ===== */
     .empty-illus {
@@ -103,19 +133,37 @@
     .empty-illus.success { background:#d1fae5; }
     .empty-illus.success i { color:#059669; }
 
+    /* ===== Footer accreditation strip ===== */
+    .rs-accred-strip {
+        display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;justify-content:center;
+        margin-top:18px;padding:14px 16px;border-top:1px dashed #ece6d6;
+    }
+    .rs-accred-item { display:flex;align-items:center;gap:7px;font-size:.72rem;font-weight:600;color:#64766D; }
+    .rs-accred-item i { color:var(--rs-gold);font-size:.85rem; }
+
     @media (prefers-reduced-motion: reduce) {
-        .call-arch-ring, .no-dipanggil { animation:none; }
+        .call-arch-ring, .no-dipanggil, .rs-live-dot { animation:none; }
     }
 </style>
 @endpush
 
 @section('content')
+<!-- Trust strip -->
+<div class="rs-trust-bar fade-in">
+    <div class="rs-trust-items">
+        <span class="rs-trust-item"><i class="bi bi-patch-check-fill"></i>Terakreditasi KARS Paripurna</span>
+        <span class="rs-trust-item"><i class="bi bi-shield-check"></i>Mitra BPJS Kesehatan</span>
+        <span class="rs-trust-item"><i class="bi bi-telephone-fill"></i>IGD 24 Jam &mdash; 119</span>
+    </div>
+    <div class="rs-trust-live"><span class="rs-live-dot"></span>Papan antrian real-time</div>
+</div>
+
 <!-- Filter Poli -->
 <div class="mb-4 poli-tabs fade-in">
     @foreach($departments as $dept)
     <a href="{{ route('antrian.index', ['department_id' => $dept->id]) }}"
        class="poli-tab {{ $selectedDept?->id == $dept->id ? 'active' : '' }}">
-        <i class="bi bi-building me-1"></i>{{ $dept->nama_poli }}
+        <span class="poli-tab-ic"><i class="bi bi-building"></i></span>{{ $dept->nama_poli }}
     </a>
     @endforeach
 </div>
@@ -182,7 +230,7 @@
                     <div class="no-antrian no-{{ $reg->status }}">{{ $reg->nomor_antrian }}</div>
                     <div class="flex-1">
                         <div class="fw-700" style="font-size:.9rem;">{{ $reg->patient->nama_pasien }}</div>
-                        <div style="font-size:.75rem;color:#64766D;">dr. {{ $reg->doctor->nama_dokter ?? '-' }}</div>
+                        <div class="patient-doctor"><i class="bi bi-person-badge"></i>dr. {{ $reg->doctor->nama_dokter ?? '-' }}</div>
                     </div>
                     <span class="badge badge-{{ $reg->status }}" id="badge-{{ $reg->id }}">{{ $reg->status_label }}</span>
 
@@ -234,6 +282,7 @@
                         </div>
                     </div>
                     <div class="fw-600 mt-1" style="font-size:.95rem;">{{ $berikutnya->patient->nama_pasien }}</div>
+                    <div class="rs-eta"><i class="bi bi-clock-history me-1"></i>Poli {{ $selectedDept->nama_poli }}</div>
                 </div>
                 <button onclick="updateStatus({{ $berikutnya->id }},'dipanggil')" class="btn w-100" style="background:linear-gradient(135deg,var(--rs-gold),var(--rs-gold-light));color:#fff;border-radius:12px;padding:12px;font-weight:700;box-shadow:0 6px 18px rgba(201,162,39,.3);">
                     <i class="bi bi-megaphone me-2"></i>Panggil Sekarang
@@ -251,6 +300,14 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Accreditation / trust footer -->
+<div class="rs-accred-strip fade-in">
+    <span class="rs-accred-item"><i class="bi bi-award-fill"></i>Akreditasi KARS Paripurna</span>
+    <span class="rs-accred-item"><i class="bi bi-globe2"></i>ISO 9001:2015</span>
+    <span class="rs-accred-item"><i class="bi bi-heart-pulse-fill"></i>Mitra BPJS &amp; Asuransi Swasta</span>
+    <span class="rs-accred-item"><i class="bi bi-people-fill"></i>Dokter Spesialis Berpengalaman</span>
 </div>
 @else
 <div class="card text-center py-5 fade-in">

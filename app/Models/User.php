@@ -65,4 +65,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Registration::class, 'created_by');
     }
+    public function petugasPoints()
+    {
+        return $this->hasMany(PetugasPoint::class);
+    }
+
+    public function pointRedemptions()
+    {
+        return $this->hasMany(PointRedemption::class);
+    }
+
+    public function totalPoints(): int
+    {
+        $earned = $this->petugasPoints()->sum('points');
+        $redeemed = $this->pointRedemptions()->sum('points');
+        return $earned - $redeemed;
+    }
 }

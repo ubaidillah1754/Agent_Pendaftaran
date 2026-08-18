@@ -158,7 +158,7 @@
     <div class="col-6 col-md-3">
         <div class="dp-stat">
             <div class="icon" style="background:#E0F2F6;color:var(--hp-secondary);"><i class="bi bi-people-fill"></i></div>
-            <div><div class="num">{{ $patients->total() }}</div><div class="lbl">Total Pasien</div></div>
+            <div><div class="num">{{ $patients->count() }}</div><div class="lbl">Total Pasien</div></div>
         </div>
     </div>
     <div class="col-6 col-md-3">
@@ -183,10 +183,6 @@
 
 <!-- Action bar: search (functional, uses existing ?q=) + create buttons -->
 <div class="dp-actionbar fade-in">
-    <form action="{{ route('patients.index') }}" method="GET" class="dp-search">
-        <i class="bi bi-search"></i>
-        <input type="text" name="q" placeholder="Cari nama pasien, NIK, atau No. RM..." value="{{ request('q') }}">
-    </form>
     <a href="{{ route('patients.create') }}" class="btn-dp-primary"><i class="bi bi-person-plus me-1"></i>Pasien Baru</a>
     <a href="{{ route('registrations.create') }}" class="btn-dp-gold"><i class="bi bi-clipboard2-plus me-1"></i>Daftar Rawat Jalan</a>
     <button type="button" class="btn-dp-ghost" onclick="alert('Fitur Export Excel belum tersedia — perlu ditambahkan di controller.')"><i class="bi bi-file-earmark-excel me-1"></i>Export Excel</button>
@@ -196,7 +192,7 @@
 <div class="dp-table-card fade-in">
     @if($patients->count())
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 datatable">
             <thead>
                 <tr>
                     <th>No. RM</th>
@@ -265,12 +261,6 @@
     </div>
     @endif
 
-    @if($patients->hasPages())
-    <div class="card-body border-top d-flex justify-content-between align-items-center py-3">
-        <small class="text-muted">Menampilkan {{ $patients->firstItem() }}&ndash;{{ $patients->lastItem() }} dari {{ $patients->total() }} pasien</small>
-        {{ $patients->links() }}
-    </div>
-    @endif
 </div>
 </div>
 @endsection

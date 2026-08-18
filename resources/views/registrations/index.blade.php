@@ -94,7 +94,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <div>
-        <p class="text-muted mb-0" style="font-size:.82rem;">Total {{ $registrations->total() }} pendaftaran ditemukan</p>
+        <p class="text-muted mb-0" style="font-size:.82rem;">Total {{ $registrations->count() }} pendaftaran ditemukan</p>
     </div>
     <a href="{{ route('registrations.create') }}" class="btn btn-accent">
         <i class="bi bi-clipboard2-plus me-1"></i> Pendaftaran Baru
@@ -107,7 +107,7 @@
         <div class="reg-stat">
             <div class="icon" style="background:#E9F3EE;color:var(--primary,#0B6B4F);"><i class="bi bi-clipboard2-check-fill"></i></div>
             <div>
-                <div class="num">{{ $registrations->total() }}</div>
+                <div class="num">{{ $registrations->count() }}</div>
                 <div class="lbl">Total Pendaftaran</div>
             </div>
         </div>
@@ -177,7 +177,7 @@
 <div class="card table-card fade-in">
     @if($registrations->count())
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 datatable">
             <thead>
                 <tr>
                     <th>No. Antrian</th>
@@ -211,6 +211,9 @@
                     </td>
                     <td class="text-center">
                         <div class="d-flex gap-1 justify-content-center">
+                            <a href="{{ route('registrations.cetak', $reg) }}" target="_blank" class="btn btn-sm btn-icon" style="background:#fef3c7;color:#d97706;" title="Cetak Antrian">
+                                <i class="bi bi-printer-fill"></i>
+                            </a>
                             <a href="{{ route('registrations.show', $reg) }}" class="btn btn-sm btn-icon" style="background:#eaf6f8;color:var(--tile,#0E7490);" title="Detail">
                                 <i class="bi bi-eye-fill"></i>
                             </a>
@@ -244,11 +247,5 @@
     </div>
     @endif
 
-    @if($registrations->hasPages())
-    <div class="card-body border-top py-3 d-flex justify-content-between align-items-center">
-        <small class="text-muted">{{ $registrations->firstItem() }}–{{ $registrations->lastItem() }} dari {{ $registrations->total() }}</small>
-        {{ $registrations->links() }}
-    </div>
-    @endif
 </div>
 @endsection

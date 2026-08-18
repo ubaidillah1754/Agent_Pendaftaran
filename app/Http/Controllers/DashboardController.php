@@ -22,6 +22,7 @@ class DashboardController extends Controller
             'dipanggil'  => Registration::whereDate('tanggal_daftar', $today)->where('status', 'dipanggil')->count(),
             'selesai'    => Registration::whereDate('tanggal_daftar', $today)->where('status', 'selesai')->count(),
             'batal'      => Registration::whereDate('tanggal_daftar', $today)->where('status', 'batal')->count(),
+            'terjadwal'  => Registration::whereDate('tanggal_daftar', '>', $today)->where('status', 'menunggu')->count(),
             'total_pasien'   => Patient::count(),
             'total_dokter'   => Doctor::where('is_active', true)->count(),
             'total_poli'     => Department::where('is_active', true)->count(),

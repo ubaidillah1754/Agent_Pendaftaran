@@ -60,7 +60,7 @@
                     <label class="form-label fw-600">Poli Utama <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-hospital"></i></span>
-                        <select name="department_id" class="form-select @error('department_id') is-invalid @enderror" required>
+                        <select name="department_id" class="form-select searchable @error('department_id') is-invalid @enderror" required placeholder="— Pilih Poli —">
                             <option value="">— Pilih Poli —</option>
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>

@@ -47,15 +47,15 @@
             </div>
         </div>
 
-        <a href="{{ route('doctors.create') }}" class="btn btn-accent">
+        {{-- <a href="{{ route('doctors.create') }}" class="btn btn-accent">
             <i class="bi bi-person-plus me-1"></i> Tambah Dokter
-        </a>
+        </a> --}}
     </div>
 </div>
 
 <div class="card table-card fade-in">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 datatable">
             <thead>
                 <tr>
                     <th>#</th>

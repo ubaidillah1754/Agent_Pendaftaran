@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Spectral:wght@700;800&display=swap"
         rel="stylesheet">
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,9 +35,13 @@
             --muted:        #6C7A76;
             --border:       #E7EDEA;
             --sidebar-w: 272px;
-            --card-radius: 14px;
+            --card-radius: 16px;
             --card-shadow: 0 1px 2px rgba(16,24,32,.04), 0 8px 20px -12px rgba(16,24,32,.10);
             --focus-ring: 0 0 0 3px rgba(15, 123, 99, .35);
+            /* bentuk "arch" — sudut atas membulat, bawah landai — dipakai konsisten
+               di seluruh ikon berulang (stat, nav, topbar) sebagai identitas visual */
+            --arch-lg: 23px 23px 6px 6px;
+            --arch-sm: 13px 13px 4px 4px;
         }
 
         * {
@@ -166,7 +170,7 @@
         .sidebar-nav .nav-link .nav-icon-box {
             width: 26px;
             height: 26px;
-            border-radius: 8px;
+            border-radius: var(--arch-sm);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -202,7 +206,7 @@
         .sidebar-footer .avatar {
             width: 32px;
             height: 32px;
-            border-radius: 9px;
+            border-radius: var(--arch-sm);
             background: var(--primary-dark);
             display: flex;
             align-items: center;
@@ -287,6 +291,25 @@
             gap: 12px;
         }
 
+        /* Badge akreditasi — penanda kredibilitas institusi, konsisten dengan
+           strip akreditasi di halaman login */
+        .topbar-accred {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-soft);
+            border: 1px solid rgba(184, 145, 46, .3);
+            border-radius: 999px;
+            padding: 7px 14px;
+            font-size: .72rem;
+            font-weight: 700;
+            color: #7A5E17;
+        }
+
+        .topbar-accred i {
+            color: var(--accent);
+        }
+
         .topbar-date {
             display: flex;
             align-items: center;
@@ -307,7 +330,7 @@
         .topbar-btn {
             width: 38px;
             height: 38px;
-            border-radius: 10px;
+            border-radius: var(--arch-sm);
             background: var(--bg);
             border: none;
             display: flex;
@@ -365,7 +388,7 @@
         .stat-icon {
             width: 44px;
             height: 44px;
-            border-radius: 12px;
+            border-radius: var(--arch-lg);
             background: var(--primary-soft);
             color: var(--primary);
             display: flex;
@@ -384,6 +407,7 @@
         }
 
         .stat-value {
+            font-family: 'Spectral', serif;
             font-size: 1.6rem;
             font-weight: 800;
             line-height: 1.2;
@@ -609,6 +633,7 @@
 
         /* ── ANTRIAN NUMBER ─────────────────────────────────── */
         .nomor-antrian {
+            font-family: 'Spectral', serif;
             font-size: 2.5rem;
             font-weight: 900;
             color: var(--primary);
@@ -640,6 +665,10 @@
 
             #topbar {
                 padding: 0 16px;
+            }
+
+            .topbar-accred {
+                display: none;
             }
         }
 
@@ -728,7 +757,116 @@
             background: #C7CDD6;
             border-radius: 10px;
         }
+
+        /* ── CUSTOM SIMPLE-DATATABLES STYLE OVERRIDES ────────── */
+        .datatable-wrapper {
+            padding: 10px 0;
+        }
+        .datatable-top {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .datatable-bottom {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .datatable-search {
+            float: none !important;
+            margin-left: auto;
+        }
+        .datatable-search .datatable-input {
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            width: 250px;
+            transition: all 0.2s;
+        }
+        .datatable-search .datatable-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(15, 123, 99, 0.12);
+        }
+        .datatable-dropdown {
+            float: none !important;
+            font-size: 0.85rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .datatable-selector {
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            padding: 6px 28px 6px 12px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            margin: 0 4px;
+            background-color: #fff;
+        }
+        .datatable-selector:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+        .datatable-table {
+            border-collapse: collapse;
+        }
+        .datatable-pagination ul {
+            margin: 0;
+            padding-left: 0;
+            display: flex;
+            gap: 4px;
+        }
+        .datatable-pagination li {
+            list-style: none;
+        }
+        .datatable-pagination a {
+            display: block;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        .datatable-pagination a:hover {
+            background: var(--primary-soft);
+            border-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        .datatable-pagination .active a,
+        .datatable-pagination .active a:focus,
+        .datatable-pagination .active a:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .datatable-pagination .disabled a,
+        .datatable-pagination .disabled a:hover {
+            color: #c7cdd6;
+            border-color: var(--border);
+            background: transparent;
+            cursor: not-allowed;
+        }
+        .datatable-info {
+            margin: 0;
+        }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     @stack('styles')
 </head>
 
@@ -770,17 +908,32 @@
                 @if(request()->routeIs('registrations.*')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
-            <a href="{{ route('patients.index') }}"
-                class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}"
-                @if(request()->routeIs('patients.*')) aria-current="page" @endif>
+            <a href="#"
+                class="nav-link disabled-link"
+                style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
                 <span class="nav-icon-box"><i class="bi bi-people" aria-hidden="true"></i></span> Data Pasien
             </a>
-            <a href="{{ route('antrian.index') }}"
-                class="nav-link {{ request()->routeIs('antrian.*') ? 'active' : '' }}"
-                @if(request()->routeIs('antrian.*')) aria-current="page" @endif>
+            <a href="#"
+                class="nav-link disabled-link"
+                style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
                 <span class="nav-icon-box"><i class="bi bi-list-ol" aria-hidden="true"></i></span> Monitor Antrian
             </a>
 
+@if(auth()->user()->isPetugas())
+    <a href="{{ route('points.index') }}"
+        class="nav-link {{ request()->routeIs('points.index') ? 'active' : '' }}"
+        @if(request()->routeIs('points.index')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Saya
+    </a>
+@endif
+
+@if(auth()->user()->isAdmin())
+    <a href="{{ route('points.admin') }}"
+        class="nav-link {{ request()->routeIs('points.admin') ? 'active' : '' }}"
+        @if(request()->routeIs('points.admin')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Karyawan
+    </a>
+@endif
             @if(auth()->user()->isAdmin())
                 <div class="sidebar-label">Master Data</div>
                 <a href="{{ route('departments.index') }}"
@@ -862,6 +1015,10 @@
                 </div>
             </div>
             <div class="topbar-right">
+                <div class="topbar-accred d-none d-lg-flex">
+                    <i class="bi bi-patch-check-fill" aria-hidden="true"></i>
+                    <span>Akreditasi Paripurna KARS</span>
+                </div>
                 <div class="topbar-date d-none d-md-flex">
                     <i class="bi bi-calendar3" aria-hidden="true"></i>
                     <span>{{ now()->translatedFormat('l, d F Y') }}</span>
@@ -905,6 +1062,10 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Simple-DataTables JS -->
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/umd/simple-datatables.js" type="text/javascript"></script>
+    <!-- Tom Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('show');
@@ -928,6 +1089,30 @@
             const bsAlert = bootstrap.Alert.getOrCreateInstance(el);
             bsAlert.close();
         }
+
+        // Auto-initialize components
+        document.addEventListener('DOMContentLoaded', () => {
+            // simple-datatables
+            document.querySelectorAll('.datatable').forEach(table => {
+                new simpleDatatables.DataTable(table, {
+                    labels: {
+                        placeholder: "Cari...",
+                        searchTitle: "Cari dalam tabel",
+                        perPage: "data per halaman",
+                        noRows: "Tidak ada data ditemukan",
+                        info: "Menampilkan {start} sampai {end} dari {rows} data",
+                    }
+                });
+            });
+
+            // Tom Select
+            document.querySelectorAll('select.searchable').forEach(select => {
+                new TomSelect(select, {
+                    create: false,
+                    placeholder: select.getAttribute('placeholder') || '— Pilih —'
+                });
+            });
+        });
     </script>
     @stack('scripts')
 </body>

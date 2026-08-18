@@ -9,7 +9,8 @@ use App\Models\Patient;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\PetugasPoint;
+use Illuminate\Support\Facades\Auth;
 class RegistrationController extends Controller
 {
     public function index(Request $request)
@@ -36,7 +37,7 @@ class RegistrationController extends Controller
             $query->where('status', $request->status);
         }
 
-        $registrations = $query->paginate(20)->withQueryString();
+        $registrations = $query->get();
         $departments   = Department::active()->orderBy('nama_poli')->get();
 
         return view('registrations.index', compact('registrations', 'departments'));
@@ -55,120 +56,128 @@ class RegistrationController extends Controller
         return view('registrations.create', compact('departments', 'patient'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            // Pilih antara pasien lama atau data pasien baru
-            'mode_pasien'       => ['required', 'in:lama,baru'],
-            'patient_id'        => ['required_if:mode_pasien,lama', 'nullable', 'exists:patients,id'],
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        // Pilih antara pasien lama atau data pasien baru
+        'mode_pasien'       => ['required', 'in:lama,baru'],
+        'patient_id'        => ['required_if:mode_pasien,lama', 'nullable', 'exists:patients,id'],
 
-            // Data pasien baru (hanya jika mode_pasien=baru)
-            'nik'               => ['required_if:mode_pasien,baru', 'nullable', 'digits:16'],
-            'nama_pasien'       => ['required_if:mode_pasien,baru', 'nullable', 'string', 'max:100'],
-            'jenis_kelamin'     => ['required_if:mode_pasien,baru', 'nullable', 'in:L,P'],
-            'tanggal_lahir'     => ['required_if:mode_pasien,baru', 'nullable', 'date'],
-            'alamat'            => ['required_if:mode_pasien,baru', 'nullable', 'string'],
-            'jenis_pembayaran'  => ['required_if:mode_pasien,baru', 'nullable', 'in:umum,bpjs,asuransi'],
+        // Data pasien baru (hanya jika mode_pasien=baru)
+        'nik'               => ['required_if:mode_pasien,baru', 'nullable', 'digits:16'],
+        'nama_pasien'       => ['required_if:mode_pasien,baru', 'nullable', 'string', 'max:100'],
+        'jenis_kelamin'     => ['required_if:mode_pasien,baru', 'nullable', 'in:L,P'],
+        'tanggal_lahir'     => ['required_if:mode_pasien,baru', 'nullable', 'date'],
+        'alamat'            => ['required_if:mode_pasien,baru', 'nullable', 'string'],
+        'jenis_pembayaran'  => ['required_if:mode_pasien,baru', 'nullable', 'in:umum,bpjs,asuransi'],
 
-            // Data pendaftaran
-            'department_id'      => ['required', 'exists:departments,id'],
-            'doctor_id'          => ['required', 'exists:doctors,id'],
-            'doctor_schedule_id' => ['required', 'exists:doctor_schedules,id'],
-            'tanggal_daftar'     => ['required', 'date', 'after_or_equal:today'],
-            'keluhan'            => ['nullable', 'string', 'max:1000'],
-        ], [
-            'mode_pasien.required'       => 'Mode pendaftaran wajib dipilih.',
-            'patient_id.required_if'     => 'Pasien wajib dipilih untuk pendaftaran pasien lama.',
-            'department_id.required'     => 'Poli wajib dipilih.',
-            'doctor_id.required'         => 'Dokter wajib dipilih.',
-            'doctor_schedule_id.required'=> 'Jadwal praktik wajib dipilih.',
-            'tanggal_daftar.required'    => 'Tanggal kunjungan wajib diisi.',
-            'tanggal_daftar.after_or_equal' => 'Tanggal kunjungan tidak boleh tanggal yang sudah lewat.',
-            'nik.digits'                 => 'NIK harus 16 digit angka.',
-        ]);
+        // Data pendaftaran
+        'department_id'      => ['required', 'exists:departments,id'],
+        'doctor_id'          => ['required', 'exists:doctors,id'],
+        'doctor_schedule_id' => ['required', 'exists:doctor_schedules,id'],
+        'tanggal_daftar'     => ['required', 'date', 'after_or_equal:today'],
+        'keluhan'            => ['nullable', 'string', 'max:1000'],
+    ], [
+        'mode_pasien.required'       => 'Mode pendaftaran wajib dipilih.',
+        'patient_id.required_if'     => 'Pasien wajib dipilih untuk pendaftaran pasien lama.',
+        'department_id.required'     => 'Poli wajib dipilih.',
+        'doctor_id.required'         => 'Dokter wajib dipilih.',
+        'doctor_schedule_id.required'=> 'Jadwal praktik wajib dipilih.',
+        'tanggal_daftar.required'    => 'Tanggal kunjungan wajib diisi.',
+        'tanggal_daftar.after_or_equal' => 'Tanggal kunjungan tidak boleh tanggal yang sudah lewat.',
+        'nik.digits'                 => 'NIK harus 16 digit angka.',
+    ]);
 
-        return DB::transaction(function () use ($request, $validated) {
+    return DB::transaction(function () use ($request, $validated) {
 
-            // ── Resolve Patient ───────────────────────────────────────────────
-            if ($validated['mode_pasien'] === 'baru') {
-                // Cek NIK sudah terdaftar
-                $existingPatient = Patient::where('nik', $validated['nik'])->first();
-                if ($existingPatient) {
-                    return back()->withInput()
-                        ->withErrors(['nik' => 'NIK sudah terdaftar. Gunakan mode pasien lama dan cari berdasarkan NIK.']);
-                }
-
-                $patient = Patient::create([
-                    'no_rm'            => Patient::generateNoRM(),
-                    'nik'              => $validated['nik'],
-                    'nama_pasien'      => $validated['nama_pasien'],
-                    'jenis_kelamin'    => $validated['jenis_kelamin'],
-                    'tanggal_lahir'    => $validated['tanggal_lahir'],
-                    'alamat'           => $validated['alamat'],
-                    'jenis_pembayaran' => $validated['jenis_pembayaran'],
-                    'golongan_darah'   => 'Tidak Diketahui',
-                ]);
-            } else {
-                $patient = Patient::findOrFail($validated['patient_id']);
-            }
-
-            // ── Validasi Jadwal ───────────────────────────────────────────────
-            $schedule = DoctorSchedule::findOrFail($validated['doctor_schedule_id']);
-            $tanggal  = $validated['tanggal_daftar'];
-            $hariDaftar = DoctorSchedule::hariDariTanggal($tanggal);
-
-            // Cek kesesuaian hari jadwal dengan tanggal yang dipilih
-            if ($schedule->hari !== $hariDaftar) {
+        // ── Resolve Patient ───────────────────────────────────────────────
+        if ($validated['mode_pasien'] === 'baru') {
+            // Cek NIK sudah terdaftar
+            $existingPatient = Patient::where('nik', $validated['nik'])->first();
+            if ($existingPatient) {
                 return back()->withInput()
-                    ->withErrors(['tanggal_daftar' => "Jadwal dokter ini hanya tersedia pada hari {$schedule->hari}, bukan hari {$hariDaftar}."]);
+                    ->withErrors(['nik' => 'NIK sudah terdaftar. Gunakan mode pasien lama dan cari berdasarkan NIK.']);
             }
 
-            // Cek jadwal aktif (dokter tidak cuti)
-            if (!$schedule->is_active) {
-                return back()->withInput()
-                    ->withErrors(['doctor_schedule_id' => 'Jadwal ini sedang tidak aktif (dokter cuti).']);
-            }
-
-            // Cek kuota tersedia
-            if ($schedule->sisaKuota($tanggal) <= 0) {
-                return back()->withInput()
-                    ->withErrors(['doctor_schedule_id' => 'Kuota pendaftaran untuk jadwal ini sudah penuh.']);
-            }
-
-            // Cek pasien belum daftar ke poli yang sama hari yang sama
-            $sudahDaftar = Registration::where('patient_id', $patient->id)
-                ->where('department_id', $validated['department_id'])
-                ->where('tanggal_daftar', $tanggal)
-                ->whereNotIn('status', ['batal'])
-                ->exists();
-
-            if ($sudahDaftar) {
-                return back()->withInput()
-                    ->withErrors(['department_id' => 'Pasien sudah terdaftar di poli ini pada tanggal tersebut.']);
-            }
-
-            // ── Generate Nomor Antrian ────────────────────────────────────────
-            $department = Department::find($validated['department_id']);
-            $antrian    = $department->generateNomorAntrian($tanggal);
-
-            // ── Simpan Pendaftaran ────────────────────────────────────────────
-            $registration = Registration::create([
-                'patient_id'         => $patient->id,
-                'doctor_schedule_id' => $schedule->id,
-                'department_id'      => $validated['department_id'],
-                'doctor_id'          => $validated['doctor_id'],
-                'tanggal_daftar'     => $tanggal,
-                'nomor_antrian'      => $antrian['nomor_antrian'],
-                'urutan_antrian'     => $antrian['urutan'],
-                'keluhan'            => $validated['keluhan'] ?? null,
-                'status'             => 'menunggu',
-                'created_by'         => auth()->id(),
+            $patient = Patient::create([
+                'no_rm'            => Patient::generateNoRM(),
+                'nik'              => $validated['nik'],
+                'nama_pasien'      => $validated['nama_pasien'],
+                'jenis_kelamin'    => $validated['jenis_kelamin'],
+                'tanggal_lahir'    => $validated['tanggal_lahir'],
+                'alamat'           => $validated['alamat'],
+                'jenis_pembayaran' => $validated['jenis_pembayaran'],
+                'golongan_darah'   => 'Tidak Diketahui',
             ]);
+        } else {
+            $patient = Patient::findOrFail($validated['patient_id']);
+        }
 
-            return redirect()->route('registrations.show', $registration)
-                ->with('success', "Pendaftaran berhasil! Nomor antrian: {$antrian['nomor_antrian']}");
-        });
-    }
+        // ── Validasi Jadwal ───────────────────────────────────────────────
+        $schedule = DoctorSchedule::findOrFail($validated['doctor_schedule_id']);
+        $tanggal  = $validated['tanggal_daftar'];
+        $hariDaftar = DoctorSchedule::hariDariTanggal($tanggal);
+
+        // Cek kesesuaian hari jadwal dengan tanggal yang dipilih
+        if ($schedule->hari !== $hariDaftar) {
+            return back()->withInput()
+                ->withErrors(['tanggal_daftar' => "Jadwal dokter ini hanya tersedia pada hari {$schedule->hari}, bukan hari {$hariDaftar}."]);
+        }
+
+        // Cek jadwal aktif (dokter tidak cuti)
+        if (!$schedule->is_active) {
+            return back()->withInput()
+                ->withErrors(['doctor_schedule_id' => 'Jadwal ini sedang tidak aktif (dokter cuti).']);
+        }
+
+        // Cek kuota tersedia
+        if ($schedule->sisaKuota($tanggal) <= 0) {
+            return back()->withInput()
+                ->withErrors(['doctor_schedule_id' => 'Kuota pendaftaran untuk jadwal ini sudah penuh.']);
+        }
+
+        // Cek pasien belum daftar ke poli yang sama hari yang sama
+        $sudahDaftar = Registration::where('patient_id', $patient->id)
+            ->where('department_id', $validated['department_id'])
+            ->where('tanggal_daftar', $tanggal)
+            ->whereNotIn('status', ['batal'])
+            ->exists();
+
+        if ($sudahDaftar) {
+            return back()->withInput()
+                ->withErrors(['department_id' => 'Pasien sudah terdaftar di poli ini pada tanggal tersebut.']);
+        }
+
+        // ── Generate Nomor Antrian ────────────────────────────────────────
+        $department = Department::find($validated['department_id']);
+        $antrian    = $department->generateNomorAntrian($tanggal);
+
+        // ── Simpan Pendaftaran ────────────────────────────────────────────
+       $registration = Registration::create([
+    'patient_id'         => $patient->id,
+    'doctor_schedule_id' => $schedule->id,
+    'department_id'      => $validated['department_id'],
+    'doctor_id'          => $validated['doctor_id'],
+    'tanggal_daftar'     => $tanggal,
+    'nomor_antrian'      => $antrian['nomor_antrian'],
+    'urutan_antrian'     => $antrian['urutan'],
+    'keluhan'            => $validated['keluhan'] ?? null,
+    'status'             => 'menunggu',
+    'created_by'         => Auth::id(),   // ← diganti
+]);
+
+// ── Catat Poin Petugas ────────────────────────────────────────────
+PetugasPoint::create([
+    'user_id'         => Auth::id(),      // ← diganti
+    'registration_id' => $registration->id,
+    'department_id'   => $validated['department_id'],
+    'points'          => 1,
+]);
+
+        return redirect()->route('registrations.show', $registration)
+            ->with('success', "Pendaftaran berhasil! Nomor antrian: {$antrian['nomor_antrian']}. Anda mendapat +1 poin.");
+    });
+}
 
     public function show(Registration $registration)
     {
@@ -225,5 +234,12 @@ class RegistrationController extends Controller
         $registration->update(['status' => 'batal']);
 
         return back()->with('success', "Pendaftaran {$registration->nomor_antrian} berhasil dibatalkan.");
+    }
+
+    /** Cetak tiket antrian */
+    public function cetak(Registration $registration)
+    {
+        $registration->load(['patient', 'department', 'doctor']);
+        return view('registrations.cetak', compact('registration'));
     }
 }

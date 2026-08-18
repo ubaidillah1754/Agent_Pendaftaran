@@ -6,9 +6,12 @@
     <li class="breadcrumb-item"><a href="{{ route('registrations.index') }}">Pendaftaran</a></li>
     <li class="breadcrumb-item active">Form Baru</li>
 @endsection
-
 @push('styles')
 <style>
+    /* Override Tom Select borders to match theme */
+    .ts-control { border-radius: 12px; border: 1.5px solid #dfe6e2; padding: .65rem .9rem; }
+    .ts-control.focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(15, 123, 99, .12); }
+
     /* Mode selection cards (Pasien Lama / Pasien Baru) */
     .mode-tab {
         position:relative; border-radius:14px; padding:20px 16px; border:1.5px solid #e7ece9;
@@ -156,42 +159,21 @@
                     </div>
                 </div>
 
-                <!-- PANEL: Pasien Baru -->
                 <div id="panel-baru" style="display:none;">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">NIK <span class="text-danger">*</span></label>
-                            <input type="text" name="nik" class="form-control @error('nik') is-invalid @enderror" maxlength="16" placeholder="16 digit NIK" value="{{ old('nik') }}">
-                            @error('nik')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="text-center py-4 px-3" style="background:#f0f9f5; border: 1.5px solid #cfe0d8; border-radius:16px;">
+                        <div style="width:60px; height:60px; border-radius:50%; background:#d1fae5; color:#059669; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-size:1.8rem;">
+                            <i class="bi bi-whatsapp"></i>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                            <input type="text" name="nama_pasien" class="form-control" placeholder="Nama sesuai KTP" value="{{ old('nama_pasien') }}">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
-                            <select name="jenis_kelamin" class="form-select">
-                                <option value="">Pilih</option>
-                                <option value="L">Laki-laki</option>
-                                <option value="P">Perempuan</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
-                            <input type="date" name="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Alamat <span class="text-danger">*</span></label>
-                            <textarea name="alamat" class="form-control" rows="2" placeholder="Alamat lengkap">{{ old('alamat') }}</textarea>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Jenis Pembayaran <span class="text-danger">*</span></label>
-                            <select name="jenis_pembayaran" class="form-select">
-                                <option value="umum">Umum (Bayar Sendiri)</option>
-                                <option value="bpjs">BPJS Kesehatan</option>
-                                <option value="asuransi">Asuransi</option>
-                            </select>
-                        </div>
+                        <h6 class="fw-700 text-success mb-2">Verifikasi Pasien Baru</h6>
+                        <p class="text-muted mb-4" style="font-size:.85rem; line-height: 1.5;">
+                            Untuk pasien baru yang belum pernah berobat di RSI Sakinah, pendaftaran awal & verifikasi dokumen (KTP/BPJS) wajib dilakukan melalui WhatsApp Admin.
+                        </p>
+                        <a href="https://wa.me/6281234567890?text=Halo%20Admin%20RSI%20Sakinah%2C%20saya%20ingin%20mendaftar%20sebagai%20pasien%20baru%20rawat%20jalan." 
+                           target="_blank" 
+                           class="btn btn-success px-4 py-2 fw-700" 
+                           style="border-radius:10px; background:#25D366; border-color:#25D366; color:#fff;">
+                            <i class="bi bi-chat-dots me-1"></i> Hubungi Chat Admin
+                        </a>
                     </div>
                 </div>
             </div>
@@ -199,7 +181,7 @@
     </div>
 
     <!-- Kolom Kanan: Data Pendaftaran -->
-    <div class="col-lg-6">
+    <div class="col-lg-6" id="right-column-kunjungan">
         <div class="card fade-in fade-in-delay-1">
             <div class="card-header d-flex align-items-center gap-2">
                 <span style="width:32px;height:32px;border-radius:9px;background:#d1fae5;color:#065f46;display:flex;align-items:center;justify-content:center;">
@@ -274,7 +256,7 @@
             </div>
         </div>
 
-        <div class="mt-3 d-flex gap-2 justify-content-end">
+        <div class="mt-3 d-flex gap-2 justify-content-end" id="submit-button-block">
             <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;border-radius:10px;">Batal</a>
             <button type="submit" class="btn btn-accent px-4" id="btn-submit" disabled style="border-radius:10px;">
                 <i class="bi bi-check2-circle me-1"></i> Simpan Pendaftaran
@@ -298,6 +280,13 @@ function setMode(mode) {
     document.getElementById('tab-baru').classList.toggle('active', mode === 'baru');
     document.getElementById('panel-lama').style.display = mode === 'lama' ? 'block' : 'none';
     document.getElementById('panel-baru').style.display = mode === 'baru' ? 'block' : 'none';
+    
+    // Toggle right column and submit buttons
+    const rightCol = document.getElementById('right-column-kunjungan');
+    const submitBtnBlock = document.getElementById('submit-button-block');
+    if (rightCol) rightCol.style.display = mode === 'lama' ? 'block' : 'none';
+    if (submitBtnBlock) submitBtnBlock.style.display = mode === 'lama' ? 'block' : 'none';
+    
     checkSubmitReady();
 }
 
@@ -347,45 +336,88 @@ function clearPatient() {
     checkSubmitReady();
 }
 
-// ── Cascading Dropdown ────────────────────────────────────────────────────────
-document.getElementById('department_id').addEventListener('change', function() {
-    const deptId = this.value;
-    const docSel = document.getElementById('doctor_id');
-    const schSel = document.getElementById('schedule_id');
-    docSel.innerHTML = '<option>Memuat...</option>'; docSel.disabled = true;
-    schSel.innerHTML = '<option>— Pilih dokter dulu —</option>'; schSel.disabled = true;
+// ── Cascading Dropdown (Tom Select) ──────────────────────────────────────────
+// Initialize Tom Select instances
+let tsPoli = new TomSelect("#department_id",{
+    create: false,
+    placeholder: '— Pilih Poli —',
+});
+let tsDoctor = new TomSelect("#doctor_id",{
+    create: false,
+    placeholder: '— Pilih Dokter —',
+});
+let tsSchedule = new TomSelect("#schedule_id",{
+    create: false,
+    placeholder: '— Pilih Jadwal —',
+});
+
+// Disable dynamically populated selects at start
+tsDoctor.disable();
+tsSchedule.disable();
+
+tsPoli.on('change', function(deptId) {
+    tsDoctor.clear();
+    tsDoctor.clearOptions();
+    tsDoctor.disable();
+    tsSchedule.clear();
+    tsSchedule.clearOptions();
+    tsSchedule.disable();
     hidePrev(); checkSubmitReady();
-    if (!deptId) { docSel.innerHTML = '<option>— Pilih poli dulu —</option>'; return; }
+    if (!deptId) return;
+
+    // Show loading
+    tsDoctor.addOption({value: '', text: 'Memuat...'});
+    tsDoctor.setValue('');
+
     fetch(`${BASE}/ajax/doctors?department_id=${deptId}`)
         .then(r => r.json())
         .then(data => {
-            docSel.innerHTML = '<option value="">— Pilih Dokter —</option>' +
-                data.map(d => `<option value="${d.id}">${d.nama_dokter}${d.spesialisasi ? ' ('+d.spesialisasi+')' : ''}</option>`).join('');
-            docSel.disabled = false;
+            tsDoctor.clearOptions();
+            tsDoctor.addOption({value: '', text: '— Pilih Dokter —'});
+            data.forEach(d => {
+                tsDoctor.addOption({
+                    value: d.id,
+                    text: `${d.nama_dokter}${d.spesialisasi ? ' ('+d.spesialisasi+')' : ''}`
+                });
+            });
+            tsDoctor.enable();
+            tsDoctor.setValue('');
         });
 });
 
-document.getElementById('doctor_id').addEventListener('change', function() {
-    const docId = this.value;
-    const deptId = document.getElementById('department_id').value;
-    const schSel = document.getElementById('schedule_id');
-    schSel.innerHTML = '<option>Memuat...</option>'; schSel.disabled = true;
+tsDoctor.on('change', function(docId) {
+    tsSchedule.clear();
+    tsSchedule.clearOptions();
+    tsSchedule.disable();
     hidePrev(); checkSubmitReady();
-    if (!docId) { schSel.innerHTML = '<option>— Pilih dokter dulu —</option>'; return; }
+    if (!docId) return;
+
+    // Show loading
+    tsSchedule.addOption({value: '', text: 'Memuat...'});
+    tsSchedule.setValue('');
+
+    const deptId = tsPoli.getValue();
     fetch(`${BASE}/ajax/schedules?doctor_id=${docId}&department_id=${deptId}`)
         .then(r => r.json())
         .then(data => {
-            schSel.innerHTML = '<option value="">— Pilih Jadwal —</option>' +
-                data.map(s => `<option value="${s.id}" data-hari="${s.hari}">${s.hari}, ${s.jam_mulai}–${s.jam_selesai} (Kuota: ${s.kuota})</option>`).join('');
-            schSel.disabled = false;
+            tsSchedule.clearOptions();
+            tsSchedule.addOption({value: '', text: '— Pilih Jadwal —'});
+            data.forEach(s => {
+                tsSchedule.addOption({
+                    value: s.id,
+                    text: `${s.hari}, ${s.jam_mulai.substring(0,5)}–${s.jam_selesai.substring(0,5)} (Kuota: ${s.kuota})`
+                });
+            });
+            tsSchedule.enable();
+            tsSchedule.setValue('');
         });
 });
 
-document.getElementById('schedule_id').addEventListener('change', checkKuota);
+tsSchedule.on('change', checkKuota);
 document.getElementById('tanggal_daftar').addEventListener('change', checkKuota);
 
 function checkKuota() {
-    const schId  = document.getElementById('schedule_id').value;
+    const schId  = tsSchedule.getValue();
     const tgl    = document.getElementById('tanggal_daftar').value;
     if (!schId || !tgl) { hidePrev(); checkSubmitReady(); return; }
     fetch(`${BASE}/ajax/kuota?schedule_id=${schId}&tanggal=${tgl}`)
@@ -420,9 +452,9 @@ function hidePrev() {
 function checkSubmitReady() {
     const mode      = document.getElementById('mode_pasien').value;
     const patientOk = mode === 'baru' || document.getElementById('patient_id').value;
-    const deptOk    = document.getElementById('department_id').value;
-    const docOk     = document.getElementById('doctor_id').value;
-    const schOk     = document.getElementById('schedule_id').value;
+    const deptOk    = tsPoli.getValue();
+    const docOk     = tsDoctor.getValue();
+    const schOk     = tsSchedule.getValue();
     const tglOk     = document.getElementById('tanggal_daftar').value;
     const penuh     = document.getElementById('hari-warning').style.display !== 'none';
     document.getElementById('btn-submit').disabled = !(patientOk && deptOk && docOk && schOk && tglOk && !penuh);
@@ -433,7 +465,6 @@ document.addEventListener('click', e => {
     if (!e.target.closest('#panel-lama')) document.getElementById('search-result').innerHTML = '';
 });
 
-// ── Keluhan character counter ────────────────────────────────────────────────
 const keluhanEl = document.getElementById('keluhan');
 const counterEl = document.getElementById('keluhan-counter');
 function updateCounter() { counterEl.textContent = keluhanEl.value.length + '/500'; }
