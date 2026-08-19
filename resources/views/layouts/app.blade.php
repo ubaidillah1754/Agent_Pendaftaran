@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Sistem Pendaftaran Rawat Jalan RSI Sakinah — kelola pendaftaran pasien, antrian, dan jadwal praktik dokter.">
+    <link rel="icon" type="image/png" sizes="225x225" href="{{ asset('favicon.png') }}?v=4">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.png') }}?v=4">
+
     <title>@yield('title', 'Dashboard') — RS Islam Sakinah</title>
 
     <!-- Google Fonts -->
@@ -18,6 +21,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
 
     <style>
         :root {
@@ -85,7 +89,7 @@
         /* ── SIDEBAR ──────────────────────────────────────────── */
         #sidebar {
             width: var(--sidebar-w);
-            min-height: 100vh;
+            height: 100vh;
             background: linear-gradient(190deg, var(--primary) 0%, var(--primary-dark) 100%);
             position: fixed;
             top: 0;
@@ -94,6 +98,7 @@
             display: flex;
             flex-direction: column;
             transition: transform .3s ease;
+            overflow: hidden;
         }
 
         .sidebar-brand {
@@ -130,6 +135,7 @@
         .sidebar-nav {
             padding: 8px 14px;
             flex: 1;
+            min-height : 0;
             overflow-y: auto;
         }
 
@@ -190,8 +196,11 @@
         }
 
         .sidebar-footer {
-            padding: 8px 14px 16px;
-        }
+    padding: 8px 14px 16px;
+    margin-top: auto;
+    position: relative;
+    z-index: 10;
+}
 
         .sidebar-footer .user-card {
             background: var(--surface);
