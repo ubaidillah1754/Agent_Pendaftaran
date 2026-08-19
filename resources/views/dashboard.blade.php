@@ -535,7 +535,7 @@
     </div>
 
     <div class="row g-3">
-        <!-- Antrian Terbaru -->
+        {{-- Antrian Terbaru — disembunyikan
         <div class="col-lg-8 fade-in">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -585,9 +585,10 @@
                 </div>
             </div>
         </div>
+        --}}
 
         <!-- Quick Actions -->
-        <div class="col-lg-4 fade-in fade-in-delay-1">
+        <div class="col-lg-12 fade-in fade-in-delay-1">
             <div class="card">
                 <div class="card-header"><span class="rs-card-title"><i class="bi bi-lightning" aria-hidden="true"></i>Aksi
                         Cepat</span></div>
