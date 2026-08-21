@@ -104,7 +104,7 @@
                 </thead>
                 <tbody>
                     @forelse($riwayat as $item)
-                        @php $nama = $item->registration->patient->name ?? '-'; @endphp
+                        @php $nama = $item->registration?->patient?->nama_pasien ?? '-'; @endphp
                         <tr>
                             <td class="ps-4 text-muted">
                                 {{ $item->created_at->translatedFormat('d M Y') }}
@@ -117,7 +117,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="poli-badge">{{ $item->department->name ?? '-' }}</span>
+                                <span class="poli-badge">{{ $item->department?->nama_poli ?? '-' }}</span>
                             </td>
                             <td class="text-end pe-4">
                                 <span class="point-pill">+{{ $item->points }}</span>

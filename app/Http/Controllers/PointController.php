@@ -104,7 +104,7 @@ class PointController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'points'  => 'required|integer|min:1',
-            'type'    => 'required|in:uang,merchandise',
+            'type'    => 'required|string|max:100',
             'catatan' => 'nullable|string|max:500',
         ]);
 

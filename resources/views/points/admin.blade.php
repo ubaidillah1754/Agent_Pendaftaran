@@ -10,6 +10,7 @@
 
 @section('content')
 <div class="poin-karyawan-page">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     /* Rapikan jarak page-title, subtitle, breadcrumb di topbar */
     .page-title { margin-bottom: 2px !important; }
@@ -319,7 +320,7 @@
             <span>Riwayat Penukaran Poin</span>
         </div>
         {{-- Filter status penukaran --}}
-        <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
+        <form method="GET" class="d-flex flex-row gap-2 align-items-center flex-nowrap">
             <input type="hidden" name="bulan" value="{{ $bulan }}">
             <select name="filter_status" class="form-select form-select-sm" style="max-width:130px; min-width:110px; border-radius:8px;"
                     onchange="this.form.submit()">
@@ -484,17 +485,21 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Jenis Penukaran <span class="text-danger">*</span></label>
-            <select name="type" class="form-select" required>
+            <select name="type" id="jenisPenukaranSelect" class="form-select" required>
                 <option value="">-- Pilih Jenis --</option>
-                <option value="uang">Uang Tunai</option>
-                <option value="merchandise">Merchandise</option>
+                <option value="Uang Tunai">Uang Tunai</option>
+                <option value="Merchandise">Merchandise</option>
             </select>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Catatan</label>
-            <textarea name="catatan" class="form-control" rows="2"
-                      placeholder="Catatan tambahan (opsional)"
-                      style="resize:vertical;"></textarea>
+          <div class="mb-3 d-none" id="merchandiseOptionsWrapper">
+            <label class="form-label">Pilihan Merchandise <span class="text-danger">*</span></label>
+            <select name="catatan" id="merchandiseSelect" class="form-select">
+                <option value="">-- Pilih Merchandise --</option>
+                <option value="Payung">Payung</option>
+                <option value="Tumblr">Tumblr</option>
+                <option value="Bolpoin">Bolpoin</option>
+                <option value="Tote Bag">Tote Bag</option>
+            </select>
           </div>
         </div>
         <div class="modal-footer" style="border-top: 1px solid var(--border);">
@@ -510,8 +515,29 @@
 @endsection
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+$(document).ready(function() {
+    $('#jenisPenukaranSelect').on('change', function() {
+        if ($(this).val() === 'Merchandise') {
+            $('#merchandiseOptionsWrapper').removeClass('d-none');
+            $('#merchandiseSelect').attr('required', true);
+        } else {
+            $('#merchandiseOptionsWrapper').addClass('d-none');
+            $('#merchandiseSelect').removeAttr('required').val('').trigger('change');
+        }
+    });
+
+    $('#merchandiseSelect').select2({
+        tags: true,
+        dropdownParent: $('#redeemModal'),
+        placeholder: "Pilih atau ketik merchandise...",
+        width: '100%'
+    });
+});
+
 function openRedeemModal(userId, userName, balance) {
     document.getElementById('redeemUserId').value = userId;
     document.getElementById('redeemUserName').textContent = userName;
