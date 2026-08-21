@@ -113,6 +113,9 @@
         <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
             <i class="bi bi-person me-1"></i>Profil Pasien
         </a>
+        <a href="{{ route('registrations.cetak', $registration) }}" target="_blank" class="btn" style="background:var(--primary);color:#fff;border-radius:10px;">
+            <i class="bi bi-printer me-1"></i>Cetak Tracer
+        </a>
     </div>
 </div>
 </div>

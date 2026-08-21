@@ -113,7 +113,9 @@ class DashboardController extends Controller
         if ($isAdmin) {
             $rankingPetugas = User::where('role', 'petugas')
                 ->withSum('petugasPoints as total_poin_earned', 'points')
-                ->withSum('pointRedemptions as total_poin_redeemed', 'points')
+                ->withSum(['pointRedemptions as total_poin_redeemed' => function($q) {
+                    $q->where('status', 'selesai');
+                }], 'points')
                 ->withCount(['registrations as total_pendaftaran_all'])
                 ->orderByDesc('total_poin_earned')
                 ->limit(5)

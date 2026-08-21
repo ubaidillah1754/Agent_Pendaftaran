@@ -290,10 +290,10 @@
                             <div style="font-size:.72rem; color:#9AA6A1;">{{ $item->created_at->format('H:i') }} WIB</div>
                         </td>
                         <td class="fw-semibold" style="color:var(--ink); font-size:.87rem;">{{ $item->user->name ?? '-' }}</td>
-                        <td style="color:var(--muted); font-size:.85rem;">{{ $item->registration->patient->name ?? '-' }}</td>
+                        <td style="color:var(--muted); font-size:.85rem;">{{ $item->registration?->patient?->nama_pasien ?? '-' }}</td>
                         <td>
                             <span class="badge" style="background:var(--tile-soft); color:var(--tile);">
-                                {{ $item->department->name ?? '-' }}
+                                {{ $item->department?->nama_poli ?? '-' }}
                             </span>
                         </td>
                         <td class="text-end pe-4 fw-semibold" style="color:#0F7B63; font-size:.87rem;">+{{ $item->points }}</td>

@@ -697,7 +697,6 @@
             </div>
         </div>
     </div>
-    </div>
 
     {{-- ═══════════ RANKING POIN PETUGAS (Admin only) ═══════════ --}}
     @if(auth()->user()->isAdmin() && $rankingPetugas && $rankingPetugas->isNotEmpty())
@@ -717,48 +716,48 @@
                 <table class="table mb-0">
                     <thead>
                         <tr>
-                            <th class="ps-4" style="width:52px;">#</th>
-                            <th>Nama Petugas</th>
-                            <th class="text-center">Total Pendaftaran</th>
-                            <th class="text-center">Total Poin</th>
-                            <th class="text-center">Saldo Poin</th>
+                            <th class="ps-4" style="width:56px;">#</th>
+                            <th>Petugas</th>
+                            <th>Total Pendaftaran</th>
+                            <th class="text-end">Poin Bulan Ini</th>
+                            <th class="text-end pe-4">Saldo Poin</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($rankingPetugas as $i => $petugas)
                         <tr>
                             <td class="ps-4">
-                                @if($i === 0)
-                                    <i class="bi bi-trophy-fill" style="color:#D4AF37; font-size:1.1rem;" aria-label="Peringkat 1"></i>
-                                @elseif($i === 1)
-                                    <i class="bi bi-trophy-fill" style="color:#A8A8A8; font-size:1rem;" aria-label="Peringkat 2"></i>
-                                @elseif($i === 2)
-                                    <i class="bi bi-trophy-fill" style="color:#C08552; font-size:.95rem;" aria-label="Peringkat 3"></i>
+                                @if($i === 0 && $petugas->total_poin_earned > 0)
+                                    <i class="bi bi-trophy-fill" style="color:#D4AF37; font-size:1.05rem;" aria-label="Peringkat 1"></i>
+                                @elseif($i === 1 && $petugas->total_poin_earned > 0)
+                                    <i class="bi bi-trophy-fill" style="color:#A8A8A8; font-size:.98rem;" aria-label="Peringkat 2"></i>
+                                @elseif($i === 2 && $petugas->total_poin_earned > 0)
+                                    <i class="bi bi-trophy-fill" style="color:#C08552; font-size:.92rem;" aria-label="Peringkat 3"></i>
                                 @else
                                     <span style="color:var(--rs-muted); font-weight:700; font-size:.85rem;">{{ $i + 1 }}</span>
                                 @endif
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <div style="width:34px; height:34px; border-radius:10px;
+                                    <div style="width:32px; height:32px; border-radius:10px;
                                                 background:{{ ['#E6F6F0','#E7F4F6','#FBF6E9','#F3E8FF','#FEE2E2'][$i % 5] }};
                                                 color:{{ ['#0F7B63','#0E7490','#B8912E','#7C3AED','#B54545'][$i % 5] }};
                                                 display:flex; align-items:center; justify-content:center;
-                                                font-weight:800; font-size:.78rem; flex-shrink:0;">
+                                                font-weight:700; font-size:.76rem; flex-shrink:0;">
                                         {{ strtoupper(substr($petugas->name, 0, 1)) }}
                                     </div>
-                                    <span style="font-weight:600; font-size:.875rem; color:var(--rs-ink);">{{ $petugas->name }}</span>
+                                    <span style="font-weight:600; font-size:.87rem; color:var(--rs-ink);">{{ $petugas->name }}</span>
                                 </div>
                             </td>
-                            <td class="text-center" style="font-size:.85rem; color:var(--rs-muted);">
-                                {{ number_format($petugas->total_pendaftaran_all ?? 0) }}
+                            <td style="color:var(--rs-muted); font-size:.85rem;">
+                                {{ number_format($petugas->total_pendaftaran_all ?? 0) }} pendaftaran
                             </td>
-                            <td class="text-center">
+                            <td class="text-end">
                                 <span class="badge" style="background:var(--rs-primary-soft); color:var(--rs-primary-dark); font-size:.76rem;">
                                     {{ number_format($petugas->total_poin_earned ?? 0) }} poin
                                 </span>
                             </td>
-                            <td class="text-center">
+                            <td class="text-end pe-4">
                                 @php $saldo = $petugas->saldo_poin ?? 0; @endphp
                                 <span class="badge" style="background:{{ $saldo > 0 ? 'var(--rs-info-soft)' : '#F3F4F6' }}; color:{{ $saldo > 0 ? 'var(--rs-info)' : '#9CA3AF' }}; font-size:.76rem;">
                                     {{ number_format($saldo) }} poin
