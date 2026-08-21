@@ -483,14 +483,15 @@
             <div class="info-item">
                 <div class="info-label">Jadwal</div>
                 <div class="info-value" style="font-weight:500;">
+                    {{ $registration->tanggal_daftar->translatedFormat('d F Y') }} <br>
                     {{ $registration->doctorSchedule->hari }},
                     {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}
                 </div>
             </div>
             <div class="info-item">
-                <div class="info-label">Urutan Antrian</div>
+                <div class="info-label">Kode Boking</div>
                 <div class="info-value" style="font-size:1.05rem; color:var(--green-dark);">
-                    #{{ $registration->urutan_antrian }}
+                    {{ $registration->kode_booking ?? str_pad($registration->urutan_antrian, 6, '0', STR_PAD_LEFT) }}
                 </div>
             </div>
             @if($registration->keluhan)

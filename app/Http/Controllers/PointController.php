@@ -20,6 +20,7 @@ class PointController extends Controller
 
         $riwayat = PetugasPoint::with(['department', 'registration.patient'])
             ->where('user_id', $userId)
+            ->whereDate('created_at', '>=', today()->subMonth())
             ->latest()
             ->get();
 
@@ -35,6 +36,88 @@ class PointController extends Controller
             ->get();
 
         return view('points.index', compact('totalPoin', 'riwayat', 'rekapPerPoli', 'riwayatTukar'));
+    }
+
+    /** Halaman Katalog Hadiah (Petugas) */
+    public function katalog()
+    {
+        $totalPoin = Auth::user()->totalPoints();
+        $merchandises = \App\Models\Merchandise::orderBy('points', 'asc')->get();
+        return view('points.katalog', compact('totalPoin', 'merchandises'));
+    }
+
+    /** Proses tambah barang ke katalog */
+    public function storeMerchandise(Request $request)
+    {
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'points'      => 'required|integer|min:1',
+            'description' => 'required|string',
+            'image'       => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $imageName = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/merchandise'), $imageName);
+        }
+
+        \App\Models\Merchandise::create([
+            'name'        => $request->name,
+            'points'      => $request->points,
+            'description' => $request->description,
+            'image'       => $imageName,
+        ]);
+
+        return back()->with('success', 'Barang berhasil ditambahkan ke dalam katalog!');
+    }
+
+    /** Hapus barang dari katalog */
+    public function destroyMerchandise(\App\Models\Merchandise $merchandise)
+    {
+        // Hapus gambar jika ada
+        if ($merchandise->image && file_exists(public_path('images/merchandise/' . $merchandise->image))) {
+            unlink(public_path('images/merchandise/' . $merchandise->image));
+        }
+        
+        $merchandise->delete();
+
+        return back()->with('success', 'Barang berhasil dihapus dari katalog.');
+    }
+
+    /** Proses request penukaran poin dari sisi petugas */
+    public function requestRedeem(Request $request)
+    {
+        $request->validate([
+            'points'  => 'required|integer|min:1',
+            'type'    => 'required|string|max:100',
+            'qty'     => 'nullable|integer|min:1',
+        ]);
+
+        $user = Auth::user();
+
+        $totalRedeemPoints = $request->points;
+        $type = $request->type;
+
+        if ($request->has('qty') && $request->qty > 1) {
+            $totalRedeemPoints = $request->points * $request->qty;
+            $type = $request->type . ' (x' . $request->qty . ')';
+        }
+
+        if ($user->totalPoints() < $totalRedeemPoints) {
+            return back()->with('error', 'Saldo poin Anda tidak mencukupi untuk ditukar.');
+        }
+
+        PointRedemption::create([
+            'user_id' => $user->id,
+            'points'  => $totalRedeemPoints,
+            'type'    => $type,
+            'status'  => 'pending',
+            'catatan' => 'Request mandiri via Katalog',
+        ]);
+
+        return redirect()->route('points.index')->with('success', 'Permintaan penukaran poin berhasil dikirim. Status saat ini: Menunggu konfirmasi Admin.');
     }
 
     /** Halaman "Poin Karyawan" — khusus admin, rekap semua petugas per bulan */
