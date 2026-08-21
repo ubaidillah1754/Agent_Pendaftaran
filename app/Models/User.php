@@ -77,8 +77,9 @@ class User extends Authenticatable
 
     public function totalPoints(): int
     {
-        $earned = $this->petugasPoints()->sum('points');
-        $redeemed = $this->pointRedemptions()->sum('points');
-        return $earned - $redeemed;
+        $earned   = $this->petugasPoints()->sum('points');
+        // Hanya redemption yang sudah 'selesai' yang memotong saldo
+        $redeemed = $this->pointRedemptions()->where('status', 'selesai')->sum('points');
+        return max(0, $earned - $redeemed);
     }
 }

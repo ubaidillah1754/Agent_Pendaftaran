@@ -57,6 +57,12 @@ class Registration extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /** Poin yang didapat dari pendaftaran ini */
+    public function petugasPoint()
+    {
+        return $this->hasOne(PetugasPoint::class);
+    }
+
     // ─── Scope ──────────────────────────────────────────────────────────────
 
     /** Filter pendaftaran hari ini */

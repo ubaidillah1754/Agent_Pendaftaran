@@ -242,4 +242,46 @@ PetugasPoint::create([
         $registration->load(['patient', 'department', 'doctor']);
         return view('registrations.cetak', compact('registration'));
     }
+
+    /** Riwayat pendaftaran milik petugas yang login */
+    public function riwayat(Request $request)
+    {
+        $userId = Auth::id();
+
+        $query = Registration::with(['patient', 'department', 'doctor', 'petugasPoint'])
+            ->where('created_by', $userId)
+            ->orderByDesc('tanggal_daftar')
+            ->orderByDesc('created_at');
+
+        // Filter tanggal dari
+        if ($request->filled('dari')) {
+            $query->whereDate('tanggal_daftar', '>=', $request->dari);
+        }
+
+        // Filter tanggal sampai
+        if ($request->filled('sampai')) {
+            $query->whereDate('tanggal_daftar', '<=', $request->sampai);
+        }
+
+        // Filter poli
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $registrations = $query->paginate(20)->withQueryString();
+        $departments   = Department::active()->orderBy('nama_poli')->get();
+
+        // Statistik petugas sendiri
+        $totalPendaftaran = Registration::where('created_by', $userId)->count();
+        $totalPoin        = Auth::user()->totalPoints();
+
+        return view('registrations.riwayat', compact(
+            'registrations', 'departments', 'totalPendaftaran', 'totalPoin'
+        ));
+    }
 }

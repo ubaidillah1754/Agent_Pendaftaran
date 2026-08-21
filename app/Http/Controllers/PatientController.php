@@ -70,7 +70,8 @@ class PatientController extends Controller
         $patient = Patient::create($validated);
 
         return redirect()->route('patients.show', $patient)
-            ->with('success', 'Pasien ' . $patient->nama_pasien . ' berhasil didaftarkan. No. RM: ' . $patient->no_rm);
+            ->with('success', 'Pasien ' . $patient->nama_pasien . ' berhasil didaftarkan. No. RM: ' . $patient->no_rm)
+            ->with('show_print_tracer', $patient->id);
     }
 
     public function show(Patient $patient)
@@ -128,5 +129,15 @@ class PatientController extends Controller
 
         return redirect()->route('patients.index')
             ->with('success', 'Data pasien ' . $nama . ' berhasil dihapus.');
+    }
+
+    /** Cetak tracer pasien (halaman standalone print-friendly) */
+    public function tracer(Patient $patient)
+    {
+        $patient->load(['registrations' => function ($q) {
+            $q->with(['department', 'doctor'])->orderByDesc('tanggal_daftar')->limit(1);
+        }]);
+
+        return view('patients.tracer', compact('patient'));
     }
 }

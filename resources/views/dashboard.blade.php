@@ -421,6 +421,90 @@
 
 @section('content')
 
+    {{-- ═══════════ FILTER DASHBOARD (Admin only) ═══════════ --}}
+    @if(auth()->user()->isAdmin())
+    <div class="fade-in mb-4" style="background:var(--rs-surface); border:1px solid var(--rs-border); border-radius:var(--rs-radius); padding:16px 20px;">
+        <form method="GET" action="{{ route('dashboard') }}" id="dashboard-filter-form">
+            <div class="row g-2 align-items-end">
+                <div class="col-12">
+                    <div style="font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--rs-muted); margin-bottom:8px;">
+                        <i class="bi bi-funnel me-1"></i>Filter Dashboard
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <label class="form-label" style="font-size:.75rem; font-weight:700; color:var(--rs-ink);">Dari Tanggal</label>
+                    <input type="date" name="dari" id="filter-dari"
+                           class="form-control form-control-sm"
+                           value="{{ request('dari') }}"
+                           style="border-radius:8px; font-size:.82rem;">
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <label class="form-label" style="font-size:.75rem; font-weight:700; color:var(--rs-ink);">Sampai Tanggal</label>
+                    <input type="date" name="sampai" id="filter-sampai"
+                           class="form-control form-control-sm"
+                           value="{{ request('sampai') }}"
+                           style="border-radius:8px; font-size:.82rem;">
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <label class="form-label" style="font-size:.75rem; font-weight:700; color:var(--rs-ink);">Poli</label>
+                    <select name="department_id" class="form-select form-select-sm" style="border-radius:8px; font-size:.82rem;">
+                        <option value="">Semua Poli</option>
+                        @foreach($filterDepts as $dept)
+                            <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
+                                {{ $dept->nama_poli }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <label class="form-label" style="font-size:.75rem; font-weight:700; color:var(--rs-ink);">Dokter</label>
+                    <select name="doctor_id" class="form-select form-select-sm" style="border-radius:8px; font-size:.82rem;">
+                        <option value="">Semua Dokter</option>
+                        @foreach($filterDoctors as $doc)
+                            <option value="{{ $doc->id }}" {{ request('doctor_id') == $doc->id ? 'selected' : '' }}>
+                                {{ $doc->nama_dokter }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <label class="form-label" style="font-size:.75rem; font-weight:700; color:var(--rs-ink);">Petugas</label>
+                    <select name="user_id" class="form-select form-select-sm" style="border-radius:8px; font-size:.82rem;">
+                        <option value="">Semua Petugas</option>
+                        @foreach($filterPetugas as $p)
+                            <option value="{{ $p->id }}" {{ request('user_id') == $p->id ? 'selected' : '' }}>
+                                {{ $p->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-sm flex-fill"
+                            style="background:var(--rs-primary); color:#fff; border-radius:8px; font-weight:700; font-size:.8rem;">
+                        <i class="bi bi-check2 me-1"></i>Terapkan
+                    </button>
+                    <a href="{{ route('dashboard') }}" class="btn btn-sm flex-fill"
+                       style="background:var(--rs-bg); color:var(--rs-muted); border:1px solid var(--rs-border); border-radius:8px; font-size:.8rem; font-weight:600; text-decoration:none; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                    </a>
+                </div>
+            </div>
+            @if(request()->hasAny(['dari','sampai','department_id','doctor_id','user_id']))
+            <div class="mt-2 pt-2" style="border-top:1px solid var(--rs-border);">
+                <span style="font-size:.75rem; color:var(--rs-muted);">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Filter aktif — statistik menampilkan data sesuai filter.
+                    @if(request('dari') || request('sampai'))
+                        Periode: <strong>{{ request('dari') ? \Carbon\Carbon::parse(request('dari'))->translatedFormat('d M Y') : '…' }}</strong>
+                        s/d <strong>{{ request('sampai') ? \Carbon\Carbon::parse(request('sampai'))->translatedFormat('d M Y') : '…' }}</strong>.
+                    @endif
+                </span>
+            </div>
+            @endif
+        </form>
+    </div>
+    @endif
+
     <!-- Welcome -->
     <div class="rs-hero fade-in">
         <div>
@@ -614,6 +698,81 @@
         </div>
     </div>
     </div>
+
+    {{-- ═══════════ RANKING POIN PETUGAS (Admin only) ═══════════ --}}
+    @if(auth()->user()->isAdmin() && $rankingPetugas && $rankingPetugas->isNotEmpty())
+    <div class="mt-4 fade-in">
+        <div class="table-card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span class="d-flex align-items-center gap-2" style="font-weight:700; font-size:.95rem; color:var(--rs-ink);">
+                    <i class="bi bi-trophy" style="color:var(--rs-accent);" aria-hidden="true"></i>
+                    Ranking Poin Petugas
+                </span>
+                <a href="{{ route('points.admin') }}"
+                   style="font-size:.78rem; font-weight:700; color:var(--rs-primary); text-decoration:none;">
+                    Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4" style="width:52px;">#</th>
+                            <th>Nama Petugas</th>
+                            <th class="text-center">Total Pendaftaran</th>
+                            <th class="text-center">Total Poin</th>
+                            <th class="text-center">Saldo Poin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($rankingPetugas as $i => $petugas)
+                        <tr>
+                            <td class="ps-4">
+                                @if($i === 0)
+                                    <i class="bi bi-trophy-fill" style="color:#D4AF37; font-size:1.1rem;" aria-label="Peringkat 1"></i>
+                                @elseif($i === 1)
+                                    <i class="bi bi-trophy-fill" style="color:#A8A8A8; font-size:1rem;" aria-label="Peringkat 2"></i>
+                                @elseif($i === 2)
+                                    <i class="bi bi-trophy-fill" style="color:#C08552; font-size:.95rem;" aria-label="Peringkat 3"></i>
+                                @else
+                                    <span style="color:var(--rs-muted); font-weight:700; font-size:.85rem;">{{ $i + 1 }}</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:34px; height:34px; border-radius:10px;
+                                                background:{{ ['#E6F6F0','#E7F4F6','#FBF6E9','#F3E8FF','#FEE2E2'][$i % 5] }};
+                                                color:{{ ['#0F7B63','#0E7490','#B8912E','#7C3AED','#B54545'][$i % 5] }};
+                                                display:flex; align-items:center; justify-content:center;
+                                                font-weight:800; font-size:.78rem; flex-shrink:0;">
+                                        {{ strtoupper(substr($petugas->name, 0, 1)) }}
+                                    </div>
+                                    <span style="font-weight:600; font-size:.875rem; color:var(--rs-ink);">{{ $petugas->name }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center" style="font-size:.85rem; color:var(--rs-muted);">
+                                {{ number_format($petugas->total_pendaftaran_all ?? 0) }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge" style="background:var(--rs-primary-soft); color:var(--rs-primary-dark); font-size:.76rem;">
+                                    {{ number_format($petugas->total_poin_earned ?? 0) }} poin
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                @php $saldo = $petugas->saldo_poin ?? 0; @endphp
+                                <span class="badge" style="background:{{ $saldo > 0 ? 'var(--rs-info-soft)' : '#F3F4F6' }}; color:{{ $saldo > 0 ? 'var(--rs-info)' : '#9CA3AF' }}; font-size:.76rem;">
+                                    {{ number_format($saldo) }} poin
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
+
 @endsection
 
 @push('scripts')

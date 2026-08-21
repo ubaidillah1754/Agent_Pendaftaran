@@ -261,6 +261,11 @@
         /* ── MAIN CONTENT ────────────────────────────────────── */
         #main-content {
             margin-left: var(--sidebar-w);
+            /* overflow-x:clip memotong konten yang melebihi batas #main-content
+               tanpa membuat Block Formatting Context (aman untuk sticky elements).
+               Ini mencegah horizontal scroll di level body akibat elemen di dalam
+               (tabel lebar, datatable, dll) tanpa mengganggu halaman lain. */
+            overflow-x: clip;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -770,6 +775,9 @@
         /* ── CUSTOM SIMPLE-DATATABLES STYLE OVERRIDES ────────── */
         .datatable-wrapper {
             padding: 10px 0;
+            /* Jaga agar wrapper tidak memperlebar container saat kolom banyak */
+            width: 100%;
+            min-width: 0;
         }
         .datatable-top {
             padding: 15px 20px;
@@ -829,6 +837,11 @@
         }
         .datatable-table {
             border-collapse: collapse;
+        }
+        /* Pastikan scroll tabel terjadi DI DALAM .table-card, bukan di level halaman */
+        .datatable-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .datatable-pagination ul {
             margin: 0;
@@ -913,20 +926,20 @@
 
             <div class="sidebar-label">Pendaftaran</div>
             <a href="{{ route('registrations.index') }}"
-                class="nav-link {{ request()->routeIs('registrations.*') ? 'active' : '' }}"
-                @if(request()->routeIs('registrations.*')) aria-current="page" @endif>
+                class="nav-link {{ request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
+                @if(request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
-            <a href="#"
-                class="nav-link disabled-link"
-                style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
-                <span class="nav-icon-box"><i class="bi bi-people" aria-hidden="true"></i></span> Data Pasien
+
+            @if(auth()->user()->isPetugas())
+            <a href="{{ route('registrations.riwayat') }}"
+                class="nav-link {{ request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
+                @if(request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
+                <span class="nav-icon-box"><i class="bi bi-clock-history" aria-hidden="true"></i></span> Riwayat Saya
             </a>
-            <a href="#"
-                class="nav-link disabled-link"
-                style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
-                <span class="nav-icon-box"><i class="bi bi-list-ol" aria-hidden="true"></i></span> Monitor Antrian
-            </a>
+            @endif
+
+            {{-- Menu Data Pasien & Monitor Antrian disembunyikan (di luar scope utama aplikasi) --}}
 
 @if(auth()->user()->isPetugas())
     <a href="{{ route('points.index') }}"

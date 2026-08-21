@@ -87,7 +87,16 @@ Route::middleware('auth')->group(function () {
             'destroy' => 'patients.destroy',
         ]);
 
+    // Cetak tracer pasien (standalone print page)
+    Route::get('patients/{patient}/tracer', [PatientController::class, 'tracer'])
+        ->name('patients.tracer');
+
     // ── Pendaftaran Rawat Jalan ───────────────────────────────────────────────
+    // Route khusus harus didaftarkan SEBELUM resource agar tidak konflik
+    Route::get('registrations/riwayat-saya', [RegistrationController::class, 'riwayat'])
+        ->name('registrations.riwayat')
+        ->middleware('role:petugas');
+
     Route::resource('registrations', RegistrationController::class)
         ->names([
             'index'   => 'registrations.index',
@@ -130,8 +139,7 @@ Route::middleware('auth')->group(function () {
         Route::get('antrian/{department}',[AjaxController::class, 'getAntrianPoli'])->name('antrian-poli');
     });
     
-Route::middleware(['auth'])->group(function () {
-
+    // ── Poin Petugas ─────────────────────────────────────────────────────────
     Route::get('/poin', [PointController::class, 'index'])
         ->name('points.index')
         ->middleware('role:petugas');
@@ -140,9 +148,17 @@ Route::middleware(['auth'])->group(function () {
         ->name('points.admin')
         ->middleware('role:admin');
 
-    Route::post('/poin/tukar', [PointController::class, 'redeem'])
-        ->name('points.redeem')
-        ->middleware('role:admin');
+    // Penukaran poin — hanya admin
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/poin/tukar', [PointController::class, 'redeem'])
+            ->name('points.redeem');
+
+        Route::patch('/poin/tukar/{redemption}/status', [PointController::class, 'updateRedemption'])
+            ->name('points.redemption.update');
+
+        Route::delete('/poin/tukar/{redemption}', [PointController::class, 'destroyRedemption'])
+            ->name('points.redemption.destroy');
+    });
 
 });
-});
+
