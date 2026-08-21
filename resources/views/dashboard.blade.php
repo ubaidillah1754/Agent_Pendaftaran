@@ -28,7 +28,7 @@
             --rs-radius-sm: 10px;
             --rs-shadow: 0 1px 2px rgba(16, 24, 32, .04), 0 8px 20px -12px rgba(16, 24, 32, .10);
             /* bentuk arch yang sama dipakai di layout & halaman login — identitas
-               visual berulang, bukan sekadar radius acak */
+                   visual berulang, bukan sekadar radius acak */
             --rs-arch-lg: 22px 22px 6px 6px;
             --rs-arch-sm: 13px 13px 4px 4px;
         }
@@ -512,7 +512,8 @@
                 Warahmatullah</div>
             <h2 class="rs-hero-title">My Sakinah Agent</h2>
             <div class="rs-hero-sub">Ringkasan aktivitas pendaftaran &amp; antrian pasien hari ini,
-                {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</div>
+                {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+            </div>
         </div>
         <div class="rs-hero-illustration" aria-hidden="true">
             <svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
@@ -668,8 +669,25 @@
                     </div>
                 </div>
             </div>
+
+        <!-- Antrian Terbaru -->
+        <!--
+<div class="col-lg-8 fade-in">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="rs-card-title">
+                <i class="bi bi-list-ol" aria-hidden="true"></i>
+                Antrian Aktif Hari Ini
+            </span>
+
+            <a href="{{ route('antrian.index') }}" class="rs-card-link">
+                Lihat Semua
+                <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+            </a>
+
         </div>
         --}}
+
 
         <!-- Quick Actions -->
         <div class="col-lg-12 fade-in fade-in-delay-1">
@@ -694,8 +712,261 @@
                         </div>
                     </div>
                 </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table rs-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>No. Antrian</th>
+                            <th>Nama Pasien</th>
+                            <th>Poli Tujuan</th>
+                            <th>Waktu Daftar</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($antrianTerbaru as $reg)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <span class="rs-antrian-no">
+                                        {{ $reg->nomor_antrian }}
+                                    </span>
+                                </td>
+                                <td class="fw-600">
+                                    {{ $reg->patient->nama_pasien }}
+                                </td>
+                                <td>
+                                    {{ $reg->department->nama_poli }}
+                                </td>
+                                <td>
+                                    {{ $reg->created_at->format('H:i') }}
+                                </td>
+                                <td>
+                                    <span class="badge badge-{{ $reg->status }}">
+                                        {{ $reg->status_label }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="rs-empty-state">
+                                        <i class="bi bi-inbox" aria-hidden="true"></i>
+                                        <p>Belum ada antrian aktif</p>
+                                        <small>
+                                            Antrian akan muncul di sini ketika ada pendaftaran baru.
+                                        </small>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
+</div>
+-->
+
+<!-- Ranking Poin -->
+<div class="col-lg-8 fade-in">
+
+    <div class="card h-100">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <span class="rs-card-title">
+                <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+                Peringkat Poin Petugas
+            </span>
+
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ route('points.admin') }}" class="rs-card-link">
+                    Lihat Semua
+                    <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            @endif
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <div class="fw-bold" style="font-size:.85rem;">
+                        Ranking Bulan Ini
+                    </div>
+
+                    <div style="font-size:.7rem;color:var(--rs-muted);">
+                        {{ $namaBulanPoin }}
+                    </div>
+                </div>
+
+                <span class="point-month-badge">
+                    {{ $totalPendaftaranPoin }} pendaftaran
+                </span>
+
+            </div>
+
+            @if($rankingPoin->count() > 0)
+
+                <div class="table-responsive">
+
+                    <table class="point-ranking-table">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Petugas</th>
+                                <th>Pendaftaran</th>
+                                <th class="text-end">Poin</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach($rankingPoin->take(5) as $petugas)
+
+                                <tr>
+
+                                    <td>
+                                        <span class="point-rank">
+                                            @if($loop->iteration === 1)
+                                                🥇
+                                            @elseif($loop->iteration === 2)
+                                                🥈
+                                            @elseif($loop->iteration === 3)
+                                                🥉
+                                            @else
+                                                {{ $loop->iteration }}
+                                            @endif
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div style="font-weight:700;">
+                                            {{ $petugas->name }}
+                                        </div>
+
+                                        <div style="font-size:.65rem;color:var(--rs-muted);">
+                                            Petugas
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        {{ $petugas->total_pendaftaran ?? 0 }}
+                                    </td>
+
+                                    <td class="text-end">
+                                        <span class="point-score">
+                                            {{ $petugas->total_poin ?? 0 }} poin
+                                        </span>
+                                    </td>
+
+                                </tr>
+
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            @else
+
+                <div class="rs-empty-state">
+
+                    <i class="bi bi-trophy"></i>
+
+                    <p>Belum ada poin bulan ini</p>
+
+                    <small>
+                        Poin akan muncul setelah ada pendaftaran.
+                    </small>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Aksi Cepat -->
+<div class="col-lg-4 fade-in fade-in-delay-1">
+
+    <div class="card h-100">
+
+        <div class="card-header">
+
+            <span class="rs-card-title">
+                <i class="bi bi-lightning" aria-hidden="true"></i>
+                Aksi Cepat
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-2">
+
+                <div class="col-6">
+
+                    <a href="{{ route('registrations.create') }}"
+                       class="quick-action-btn qa-1">
+
+                        <span class="icon">
+                            <i class="bi bi-clipboard2-plus-fill"></i>
+                        </span>
+
+                        <span class="label">
+                            Daftar Pasien
+                        </span>
+
+                        <span class="sub">
+                            Pendaftaran baru
+                        </span>
+
+                    </a>
+
+                </div>
+
+                <div class="col-6">
+
+                    <a href="{{ route('registrations.index') }}"
+                       class="quick-action-btn qa-4">
+
+                        <span class="icon">
+                            <i class="bi bi-table"></i>
+                        </span>
+
+                        <span class="label">
+                            Pendaftaran
+                        </span>
+
+                        <span class="sub">
+                            Riwayat lengkap
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
     </div>
     </div>
 
@@ -782,7 +1053,7 @@
         const gradientFill = ctx.createLinearGradient(0, 0, 0, 220);
         gradientFill.addColorStop(0, 'rgba(15,123,99,.22)');
         gradientFill.addColorStop(1, 'rgba(15,123,99,.02)');
-        
+
         new Chart(ctx, {
             type: 'line',
             data: {

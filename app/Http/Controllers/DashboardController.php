@@ -8,7 +8,9 @@ use App\Models\Patient;
 use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\PetugasPoint;
+use App\Models\User;
+acades\DB;
 
 class DashboardController extends Controller
 {
@@ -52,6 +54,7 @@ class DashboardController extends Controller
 
         // ── Statistik Utama ────────────────────────────────────────────────
         $stats = [
+<<<<<<< Updated upstream
             'total_pendaftaran_hari_ini' => (clone $baseQuery())->count(),
             'menunggu'   => (clone $baseQuery())->where('status', 'menunggu')->count(),
             'dipanggil'  => (clone $baseQuery())->where('status', 'dipanggil')->count(),
@@ -62,6 +65,18 @@ class DashboardController extends Controller
             'total_pasien'   => Patient::count(),
             'total_dokter'   => Doctor::where('is_active', true)->count(),
             'total_poli'     => Department::where('is_active', true)->count(),
+=======
+            'total_pendaftaran_hari_ini' => Registration::whereDate('tanggal_daftar', $today)->count(),
+            'menunggu'   => Registration::whereDate('tanggal_daftar', $today)->where('status', 'menunggu')->count(),
+            'dipanggil'  => Registration::whereDate('tanggal_daftar', $today)->where('status', 'dipanggil')->count(),
+            'selesai'    => Registration::whereDate('tanggal_daftar', $today)->where('status', 'selesai')->count(),
+            'batal'      => Registration::whereDate('tanggal_daftar', $today)->where('status', 'batal')->count(),
+            'terjadwal'  => Registration::whereDate('tanggal_daftar', '>', $today)
+                ->where('status', 'menunggu')
+                ->count(),
+            'total_pasien' => Patient::count(),
+            'total_dokter' => Doctor::where('is_active', true)->count(),
+            'total_poli'   => Department::where('is_active', true)->count(),
         ];
 
         // ── Pendaftaran Per Poli (mengikuti filter) ────────────────────────
@@ -75,6 +90,7 @@ class DashboardController extends Controller
                 'total'     => $r->total,
             ]);
 
+<<<<<<< Updated upstream
         // ── Grafik Pendaftaran 7 Hari Terakhir (mengikuti filter poli/dokter/petugas) ──
         $grafik = Registration::select(
                 DB::raw('DATE(tanggal_daftar) as tanggal'),
@@ -87,6 +103,17 @@ class DashboardController extends Controller
         if ($userId)   $grafik->where('created_by', $userId);
 
         $pendaftaran7Hari = $grafik
+=======
+        // ── Grafik Pendaftaran 7 Hari Terakhir ─────────────────────────────
+        $pendaftaran7Hari = Registration::select(
+                DB::raw('DATE(tanggal_daftar) as tanggal'),
+                DB::raw('count(*) as total')
+            )
+            ->where(
+                'tanggal_daftar',
+                '>=',
+                now()->subDays(6)->format('Y-m-d')
+            )
             ->groupBy('tanggal')
             ->orderBy('tanggal')
             ->get()
@@ -94,20 +121,27 @@ class DashboardController extends Controller
 
         $labels7Hari = [];
         $data7Hari   = [];
+
         for ($i = 6; $i >= 0; $i--) {
             $tgl = now()->subDays($i)->format('Y-m-d');
+
             $labels7Hari[] = now()->subDays($i)->format('d M');
             $data7Hari[]   = $pendaftaran7Hari->get($tgl)?->total ?? 0;
         }
 
-        // ── Antrian Terbaru Hari Ini ──────────────────────────────────────
-        $antrianTerbaru = Registration::with(['patient', 'department', 'doctor'])
+        // ── Antrian Terbaru Hari Ini ───────────────────────────────────────
+        $antrianTerbaru = Registration::with([
+                'patient',
+                'department',
+                'doctor'
+            ])
             ->whereDate('tanggal_daftar', $today)
             ->whereIn('status', ['menunggu', 'dipanggil'])
             ->orderBy('urutan_antrian')
             ->limit(10)
             ->get();
 
+<<<<<<< Updated upstream
         // ── Ranking Poin Petugas (Top 5, untuk Admin) ────────────────────
         $rankingPetugas = null;
         if ($isAdmin) {
@@ -131,6 +165,52 @@ class DashboardController extends Controller
 
         // ── Kumpulkan nilai filter aktif (untuk reset/display) ────────────
         $activeFilters = compact('dari', 'sampai', 'deptId', 'doctorId', 'userId');
+=======
+
+        // ═══════════════════════════════════════════════════════════════════
+        // DATA POIN KARYAWAN
+        // ═══════════════════════════════════════════════════════════════════
+
+        $tahunPoin = now()->year;
+        $bulanPoin = now()->month;
+
+        // ── Total seluruh poin bulan berjalan ──────────────────────────────
+        $totalPoin = PetugasPoint::whereYear('created_at', $tahunPoin)
+            ->whereMonth('created_at', $bulanPoin)
+            ->sum('points');
+
+
+        // ── Ranking poin petugas bulan berjalan ────────────────────────────
+        $rankingPoin = User::where('role', 'petugas')
+            ->withSum([
+                'petugasPoints as total_poin' => function ($query) use ($tahunPoin, $bulanPoin) {
+                    $query->whereYear('created_at', $tahunPoin)
+                        ->whereMonth('created_at', $bulanPoin);
+                }
+            ], 'points')
+            ->withCount([
+                'petugasPoints as total_pendaftaran' => function ($query) use ($tahunPoin, $bulanPoin) {
+                    $query->whereYear('created_at', $tahunPoin)
+                        ->whereMonth('created_at', $bulanPoin);
+                }
+            ])
+            ->orderByDesc('total_poin')
+            ->get();
+
+
+        // ── Petugas terbaik ────────────────────────────────────────────────
+        $petugasTerbaik = $rankingPoin->first();
+
+
+        // ── Total pendaftaran yang menghasilkan poin ──────────────────────
+        $totalPendaftaranPoin = PetugasPoint::whereYear('created_at', $tahunPoin)
+            ->whereMonth('created_at', $bulanPoin)
+            ->count();
+
+
+        // ── Nama bulan untuk Dashboard ─────────────────────────────────────
+        $namaBulanPoin = now()->translatedFormat('F Y');
+
 
         return view('dashboard', compact(
             'stats',
@@ -146,6 +226,13 @@ class DashboardController extends Controller
             'hasDateFilter',
             'dari',
             'sampai'
+
+            // DATA POIN
+            'totalPoin',
+            'rankingPoin',
+            'petugasTerbaik',
+            'totalPendaftaranPoin',
+            'namaBulanPoin'
         ));
     }
 }

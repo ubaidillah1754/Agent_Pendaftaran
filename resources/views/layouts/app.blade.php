@@ -930,6 +930,7 @@
                 @if(request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
+<<<<<<< Updated upstream
 
             @if(auth()->user()->isPetugas())
             <a href="{{ route('registrations.riwayat') }}"
@@ -940,6 +941,19 @@
             @endif
 
             {{-- Menu Data Pasien & Monitor Antrian disembunyikan (di luar scope utama aplikasi) --}}
+           <!--
+<a href="#"
+    class="nav-link disabled-link"
+    style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
+    <span class="nav-icon-box"><i class="bi bi-people" aria-hidden="true"></i></span> Data Pasien
+</a>
+
+<a href="#"
+    class="nav-link disabled-link"
+    style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
+    <span class="nav-icon-box"><i class="bi bi-list-ol" aria-hidden="true"></i></span> Monitor Antrian
+</a>
+-->
 
 @if(auth()->user()->isPetugas())
     <a href="{{ route('points.index') }}"
