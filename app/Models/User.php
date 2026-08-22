@@ -75,11 +75,18 @@ class User extends Authenticatable
         return $this->hasMany(PointRedemption::class);
     }
 
+    public function pointRequests()
+    {
+        return $this->hasMany(PointRequest::class);
+    }
+
     public function totalPoints(): int
     {
         $earned   = $this->petugasPoints()->sum('points');
+        // Poin dari pengajuan yang sudah disetujui admin
+        $fromRequest = $this->pointRequests()->where('status', 'approved')->sum('points');
         // Hanya redemption yang sudah 'selesai' yang memotong saldo
         $redeemed = $this->pointRedemptions()->where('status', 'selesai')->sum('points');
-        return max(0, $earned - $redeemed);
+        return max(0, $earned + $fromRequest - $redeemed);
     }
 }

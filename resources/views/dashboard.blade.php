@@ -654,6 +654,114 @@
         </div>
     </div>
 
+    <div class="row g-3 mb-4">
+        {{-- PENDING REDEMPTIONS (Admin Only) --}}
+        @if(auth()->user()->isAdmin() && isset($pendingRedemptions) && $pendingRedemptions->count() > 0)
+        <div class="col-12 fade-in">
+            <div class="card border-warning" style="border-left: 4px solid #F59E0B !important;">
+                <div class="card-header d-flex justify-content-between align-items-center bg-transparent">
+                    <span class="rs-card-title text-warning" style="color: #D97706 !important;">
+                        <i class="bi bi-gift-fill me-2" aria-hidden="true"></i>Menunggu Persetujuan Penukaran Poin
+                    </span>
+                    <a href="{{ route('points.admin') }}" class="rs-card-link text-warning">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table rs-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Petugas</th>
+                                    <th>Poin Ditukar</th>
+                                    <th>Jenis</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th class="text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($pendingRedemptions as $redemption)
+                                <tr>
+                                    <td class="fw-600">{{ $redemption->user->name }}</td>
+                                    <td><span style="font-weight:800; color:var(--rs-accent);">{{ number_format($redemption->points) }}</span> Poin</td>
+                                    <td><span class="badge bg-light text-dark">{{ $redemption->type }}</span></td>
+                                    <td>{{ $redemption->created_at->format('d M Y, H:i') }}</td>
+                                    <td class="text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <form action="{{ route('points.redemption.update', $redemption) }}" method="POST" onsubmit="return confirm('Setujui penukaran ini?')">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="disetujui">
+                                                <input type="hidden" name="catatan" value="Disetujui dari dashboard">
+                                                <button type="submit" class="btn btn-sm text-white" style="background:#0F9D58; border-radius:6px; font-weight:600;"><i class="bi bi-check-lg"></i> Setuju</button>
+                                            </form>
+                                            <form action="{{ route('points.redemption.update', $redemption) }}" method="POST" onsubmit="return confirm('Tolak penukaran ini?')">
+                                                @csrf @method('PATCH')
+                                                <input type="hidden" name="status" value="ditolak">
+                                                <input type="hidden" name="catatan" value="Ditolak dari dashboard">
+                                                <button type="submit" class="btn btn-sm text-white" style="background:#B54545; border-radius:6px; font-weight:600;"><i class="bi bi-x-lg"></i> Tolak</button>
+                                            </form>
+                                            <a href="{{ route('points.redemption.cetak', $redemption) }}" target="_blank" class="btn btn-sm text-white" style="background:var(--rs-info); border-radius:6px; font-weight:600;" title="Cetak Resi">
+                                                <i class="bi bi-printer"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
+    {{-- PENGAJUAN POIN PENDING (Admin Only) --}}
+    @if(auth()->user()->isAdmin() && isset($pendingPointRequestCount) && $pendingPointRequestCount > 0)
+    <div class="row g-3 mb-4">
+        <div class="col-12 fade-in">
+            <div class="card" style="border-left: 4px solid #8B5CF6 !important; border: 1px solid #E2E8F0;">
+                <div class="card-header d-flex justify-content-between align-items-center bg-transparent">
+                    <span class="rs-card-title" style="color:#7C3AED;">
+                        <i class="bi bi-send-check-fill me-2" aria-hidden="true"></i>
+                        Pengajuan Poin Menunggu Persetujuan
+                        <span class="ms-2 badge rounded-pill" style="background:#7C3AED; color:#fff; font-size:.7rem; padding:4px 10px;">{{ $pendingPointRequestCount }}</span>
+                    </span>
+                    <a href="{{ route('point-requests.admin') }}" class="rs-card-link" style="color:#7C3AED;">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table rs-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Petugas</th>
+                                    <th>Poin Diajukan</th>
+                                    <th>Alasan</th>
+                                    <th>Tanggal</th>
+                                    <th class="text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($pendingPointRequests as $pr)
+                                <tr>
+                                    <td class="fw-600">{{ $pr->user->name }}</td>
+                                    <td><span style="font-weight:800; color:#B8912E;">{{ number_format($pr->points) }}</span> Poin</td>
+                                    <td style="max-width:200px; color:#64748B; font-size:.83rem;">{{ Str::limit($pr->reason, 50) }}</td>
+                                    <td style="color:#64748B; font-size:.83rem; white-space:nowrap;">{{ $pr->created_at->format('d M Y') }}</td>
+                                    <td class="text-end">
+                                        <a href="{{ route('point-requests.admin') }}" class="btn btn-sm text-white" style="background:#7C3AED; border-radius:6px; font-weight:600; font-size:.78rem;">
+                                            <i class="bi bi-arrow-right me-1"></i> Proses
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="row g-3">
         {{-- Antrian Terbaru — disembunyikan
         <div class="col-lg-8 fade-in">

@@ -16,6 +16,7 @@ class PetugasPoint extends Model
         'registration_id',
         'department_id',
         'points',
+        'point_request_id',
     ];
 
     public function user(): BelongsTo

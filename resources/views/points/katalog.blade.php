@@ -34,16 +34,16 @@
                     </div>
                     <div class="hadiah-body">
                         <h6 class="hadiah-title">Pencairan Dana (Cash)</h6>
-                        <p class="hadiah-desc">Tukarkan poin Anda dengan uang tunai. Saldo minimal penukaran adalah 500 Poin (Rp 500.000).</p>
+                        <p class="hadiah-desc">Tukarkan poin Anda dengan uang tunai. Setiap 1 poin = Rp 1.000.</p>
                         
                         <form action="{{ route('points.request_redeem') }}" method="POST">
                             @csrf
                             <input type="hidden" name="type" value="Uang Tunai">
                             <div class="input-group mb-3">
                                 <span class="input-group-text bg-white" style="border-radius:10px 0 0 10px; border-color:#E2E8F0;"><i class="bi bi-star"></i></span>
-                                <input type="number" name="points" class="form-control border-start-0" placeholder="Jml poin..." min="500" max="{{ $totalPoin }}" required style="border-radius:0 10px 10px 0; border-color:#E2E8F0;">
+                                <input type="number" name="points" class="form-control border-start-0" placeholder="Jml poin..." min="1" max="{{ $totalPoin }}" required style="border-radius:0 10px 10px 0; border-color:#E2E8F0;">
                             </div>
-                            <button type="submit" class="btn btn-brand w-100 {{ $totalPoin < 500 ? 'disabled' : '' }}">
+                            <button type="submit" class="btn btn-brand w-100" onclick="return confirm('Ajukan pencairan ' + document.querySelector(\'input[name=points]\').value + ' poin?')">
                                 Ajukan Pencairan
                             </button>
                         </form>
@@ -74,21 +74,10 @@
                             <input type="hidden" name="type" value="Merchandise - {{ $item->name }}">
                             <input type="hidden" name="points" value="{{ $item->points }}">
                             
-                            @if($totalPoin >= $item->points)
-                                @php
-                                    $maxQty = floor($totalPoin / $item->points);
-                                @endphp
-                                <div class="d-flex gap-2 mb-2">
-                                    <input type="number" name="qty" class="form-control text-center" value="1" min="1" max="{{ $maxQty }}" style="width: 75px; padding: 0.375rem 0.5rem;" title="Jumlah Barang">
-                                    <button type="button" class="btn btn-brand flex-grow-1" onclick="confirmTukarQty(this, '{{ $item->name }}', {{ $item->points }})">
-                                        Tukar
-                                    </button>
-                                </div>
-                            @else
-                                <button type="button" class="btn btn-secondary w-100 disabled" style="background:#E2E8F0; border:none; color:#94A3B8;">
-                                    Poin Kurang
-                                </button>
-                            @endif
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" name="qty" class="form-control text-center" value="1" min="1" style="width: 75px; padding: 0.375rem 0.5rem;" title="Jumlah Barang">
+                                <button type="button" class="btn btn-brand flex-grow-1" onclick="confirmTukarQty(this, '{{ $item->name }}', {{ $item->points }})">Tukar</button>
+                            </div>
                         </form>
                     </div>
                 </div>

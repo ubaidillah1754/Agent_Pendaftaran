@@ -46,6 +46,13 @@ class PointController extends Controller
         return view('points.katalog', compact('totalPoin', 'merchandises'));
     }
 
+    /** Halaman Master Merchandise (Admin) */
+    public function masterMerchandise()
+    {
+        $merchandises = \App\Models\Merchandise::orderBy('points', 'asc')->get();
+        return view('points.merchandise', compact('merchandises'));
+    }
+
     /** Proses tambah barang ke katalog */
     public function storeMerchandise(Request $request)
     {
@@ -109,7 +116,7 @@ class PointController extends Controller
             return back()->with('error', 'Saldo poin Anda tidak mencukupi untuk ditukar.');
         }
 
-        PointRedemption::create([
+        $redemption = PointRedemption::create([
             'user_id' => $user->id,
             'points'  => $totalRedeemPoints,
             'type'    => $type,
@@ -117,7 +124,19 @@ class PointController extends Controller
             'catatan' => 'Request mandiri via Katalog',
         ]);
 
-        return redirect()->route('points.index')->with('success', 'Permintaan penukaran poin berhasil dikirim. Status saat ini: Menunggu konfirmasi Admin.');
+        return redirect()->route('points.redemption.cetak', $redemption)->with('success', 'Permintaan penukaran poin berhasil dikirim. Status saat ini: Menunggu konfirmasi Admin.');
+    }
+
+    /** Cetak resi penukaran poin */
+    public function cetakResi(PointRedemption $redemption)
+    {
+        // Hanya pemilik atau admin yang boleh akses
+        if (Auth::id() !== $redemption->user_id && !Auth::user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses ke resi ini.');
+        }
+
+        $redemption->load('user');
+        return view('points.cetak-resi', compact('redemption'));
     }
 
     /** Halaman "Poin Karyawan" — khusus admin, rekap semua petugas per bulan */

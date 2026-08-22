@@ -230,6 +230,22 @@ class DashboardController extends Controller
                     return $u;
                 });
         }
+        
+        $pendingRedemptions = collect();
+        $pendingPointRequests = collect();
+        $pendingPointRequestCount = 0;
+        if ($isAdmin) {
+            $pendingRedemptions = \App\Models\PointRedemption::with('user')
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'asc')
+                ->get();
+            $pendingPointRequests = \App\Models\PointRequest::with('user')
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'asc')
+                ->limit(5)
+                ->get();
+            $pendingPointRequestCount = \App\Models\PointRequest::where('status', 'pending')->count();
+        }
 
         // ── Data Filter Dropdown ─────────────────────────────────────
         $filterDepts = $isAdmin
@@ -353,7 +369,10 @@ class DashboardController extends Controller
             'rankingPoin',
             'petugasTerbaik',
             'totalPendaftaranPoin',
-            'namaBulanPoin'
+            'namaBulanPoin',
+            'pendingRedemptions',
+            'pendingPointRequests',
+            'pendingPointRequestCount'
         ));
     }
 }

@@ -961,6 +961,11 @@
         @if(request()->routeIs('points.index')) aria-current="page" @endif>
         <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Saya
     </a>
+    <a href="{{ route('point-requests.index') }}"
+        class="nav-link {{ request()->routeIs('point-requests.index', 'point-requests.create') ? 'active' : '' }}"
+        @if(request()->routeIs('point-requests.*')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-send" aria-hidden="true"></i></span> Pengajuan Poin
+    </a>
     <a href="{{ route('points.katalog') }}"
         class="nav-link {{ request()->routeIs('points.katalog') ? 'active' : '' }}"
         @if(request()->routeIs('points.katalog')) aria-current="page" @endif>
@@ -974,9 +979,23 @@
         @if(request()->routeIs('points.admin')) aria-current="page" @endif>
         <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Karyawan
     </a>
+    <a href="{{ route('point-requests.admin') }}"
+        class="nav-link {{ request()->routeIs('point-requests.admin') ? 'active' : '' }}"
+        @if(request()->routeIs('point-requests.admin')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-send-check" aria-hidden="true"></i></span> Pengajuan Poin
+        @php $prCount = \App\Models\PointRequest::where('status','pending')->count(); @endphp
+        @if($prCount > 0)
+            <span class="ms-auto badge rounded-pill" style="background:#EF4444; font-size:.65rem; padding:3px 7px;">{{ $prCount }}</span>
+        @endif
+    </a>
 @endif
             @if(auth()->user()->isAdmin())
                 <div class="sidebar-label">Master Data</div>
+                <a href="{{ route('points.merchandise.index') }}"
+                    class="nav-link {{ request()->routeIs('points.merchandise.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('points.merchandise.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Master Hadiah
+                </a>
                 <a href="{{ route('departments.index') }}"
                     class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}"
                     @if(request()->routeIs('departments.*')) aria-current="page" @endif>
