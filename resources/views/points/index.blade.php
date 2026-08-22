@@ -104,7 +104,7 @@
                 </thead>
                 <tbody>
                     @forelse($riwayat as $item)
-                        @php $nama = $item->registration->patient->name ?? '-'; @endphp
+                        @php $nama = $item->registration?->patient?->nama_pasien ?? '-'; @endphp
                         <tr>
                             <td class="ps-4 text-muted">
                                 {{ $item->created_at->translatedFormat('d M Y') }}
@@ -117,7 +117,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="poli-badge">{{ $item->department->name ?? '-' }}</span>
+                                <span class="poli-badge">{{ $item->department?->nama_poli ?? '-' }}</span>
                             </td>
                             <td class="text-end pe-4">
                                 <span class="point-pill">+{{ $item->points }}</span>
@@ -130,6 +130,70 @@
                                 <div class="text-muted mt-2" style="font-size:14px;">Belum ada riwayat poin.</div>
                             </td>
                         </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- ═══════════ RIWAYAT PENUKARAN POIN ═══════════ --}}
+    <div class="card" style="border-radius:16px; border:1px solid #E2E8F0; overflow:hidden;">
+        <div class="card-header d-flex align-items-center justify-content-between"
+             style="background:#F8FAFC; padding:16px 20px; border-bottom:1px solid #E2E8F0;">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-left-right" style="color:#B8912E; font-size:1rem;"></i>
+                <span style="font-weight:700; font-size:.9rem; color:#0F172A;">Riwayat Penukaran Poin Saya</span>
+            </div>
+            <span class="badge" style="background:#FBF6E9; color:#7A5E17; font-size:.72rem;">
+                {{ $riwayatTukar->count() }} transaksi
+            </span>
+        </div>
+        <div class="table-responsive">
+            <table class="table points-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Tanggal</th>
+                        <th class="text-center">Poin</th>
+                        <th class="text-center">Jenis</th>
+                        <th class="text-center">Status</th>
+                        <th>Catatan Admin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($riwayatTukar as $item)
+                    <tr>
+                        <td class="ps-4 text-muted" style="white-space:nowrap;">
+                            {{ $item->created_at->translatedFormat('d M Y') }}
+                            <div style="font-size:12px; color:#94A3B8;">{{ $item->created_at->format('H:i') }} WIB</div>
+                        </td>
+                        <td class="text-center">
+                            <span style="font-weight:700; color:#B8912E; font-size:1rem;">
+                                -{{ number_format($item->points) }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="poli-badge" style="background:#FBF6E9; color:#7A5E17;">
+                                {{ $item->type_label }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            @php $sc = $item->status_color; @endphp
+                            <span class="badge"
+                                  style="background:{{ $sc['bg'] }}; color:{{ $sc['color'] }}; font-size:.73rem; padding:5px 10px;">
+                                {{ $item->status_label }}
+                            </span>
+                        </td>
+                        <td style="font-size:.82rem; color:#64748B; max-width:200px;">
+                            {{ $item->catatan ?: '—' }}
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size:32px; color:#CBD5E1;" aria-hidden="true"></i>
+                            <div class="text-muted mt-2" style="font-size:14px;">Belum ada riwayat penukaran poin.</div>
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

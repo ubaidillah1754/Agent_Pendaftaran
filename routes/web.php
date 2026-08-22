@@ -11,6 +11,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PointController;
+use App\Http\Controllers\PointRequestController;
 // ── Redirect root ke dashboard atau login ────────────────────────────────────
 Route::get('/', fn() => redirect()->route('dashboard'));
 
@@ -87,7 +88,16 @@ Route::middleware('auth')->group(function () {
             'destroy' => 'patients.destroy',
         ]);
 
+    // Cetak tracer pasien (standalone print page)
+    Route::get('patients/{patient}/tracer', [PatientController::class, 'tracer'])
+        ->name('patients.tracer');
+
     // ── Pendaftaran Rawat Jalan ───────────────────────────────────────────────
+    // Route khusus harus didaftarkan SEBELUM resource agar tidak konflik
+    Route::get('registrations/riwayat-saya', [RegistrationController::class, 'riwayat'])
+        ->name('registrations.riwayat')
+        ->middleware('role:petugas');
+
     Route::resource('registrations', RegistrationController::class)
         ->names([
             'index'   => 'registrations.index',
@@ -130,19 +140,67 @@ Route::middleware('auth')->group(function () {
         Route::get('antrian/{department}',[AjaxController::class, 'getAntrianPoli'])->name('antrian-poli');
     });
     
-Route::middleware(['auth'])->group(function () {
-
+    // ── Poin Petugas ─────────────────────────────────────────────────────────
     Route::get('/poin', [PointController::class, 'index'])
         ->name('points.index')
         ->middleware('role:petugas');
+
+    Route::get('/poin/katalog', [PointController::class, 'katalog'])
+        ->name('points.katalog')
+        ->middleware('role:petugas');
+
+    Route::post('/poin/katalog/tukar', [PointController::class, 'requestRedeem'])
+        ->name('points.request_redeem')
+        ->middleware('role:petugas');
+
+    Route::get('/poin/tukar/{redemption}/cetak', [PointController::class, 'cetakResi'])
+        ->name('points.redemption.cetak')
+        ->middleware('role:petugas,admin');
 
     Route::get('/poin/karyawan', [PointController::class, 'admin'])
         ->name('points.admin')
         ->middleware('role:admin');
 
-    Route::post('/poin/tukar', [PointController::class, 'redeem'])
-        ->name('points.redeem')
-        ->middleware('role:admin');
+    // Master Merchandise (Hanya Admin)
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/master/hadiah', [PointController::class, 'masterMerchandise'])
+            ->name('points.merchandise.index');
+
+        Route::post('/master/hadiah', [PointController::class, 'storeMerchandise'])
+            ->name('points.merchandise.store');
+
+        Route::delete('/master/hadiah/{merchandise}', [PointController::class, 'destroyMerchandise'])
+            ->name('points.merchandise.destroy');
+
+        Route::post('/poin/tukar', [PointController::class, 'redeem'])
+            ->name('points.redeem');
+
+        Route::patch('/poin/tukar/{redemption}/status', [PointController::class, 'updateRedemption'])
+            ->name('points.redemption.update');
+
+        Route::delete('/poin/tukar/{redemption}', [PointController::class, 'destroyRedemption'])
+            ->name('points.redemption.destroy');
+    });
+
+    // ── Pengajuan Poin (Petugas) ──────────────────────────────────────────────
+    Route::middleware('role:petugas')->group(function () {
+        Route::get('/pengajuan-poin', [PointRequestController::class, 'index'])
+            ->name('point-requests.index');
+        Route::get('/pengajuan-poin/baru', [PointRequestController::class, 'create'])
+            ->name('point-requests.create');
+        Route::post('/pengajuan-poin', [PointRequestController::class, 'store'])
+            ->name('point-requests.store');
+    });
+
+    // ── Pengajuan Poin (Admin) ────────────────────────────────────────────────
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/pengajuan-poin', [PointRequestController::class, 'adminIndex'])
+            ->name('point-requests.admin');
+        Route::patch('/admin/pengajuan-poin/{pointRequest}/approve', [PointRequestController::class, 'approve'])
+            ->name('point-requests.approve');
+        Route::patch('/admin/pengajuan-poin/{pointRequest}/reject', [PointRequestController::class, 'reject'])
+            ->name('point-requests.reject');
+    });
 
 });
-});
+

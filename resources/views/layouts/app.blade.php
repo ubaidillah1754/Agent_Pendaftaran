@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Sistem Pendaftaran Rawat Jalan RSI Sakinah — kelola pendaftaran pasien, antrian, dan jadwal praktik dokter.">
+    <link rel="icon" type="image/png" sizes="225x225" href="{{ asset('favicon.png') }}?v=4">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.png') }}?v=4">
+
     <title>@yield('title', 'Dashboard') — RS Islam Sakinah</title>
 
     <!-- Google Fonts -->
@@ -18,6 +21,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
 
     <style>
         :root {
@@ -85,7 +89,7 @@
         /* ── SIDEBAR ──────────────────────────────────────────── */
         #sidebar {
             width: var(--sidebar-w);
-            min-height: 100vh;
+            height: 100vh;
             background: linear-gradient(190deg, var(--primary) 0%, var(--primary-dark) 100%);
             position: fixed;
             top: 0;
@@ -94,6 +98,7 @@
             display: flex;
             flex-direction: column;
             transition: transform .3s ease;
+            overflow: hidden;
         }
 
         .sidebar-brand {
@@ -130,6 +135,7 @@
         .sidebar-nav {
             padding: 8px 14px;
             flex: 1;
+            min-height : 0;
             overflow-y: auto;
         }
 
@@ -190,8 +196,11 @@
         }
 
         .sidebar-footer {
-            padding: 8px 14px 16px;
-        }
+    padding: 8px 14px 16px;
+    margin-top: auto;
+    position: relative;
+    z-index: 10;
+}
 
         .sidebar-footer .user-card {
             background: var(--surface);
@@ -252,6 +261,11 @@
         /* ── MAIN CONTENT ────────────────────────────────────── */
         #main-content {
             margin-left: var(--sidebar-w);
+            /* overflow-x:clip memotong konten yang melebihi batas #main-content
+               tanpa membuat Block Formatting Context (aman untuk sticky elements).
+               Ini mencegah horizontal scroll di level body akibat elemen di dalam
+               (tabel lebar, datatable, dll) tanpa mengganggu halaman lain. */
+            overflow-x: clip;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -761,6 +775,9 @@
         /* ── CUSTOM SIMPLE-DATATABLES STYLE OVERRIDES ────────── */
         .datatable-wrapper {
             padding: 10px 0;
+            /* Jaga agar wrapper tidak memperlebar container saat kolom banyak */
+            width: 100%;
+            min-width: 0;
         }
         .datatable-top {
             padding: 15px 20px;
@@ -820,6 +837,11 @@
         }
         .datatable-table {
             border-collapse: collapse;
+        }
+        /* Pastikan scroll tabel terjadi DI DALAM .table-card, bukan di level halaman */
+        .datatable-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .datatable-pagination ul {
             margin: 0;
@@ -904,26 +926,50 @@
 
             <div class="sidebar-label">Pendaftaran</div>
             <a href="{{ route('registrations.index') }}"
-                class="nav-link {{ request()->routeIs('registrations.*') ? 'active' : '' }}"
-                @if(request()->routeIs('registrations.*')) aria-current="page" @endif>
+                class="nav-link {{ request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
+                @if(request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
-            <a href="#"
-                class="nav-link disabled-link"
-                style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
-                <span class="nav-icon-box"><i class="bi bi-people" aria-hidden="true"></i></span> Data Pasien
+
+
+            @if(auth()->user()->isPetugas())
+            <a href="{{ route('registrations.riwayat') }}"
+                class="nav-link {{ request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
+                @if(request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
+                <span class="nav-icon-box"><i class="bi bi-clock-history" aria-hidden="true"></i></span> Riwayat Saya
             </a>
-            <a href="#"
-                class="nav-link disabled-link"
-                style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
-                <span class="nav-icon-box"><i class="bi bi-list-ol" aria-hidden="true"></i></span> Monitor Antrian
-            </a>
+            @endif
+
+            {{-- Menu Data Pasien & Monitor Antrian disembunyikan (di luar scope utama aplikasi) --}}
+           <!--
+<a href="#"
+    class="nav-link disabled-link"
+    style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
+    <span class="nav-icon-box"><i class="bi bi-people" aria-hidden="true"></i></span> Data Pasien
+</a>
+
+<a href="#"
+    class="nav-link disabled-link"
+    style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
+    <span class="nav-icon-box"><i class="bi bi-list-ol" aria-hidden="true"></i></span> Monitor Antrian
+</a>
+-->
 
 @if(auth()->user()->isPetugas())
     <a href="{{ route('points.index') }}"
         class="nav-link {{ request()->routeIs('points.index') ? 'active' : '' }}"
         @if(request()->routeIs('points.index')) aria-current="page" @endif>
         <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Saya
+    </a>
+    <a href="{{ route('point-requests.index') }}"
+        class="nav-link {{ request()->routeIs('point-requests.index', 'point-requests.create') ? 'active' : '' }}"
+        @if(request()->routeIs('point-requests.*')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-send" aria-hidden="true"></i></span> Pengajuan Poin
+    </a>
+    <a href="{{ route('points.katalog') }}"
+        class="nav-link {{ request()->routeIs('points.katalog') ? 'active' : '' }}"
+        @if(request()->routeIs('points.katalog')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Penukaran Poin
     </a>
 @endif
 
@@ -933,9 +979,23 @@
         @if(request()->routeIs('points.admin')) aria-current="page" @endif>
         <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Karyawan
     </a>
+    <a href="{{ route('point-requests.admin') }}"
+        class="nav-link {{ request()->routeIs('point-requests.admin') ? 'active' : '' }}"
+        @if(request()->routeIs('point-requests.admin')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-send-check" aria-hidden="true"></i></span> Pengajuan Poin
+        @php $prCount = \App\Models\PointRequest::where('status','pending')->count(); @endphp
+        @if($prCount > 0)
+            <span class="ms-auto badge rounded-pill" style="background:#EF4444; font-size:.65rem; padding:3px 7px;">{{ $prCount }}</span>
+        @endif
+    </a>
 @endif
             @if(auth()->user()->isAdmin())
                 <div class="sidebar-label">Master Data</div>
+                <a href="{{ route('points.merchandise.index') }}"
+                    class="nav-link {{ request()->routeIs('points.merchandise.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('points.merchandise.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Master Hadiah
+                </a>
                 <a href="{{ route('departments.index') }}"
                     class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}"
                     @if(request()->routeIs('departments.*')) aria-current="page" @endif>

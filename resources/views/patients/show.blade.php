@@ -7,6 +7,32 @@
 @endsection
 @section('content')
 
+    {{-- ===== BANNER CETAK TRACER (muncul setelah pasien baru dibuat) ===== --}}
+    @if(session('show_print_tracer'))
+    <div class="alert alert-success alert-dismissible fade show mb-4 d-flex align-items-center gap-3"
+         role="alert"
+         style="border-left: 4px solid #0F7B63; border-radius: 14px; padding: 16px 20px; background: #ecfdf5;">
+        <div style="width:44px; height:44px; border-radius:12px; background:#D1FAE5; color:#059669; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+        </div>
+        <div class="flex-grow-1">
+            <div class="fw-700" style="color:#065f46; font-size:.95rem;">
+                Pasien <strong>{{ $patient->nama_pasien }}</strong> berhasil didaftarkan!
+            </div>
+            <div style="font-size:.82rem; color:#047857; margin-top:3px;">
+                No. RM: <strong>{{ $patient->no_rm }}</strong> · Silakan cetak tracer untuk keperluan administrasi.
+            </div>
+        </div>
+        <a href="{{ route('patients.tracer', $patient) }}"
+           target="_blank"
+           class="btn btn-sm d-flex align-items-center gap-1"
+           style="background:#0F7B63; color:#fff; border-radius:9px; font-weight:700; padding:8px 16px; flex-shrink:0; text-decoration:none; white-space:nowrap;">
+            <i class="bi bi-printer" aria-hidden="true"></i> Cetak Tracer
+        </a>
+        <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Tutup"></button>
+    </div>
+    @endif
+
     @php
         // ---- Fallbacks for fields that may not exist yet on the Patient model ----
         // If your `patients` table doesn't have these columns yet, add them via a

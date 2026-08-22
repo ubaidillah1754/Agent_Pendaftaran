@@ -91,7 +91,7 @@
                         <span class="value" style="font-weight:400;">{{ $registration->doctorSchedule->hari }}, {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}</span>
                     </div>
                     <div class="info-row"><span class="label">Tgl Daftar</span><span class="value" style="font-weight:400;">{{ $registration->tanggal_daftar->format('d M Y') }}</span></div>
-                    <div class="info-row"><span class="label">Urutan</span><span class="value" style="font-weight:400;">#{{ $registration->urutan_antrian }}</span></div>
+                    <!--<div class="info-row"><span class="label">Urutan</span><span class="value" style="font-weight:400;">#{{ $registration->urutan_antrian }}</span></div>-->
                     <div class="info-row"><span class="label">Keluhan</span><span class="value" style="font-weight:400;">{{ $registration->keluhan ?? '-' }}</span></div>
                     <div class="info-row"><span class="label">Petugas</span><span class="value" style="font-weight:400;">{{ $registration->createdBy->name }}</span></div>
                     <div class="info-row"><span class="label">Waktu Daftar</span><span class="value" style="font-weight:400;">{{ $registration->created_at->format('d M Y H:i') }}</span></div>
@@ -112,6 +112,9 @@
         @endif
         <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
             <i class="bi bi-person me-1"></i>Profil Pasien
+        </a>
+        <a href="{{ route('registrations.cetak', $registration) }}" target="_blank" class="btn" style="background:var(--primary);color:#fff;border-radius:10px;">
+            <i class="bi bi-printer me-1"></i>Cetak Tracer
         </a>
     </div>
 </div>

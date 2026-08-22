@@ -17,6 +17,7 @@ class Registration extends Model
         'tanggal_daftar',
         'nomor_antrian',
         'urutan_antrian',
+        'kode_booking',
         'keluhan',
         'status',
         'created_by',
@@ -55,6 +56,12 @@ class Registration extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /** Poin yang didapat dari pendaftaran ini */
+    public function petugasPoint()
+    {
+        return $this->hasOne(PetugasPoint::class);
     }
 
     // ─── Scope ──────────────────────────────────────────────────────────────
