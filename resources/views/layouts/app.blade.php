@@ -930,7 +930,7 @@
                 @if(request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
-<<<<<<< Updated upstream
+
 
             @if(auth()->user()->isPetugas())
             <a href="{{ route('registrations.riwayat') }}"

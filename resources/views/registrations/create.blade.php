@@ -243,7 +243,7 @@
                     </div>
 
                     <!-- Keluhan -->
-                    <div class="col-12">
+                    <div class="col-12 d-none">
                         <label class="form-label d-flex align-items-center gap-1" for="keluhan">
                             <i class="bi bi-chat-left-text" style="color:var(--primary); font-size:.85rem;"></i>
                             Keluhan / Keterangan Kunjungan
