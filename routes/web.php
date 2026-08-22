@@ -144,6 +144,22 @@ Route::middleware('auth')->group(function () {
         ->name('points.index')
         ->middleware('role:petugas');
 
+    Route::get('/poin/katalog', [PointController::class, 'katalog'])
+        ->name('points.katalog')
+        ->middleware('role:petugas,admin');
+
+    Route::post('/poin/katalog', [PointController::class, 'storeMerchandise'])
+        ->name('points.merchandise.store')
+        ->middleware('role:petugas,admin'); // membolehkan petugas/admin menambah sesuai requirement saat ini
+
+    Route::delete('/poin/katalog/{merchandise}', [PointController::class, 'destroyMerchandise'])
+        ->name('points.merchandise.destroy')
+        ->middleware('role:petugas,admin');
+
+    Route::post('/poin/katalog/tukar', [PointController::class, 'requestRedeem'])
+        ->name('points.request_redeem')
+        ->middleware('role:petugas');
+
     Route::get('/poin/karyawan', [PointController::class, 'admin'])
         ->name('points.admin')
         ->middleware('role:admin');

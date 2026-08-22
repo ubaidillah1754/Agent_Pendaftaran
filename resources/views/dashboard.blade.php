@@ -421,6 +421,42 @@
 
 @section('content')
 
+    <!-- Welcome -->
+    <div class="rs-hero fade-in mb-4">
+        <div>
+            <div class="rs-hero-eyebrow"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i> Assalamu'alaikum
+                Warahmatullah</div>
+            <h2 class="rs-hero-title">My Sakinah Agent</h2>
+            <div class="rs-hero-sub">Ringkasan aktivitas pendaftaran &amp; antrian pasien hari ini,
+                {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</div>
+        </div>
+        <div class="rs-hero-illustration" aria-hidden="true">
+            <svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="185" cy="30" r="16" fill="rgba(255,255,255,.10)" />
+                <circle cx="205" cy="55" r="9" fill="rgba(255,255,255,.10)" />
+                <ellipse cx="110" cy="122" rx="95" ry="7" fill="rgba(255,255,255,.08)" />
+                <rect x="12" y="82" width="11" height="38" rx="2" fill="rgba(255,255,255,.22)" />
+                <circle cx="17.5" cy="72" r="18" fill="rgba(255,255,255,.16)" />
+                <rect x="60" y="34" width="100" height="86" rx="5" fill="rgba(255,255,255,.24)" />
+                <g fill="rgba(255,255,255,.6)">
+                    <rect x="74" y="48" width="12" height="12" rx="2" />
+                    <rect x="94" y="48" width="12" height="12" rx="2" />
+                    <rect x="114" y="48" width="12" height="12" rx="2" />
+                    <rect x="134" y="48" width="12" height="12" rx="2" />
+                    <rect x="74" y="70" width="12" height="12" rx="2" />
+                    <rect x="94" y="70" width="12" height="12" rx="2" />
+                    <rect x="114" y="70" width="12" height="12" rx="2" />
+                    <rect x="134" y="70" width="12" height="12" rx="2" />
+                </g>
+                <rect x="98" y="92" width="24" height="28" rx="2" fill="rgba(255,255,255,.45)" />
+                <rect x="106" y="18" width="6" height="20" fill="rgba(255,255,255,.55)" />
+                <rect x="98" y="24" width="22" height="6" fill="rgba(255,255,255,.55)" />
+                <rect x="192" y="86" width="10" height="34" rx="2" fill="rgba(255,255,255,.2)" />
+                <circle cx="197" cy="76" r="15" fill="rgba(255,255,255,.14)" />
+            </svg>
+        </div>
+    </div>
+
     {{-- ═══════════ FILTER DASHBOARD (Admin only) ═══════════ --}}
     @if(auth()->user()->isAdmin())
     <div class="fade-in mb-4" style="background:var(--rs-surface); border:1px solid var(--rs-border); border-radius:var(--rs-radius); padding:16px 20px;">
@@ -541,7 +577,6 @@
             </svg>
         </div>
     </div>
-
     <div class="row g-3 mb-4">
         <!-- Stat Cards -->
         <div class="col-12 col-md-6 fade-in">

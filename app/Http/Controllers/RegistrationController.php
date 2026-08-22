@@ -152,6 +152,11 @@ public function store(Request $request)
         $department = Department::find($validated['department_id']);
         $antrian    = $department->generateNomorAntrian($tanggal);
 
+        // ── Generate Kode Booking Unik ────────────────────────────────────
+        do {
+            $kodeBooking = strtoupper(\Illuminate\Support\Str::random(6));
+        } while (Registration::where('kode_booking', $kodeBooking)->exists());
+
         // ── Simpan Pendaftaran ────────────────────────────────────────────
        $registration = Registration::create([
     'patient_id'         => $patient->id,
@@ -161,6 +166,7 @@ public function store(Request $request)
     'tanggal_daftar'     => $tanggal,
     'nomor_antrian'      => $antrian['nomor_antrian'],
     'urutan_antrian'     => $antrian['urutan'],
+    'kode_booking'       => $kodeBooking,
     'keluhan'            => $validated['keluhan'] ?? null,
     'status'             => 'menunggu',
     'created_by'         => Auth::id(),   // ← diganti
@@ -255,12 +261,18 @@ PetugasPoint::create([
 
         // Filter tanggal dari
         if ($request->filled('dari')) {
-            $query->whereDate('tanggal_daftar', '>=', $request->dari);
+            $query->whereDate('created_at', '>=', $request->dari);
+        } else {
+            // Default: mulai dari kemarin
+            $query->whereDate('created_at', '>=', today()->subDay());
         }
 
         // Filter tanggal sampai
         if ($request->filled('sampai')) {
-            $query->whereDate('tanggal_daftar', '<=', $request->sampai);
+            $query->whereDate('created_at', '<=', $request->sampai);
+        } else {
+            // Default: sampai hari ini
+            $query->whereDate('created_at', '<=', today());
         }
 
         // Filter poli

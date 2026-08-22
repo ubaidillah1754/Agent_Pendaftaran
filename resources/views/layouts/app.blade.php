@@ -961,6 +961,11 @@
         @if(request()->routeIs('points.index')) aria-current="page" @endif>
         <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Saya
     </a>
+    <a href="{{ route('points.katalog') }}"
+        class="nav-link {{ request()->routeIs('points.katalog') ? 'active' : '' }}"
+        @if(request()->routeIs('points.katalog')) aria-current="page" @endif>
+        <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Penukaran Poin
+    </a>
 @endif
 
 @if(auth()->user()->isAdmin())
