@@ -9,9 +9,13 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\Petugas\PointController as PetugasPointController;
+use App\Http\Controllers\Admin\MerchandiseController as AdminMerchandiseController;
+use App\Http\Controllers\Admin\PointRedemptionController as AdminPointRedemptionController;
+use App\Http\Controllers\Admin\PointAdjustmentController as AdminPointAdjustmentController;
+use App\Http\Controllers\Admin\PointReportController as AdminPointReportController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PointController;
-use App\Http\Controllers\PointRequestController;
+
 // ── Redirect root ke dashboard atau login ────────────────────────────────────
 Route::get('/', fn() => redirect()->route('dashboard'));
 
@@ -93,7 +97,6 @@ Route::middleware('auth')->group(function () {
         ->name('patients.tracer');
 
     // ── Pendaftaran Rawat Jalan ───────────────────────────────────────────────
-    // Route khusus harus didaftarkan SEBELUM resource agar tidak konflik
     Route::get('registrations/riwayat-saya', [RegistrationController::class, 'riwayat'])
         ->name('registrations.riwayat')
         ->middleware('role:petugas');
@@ -126,81 +129,51 @@ Route::middleware('auth')->group(function () {
 
     // ── AJAX Endpoints ────────────────────────────────────────────────────────
     Route::prefix('ajax')->name('ajax.')->group(function () {
-        // Cascading dropdown: Poli → Dokter
         Route::get('doctors',            [AjaxController::class, 'getDoctors'])->name('doctors');
-        // Cascading dropdown: Dokter → Jadwal (hari + jam)
         Route::get('schedules',          [AjaxController::class, 'getSchedules'])->name('schedules');
-        // Cek sisa kuota & nomor antrian berikutnya
         Route::get('kuota',              [AjaxController::class, 'getKuota'])->name('kuota');
-        // Cari pasien by NIK / No. RM (live search)
         Route::get('cari-pasien',        [AjaxController::class, 'cariPasien'])->name('cari-pasien');
-        // Ambil nomor antrian berikutnya (preview sebelum submit)
         Route::get('nomor-antrian',      [AjaxController::class, 'getNomorAntrian'])->name('nomor-antrian');
-        // Data antrian real-time per poli (untuk display antrian)
         Route::get('antrian/{department}',[AjaxController::class, 'getAntrianPoli'])->name('antrian-poli');
     });
-    
-    // ── Poin Petugas ─────────────────────────────────────────────────────────
-    Route::get('/poin', [PointController::class, 'index'])
-        ->name('points.index')
-        ->middleware('role:petugas');
 
-    Route::get('/poin/katalog', [PointController::class, 'katalog'])
-        ->name('points.katalog')
-        ->middleware('role:petugas');
-
-    Route::post('/poin/katalog/tukar', [PointController::class, 'requestRedeem'])
-        ->name('points.request_redeem')
-        ->middleware('role:petugas');
-
-    Route::get('/poin/tukar/{redemption}/cetak', [PointController::class, 'cetakResi'])
-        ->name('points.redemption.cetak')
-        ->middleware('role:petugas,admin');
-
-    Route::get('/poin/karyawan', [PointController::class, 'admin'])
-        ->name('points.admin')
-        ->middleware('role:admin');
-
-    // Master Merchandise (Hanya Admin)
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/master/hadiah', [PointController::class, 'masterMerchandise'])
-            ->name('points.merchandise.index');
-
-        Route::post('/master/hadiah', [PointController::class, 'storeMerchandise'])
-            ->name('points.merchandise.store');
-
-        Route::delete('/master/hadiah/{merchandise}', [PointController::class, 'destroyMerchandise'])
-            ->name('points.merchandise.destroy');
-
-        Route::post('/poin/tukar', [PointController::class, 'redeem'])
-            ->name('points.redeem');
-
-        Route::patch('/poin/tukar/{redemption}/status', [PointController::class, 'updateRedemption'])
-            ->name('points.redemption.update');
-
-        Route::delete('/poin/tukar/{redemption}', [PointController::class, 'destroyRedemption'])
-            ->name('points.redemption.destroy');
-    });
-
-    // ── Pengajuan Poin (Petugas) ──────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════════
+    // SISTEM POIN & REWARD (PETUGAS)
+    // ══════════════════════════════════════════════════════════════════════════
     Route::middleware('role:petugas')->group(function () {
-        Route::get('/pengajuan-poin', [PointRequestController::class, 'index'])
-            ->name('point-requests.index');
-        Route::get('/pengajuan-poin/baru', [PointRequestController::class, 'create'])
-            ->name('point-requests.create');
-        Route::post('/pengajuan-poin', [PointRequestController::class, 'store'])
-            ->name('point-requests.store');
+        Route::get('/poin',               [PetugasPointController::class, 'index'])->name('points.index');
+        Route::get('/poin/riwayat',       [PetugasPointController::class, 'riwayat'])->name('points.riwayat');
+        Route::get('/poin/katalog',       [PetugasPointController::class, 'katalog'])->name('points.katalog');
+        Route::post('/poin/katalog/tukar',[PetugasPointController::class, 'tukar'])->name('points.tukar');
+        Route::get('/poin/penukaran',     [PetugasPointController::class, 'riwayatRedemption'])->name('points.redemptions.index');
     });
 
-    // ── Pengajuan Poin (Admin) ────────────────────────────────────────────────
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/pengajuan-poin', [PointRequestController::class, 'adminIndex'])
-            ->name('point-requests.admin');
-        Route::patch('/admin/pengajuan-poin/{pointRequest}/approve', [PointRequestController::class, 'approve'])
-            ->name('point-requests.approve');
-        Route::patch('/admin/pengajuan-poin/{pointRequest}/reject', [PointRequestController::class, 'reject'])
-            ->name('point-requests.reject');
+    // Cetak resi dapat diakses petugas (pemilik) & admin
+    Route::get('/poin/penukaran/{redemption}/cetak', [PetugasPointController::class, 'cetakResi'])
+        ->name('points.redemptions.cetak');
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // SISTEM POIN & REWARD (ADMIN)
+    // ══════════════════════════════════════════════════════════════════════════
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        // Master Merchandise
+        Route::resource('merchandises', AdminMerchandiseController::class)
+            ->names('merchandises');
+
+        // Persetujuan & Manajemen Penukaran Reward
+        Route::get('/penukaran',                          [AdminPointRedemptionController::class, 'index'])->name('redemptions.index');
+        Route::get('/penukaran/{redemption}',             [AdminPointRedemptionController::class, 'show'])->name('redemptions.show');
+        Route::patch('/penukaran/{redemption}/approve',   [AdminPointRedemptionController::class, 'approve'])->name('redemptions.approve');
+        Route::patch('/penukaran/{redemption}/complete',  [AdminPointRedemptionController::class, 'complete'])->name('redemptions.complete');
+        Route::patch('/penukaran/{redemption}/reject',    [AdminPointRedemptionController::class, 'reject'])->name('redemptions.reject');
+        Route::patch('/penukaran/{redemption}/cancel',    [AdminPointRedemptionController::class, 'cancel'])->name('redemptions.cancel');
+
+        // Penyesuaian / Adjustment Poin Karyawan
+        Route::get('/poin/adjustment',  [AdminPointAdjustmentController::class, 'index'])->name('points.adjustment.index');
+        Route::post('/poin/adjustment', [AdminPointAdjustmentController::class, 'store'])->name('points.adjustment.store');
+
+        // Laporan Rekapitulasi Poin, Ledger & Reward
+        Route::get('/poin/laporan', [AdminPointReportController::class, 'index'])->name('reports.index');
     });
 
 });
-

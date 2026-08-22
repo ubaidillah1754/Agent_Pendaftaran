@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Services\PatientService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
+    public function __construct(
+        protected PatientService $patientService
+    ) {}
+
     public function index(Request $request)
     {
         $query = Patient::withCount('registrations')->orderBy('nama_pasien');
@@ -21,14 +27,14 @@ class PatientController extends Controller
             });
         }
 
-        $patients = $query->get();
+        $patients = $query->paginate(20)->withQueryString();
 
         return view('patients.index', compact('patients'));
     }
 
     public function create()
     {
-        // Generate No. RM baru untuk ditampilkan di form
+        // Generate No. RM baru untuk ditampilkan di form preview
         $noRM = Patient::generateNoRM();
         return view('patients.create', compact('noRM'));
     }
@@ -63,14 +69,15 @@ class PatientController extends Controller
             'no_asuransi.required_if'=> 'Nomor asuransi wajib diisi jika pembayaran asuransi.',
         ]);
 
-        // Auto-generate Nomor Rekam Medis
-        $validated['no_rm']          = Patient::generateNoRM();
         $validated['golongan_darah'] = $request->input('golongan_darah', 'Tidak Diketahui');
 
-        $patient = Patient::create($validated);
+        // Buat pasien baru dan tambahkan poin ke akun petugas via PatientService
+        $patient = $this->patientService->createPatient($validated, Auth::user());
+
+        $earnedPoints = config('points.earn_per_new_patient', 10);
 
         return redirect()->route('patients.show', $patient)
-            ->with('success', 'Pasien ' . $patient->nama_pasien . ' berhasil didaftarkan. No. RM: ' . $patient->no_rm)
+            ->with('success', "Pasien {$patient->nama_pasien} berhasil didaftarkan (No. RM: {$patient->no_rm}). Anda mendapatkan +{$earnedPoints} poin!")
             ->with('show_print_tracer', $patient->id);
     }
 
@@ -78,7 +85,7 @@ class PatientController extends Controller
     {
         $patient->load(['registrations' => function ($q) {
             $q->with(['department', 'doctor'])->orderByDesc('tanggal_daftar');
-        }]);
+        }, 'creator']);
 
         return view('patients.show', compact('patient'));
     }
@@ -105,8 +112,8 @@ class PatientController extends Controller
             'no_bpjs'           => ['nullable', 'string', 'max:20', 'required_if:jenis_pembayaran,bpjs'],
             'no_asuransi'       => ['nullable', 'string', 'max:30', 'required_if:jenis_pembayaran,asuransi'],
         ], [
-            'nik.digits'  => 'NIK harus 16 digit angka.',
-            'nik.unique'  => 'NIK sudah digunakan pasien lain.',
+            'nik.digits' => 'NIK harus 16 digit angka.',
+            'nik.unique' => 'NIK sudah digunakan pasien lain.',
         ]);
 
         $patient->update($validated);

@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\PointRedemption;
 use App\Models\Registration;
 use App\Models\User;
-use App\Models\PetugasPoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -16,7 +17,8 @@ class DashboardController extends Controller
     /** Halaman utama dashboard dengan ringkasan statistik */
     public function index(Request $request)
     {
-        $isAdmin = auth()->user()->isAdmin();
+        $user = Auth::user();
+        $isAdmin = $user->isAdmin();
 
         // ── Filter Admin ─────────────────────────────────────────────
         $dari = $isAdmin && $request->filled('dari')
@@ -183,88 +185,38 @@ class DashboardController extends Controller
                 ->get($tgl)?->total ?? 0;
         }
 
-        // ── Antrian Terbaru Hari Ini ─────────────────────────────────
-        $antrianTerbaru = Registration::with([
-            'patient',
-            'department',
-            'doctor',
-        ])
-            ->whereDate('tanggal_daftar', $today)
-            ->whereIn('status', [
-                'menunggu',
-                'dipanggil',
-            ])
-            ->orderBy('urutan_antrian')
-            ->limit(10)
-            ->get();
-
-        // ── Ranking Poin Petugas ─────────────────────────────────────
-        $rankingPetugas = null;
-
-        if ($isAdmin) {
-            $rankingPetugas = User::where('role', 'petugas')
-                ->withSum(
-                    'petugasPoints as total_poin_earned',
-                    'points'
-                )
-                ->withSum(
-                    [
-                        'pointRedemptions as total_poin_redeemed' =>
-                            function ($q) {
-                                $q->where('status', 'selesai');
-                            },
-                    ],
-                    'points'
-                )
-                ->withCount([
-                    'registrations as total_pendaftaran_all',
-                ])
-                ->orderByDesc('total_poin_earned')
-                ->limit(5)
-                ->get()
-                ->map(function ($u) {
-                    $u->saldo_poin =
-                        ($u->total_poin_earned ?? 0)
-                        - ($u->total_poin_redeemed ?? 0);
-
-                    return $u;
-                });
-        }
-        
-        $pendingRedemptions = collect();
-        $pendingPointRequests = collect();
-        $pendingPointRequestCount = 0;
-        if ($isAdmin) {
-            $pendingRedemptions = \App\Models\PointRedemption::with('user')
-                ->where('status', 'pending')
-                ->orderBy('created_at', 'asc')
-                ->get();
-            $pendingPointRequests = \App\Models\PointRequest::with('user')
-                ->where('status', 'pending')
-                ->orderBy('created_at', 'asc')
-                ->limit(5)
-                ->get();
-            $pendingPointRequestCount = \App\Models\PointRequest::where('status', 'pending')->count();
-        }
-
         // ── Data Filter Dropdown ─────────────────────────────────────
         $filterDepts = $isAdmin
-            ? Department::active()
-                ->orderBy('nama_poli')
-                ->get()
+            ? Department::active()->orderBy('nama_poli')->get()
             : collect();
 
         $filterDoctors = $isAdmin
-            ? Doctor::active()
-                ->orderBy('nama_dokter')
-                ->get()
+            ? Doctor::active()->orderBy('nama_dokter')->get()
             : collect();
 
         $filterPetugas = $isAdmin
-            ? User::where('role', 'petugas')
-                ->orderBy('name')
-                ->get()
+            ? User::where('role', 'petugas')->orderBy('name')->get()
             : collect();
+
+        // ── Data Tambahan Poin & Reward ──────────────────────────────
+        $pendingRedemptionsCount = 0;
+        $topPetugas = collect();
+        $myPointStats = [];
+
+        if ($isAdmin) {
+            $pendingRedemptionsCount = PointRedemption::where('status', 'pending')->count();
+            $topPetugas = User::where('role', 'petugas')
+                ->withCount('createdPatients')
+                ->orderByDesc('point_balance')
+                ->limit(5)
+                ->get();
+        } else {
+            $myPointStats = [
+                'point_balance'   => $user->point_balance,
+                'patients_count'  => $user->createdPatients()->count(),
+                'redeemed_count'  => $user->pointRedemptions()->count(),
+            ];
+        }
 
         // ── Filter Aktif ─────────────────────────────────────────────
         $activeFilters = compact(
@@ -275,87 +227,12 @@ class DashboardController extends Controller
             'userId'
         );
 
-        // ══════════════════════════════════════════════════════════════
-        // DATA POIN KARYAWAN
-        // ══════════════════════════════════════════════════════════════
-
-        $tahunPoin = now()->year;
-        $bulanPoin = now()->month;
-
-        // ── Total seluruh poin bulan berjalan ─────────────────────────
-        $totalPoin = PetugasPoint::whereYear(
-            'created_at',
-            $tahunPoin
-        )
-            ->whereMonth(
-                'created_at',
-                $bulanPoin
-            )
-            ->sum('points');
-
-        // ── Ranking poin petugas bulan berjalan ──────────────────────
-        $rankingPoin = User::where('role', 'petugas')
-            ->withSum(
-                [
-                    'petugasPoints as total_poin' =>
-                        function ($query) use ($tahunPoin, $bulanPoin) {
-                            $query
-                                ->whereYear(
-                                    'created_at',
-                                    $tahunPoin
-                                )
-                                ->whereMonth(
-                                    'created_at',
-                                    $bulanPoin
-                                );
-                        },
-                ],
-                'points'
-            )
-            ->withCount(
-                [
-                    'petugasPoints as total_pendaftaran' =>
-                        function ($query) use ($tahunPoin, $bulanPoin) {
-                            $query
-                                ->whereYear(
-                                    'created_at',
-                                    $tahunPoin
-                                )
-                                ->whereMonth(
-                                    'created_at',
-                                    $bulanPoin
-                                );
-                        },
-                ]
-            )
-            ->orderByDesc('total_poin')
-            ->get();
-
-        // ── Petugas terbaik ──────────────────────────────────────────
-        $petugasTerbaik = $rankingPoin->first();
-
-        // ── Total pendaftaran yang menghasilkan poin ─────────────────
-        $totalPendaftaranPoin = PetugasPoint::whereYear(
-            'created_at',
-            $tahunPoin
-        )
-            ->whereMonth(
-                'created_at',
-                $bulanPoin
-            )
-            ->count();
-
-        // ── Nama bulan untuk Dashboard ───────────────────────────────
-        $namaBulanPoin = now()->translatedFormat('F Y');
-
         // ── Kirim data ke dashboard ──────────────────────────────────
         return view('dashboard', compact(
             'stats',
             'pendaftaranPerPoli',
             'labels7Hari',
             'data7Hari',
-            'antrianTerbaru',
-            'rankingPetugas',
             'filterDepts',
             'filterDoctors',
             'filterPetugas',
@@ -363,16 +240,9 @@ class DashboardController extends Controller
             'hasDateFilter',
             'dari',
             'sampai',
-
-            // DATA POIN
-            'totalPoin',
-            'rankingPoin',
-            'petugasTerbaik',
-            'totalPendaftaranPoin',
-            'namaBulanPoin',
-            'pendingRedemptions',
-            'pendingPointRequests',
-            'pendingPointRequestCount'
+            'pendingRedemptionsCount',
+            'topPetugas',
+            'myPointStats'
         ));
     }
 }

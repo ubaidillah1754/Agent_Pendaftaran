@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -17,6 +19,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'point_balance',
     ];
 
     protected $hidden = [
@@ -29,6 +32,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+            'point_balance'     => 'integer',
         ];
     }
 
@@ -55,38 +59,58 @@ class User extends Authenticatable
     // ─── Relasi ─────────────────────────────────────────────────────────────
 
     /** User yang merupakan dokter (opsional) */
-    public function doctor()
+    public function doctor(): HasOne
     {
         return $this->hasOne(Doctor::class);
     }
 
+    /** Pasien yang pertama kali diinput oleh user ini */
+    public function createdPatients(): HasMany
+    {
+        return $this->hasMany(Patient::class, 'created_by');
+    }
+
     /** Pendaftaran yang dibuat oleh user ini */
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class, 'created_by');
     }
-    public function petugasPoints()
+
+    /** Buku besar transaksi poin */
+    public function pointTransactions(): HasMany
     {
-        return $this->hasMany(PetugasPoint::class);
+        return $this->hasMany(PointTransaction::class, 'user_id');
     }
 
-    public function pointRedemptions()
+    /** Transaksi penukaran reward */
+    public function pointRedemptions(): HasMany
     {
-        return $this->hasMany(PointRedemption::class);
+        return $this->hasMany(PointRedemption::class, 'user_id');
     }
 
-    public function pointRequests()
+    /** Log audit yang dilakukan oleh user ini */
+    public function auditLogs(): HasMany
     {
-        return $this->hasMany(PointRequest::class);
+        return $this->hasMany(AuditLog::class, 'actor_id');
     }
 
+    // ─── Poin Helpers ───────────────────────────────────────────────────────
+
+    /** Total saldo poin saat ini */
     public function totalPoints(): int
     {
-        $earned   = $this->petugasPoints()->sum('points');
-        // Poin dari pengajuan yang sudah disetujui admin
-        $fromRequest = $this->pointRequests()->where('status', 'approved')->sum('points');
-        // Hanya redemption yang sudah 'selesai' yang memotong saldo
-        $redeemed = $this->pointRedemptions()->where('status', 'selesai')->sum('points');
-        return max(0, $earned + $fromRequest - $redeemed);
+        return (int) $this->point_balance;
+    }
+
+    /** Total perolehan poin masuk sepanjang waktu (lifetime earned) */
+    public function totalEarnedPoints(): int
+    {
+        return (int) $this->pointTransactions()->where('type', 'earn')->sum('amount');
+    }
+
+    /** Total poin yang telah ditukarkan (lifetime redeemed) */
+    public function totalRedeemedPoints(): int
+    {
+        return (int) abs($this->pointTransactions()->where('type', 'redeem')->sum('amount'));
     }
 }

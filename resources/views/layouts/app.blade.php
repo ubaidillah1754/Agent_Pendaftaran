@@ -955,46 +955,52 @@
 </a>
 -->
 
-@if(auth()->user()->isPetugas())
-    <a href="{{ route('points.index') }}"
-        class="nav-link {{ request()->routeIs('points.index') ? 'active' : '' }}"
-        @if(request()->routeIs('points.index')) aria-current="page" @endif>
-        <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Saya
-    </a>
-    <a href="{{ route('point-requests.index') }}"
-        class="nav-link {{ request()->routeIs('point-requests.index', 'point-requests.create') ? 'active' : '' }}"
-        @if(request()->routeIs('point-requests.*')) aria-current="page" @endif>
-        <span class="nav-icon-box"><i class="bi bi-send" aria-hidden="true"></i></span> Pengajuan Poin
-    </a>
-    <a href="{{ route('points.katalog') }}"
-        class="nav-link {{ request()->routeIs('points.katalog') ? 'active' : '' }}"
-        @if(request()->routeIs('points.katalog')) aria-current="page" @endif>
-        <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Penukaran Poin
-    </a>
-@endif
+            @if(auth()->user()->isPetugas())
+                <div class="sidebar-label">Poin & Reward</div>
+                <a href="{{ route('points.index') }}"
+                    class="nav-link {{ request()->routeIs('points.index', 'points.riwayat') ? 'active' : '' }}"
+                    @if(request()->routeIs('points.index', 'points.riwayat')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Saya
+                </a>
+                <a href="{{ route('points.katalog') }}"
+                    class="nav-link {{ request()->routeIs('points.katalog') ? 'active' : '' }}"
+                    @if(request()->routeIs('points.katalog')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Katalog Reward
+                </a>
+                <a href="{{ route('points.redemptions.index') }}"
+                    class="nav-link {{ request()->routeIs('points.redemptions.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('points.redemptions.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-clock-history" aria-hidden="true"></i></span> Riwayat Penukaran
+                </a>
+            @endif
 
-@if(auth()->user()->isAdmin())
-    <a href="{{ route('points.admin') }}"
-        class="nav-link {{ request()->routeIs('points.admin') ? 'active' : '' }}"
-        @if(request()->routeIs('points.admin')) aria-current="page" @endif>
-        <span class="nav-icon-box"><i class="bi bi-star-fill" aria-hidden="true"></i></span> Poin Karyawan
-    </a>
-    <a href="{{ route('point-requests.admin') }}"
-        class="nav-link {{ request()->routeIs('point-requests.admin') ? 'active' : '' }}"
-        @if(request()->routeIs('point-requests.admin')) aria-current="page" @endif>
-        <span class="nav-icon-box"><i class="bi bi-send-check" aria-hidden="true"></i></span> Pengajuan Poin
-        @php $prCount = \App\Models\PointRequest::where('status','pending')->count(); @endphp
-        @if($prCount > 0)
-            <span class="ms-auto badge rounded-pill" style="background:#EF4444; font-size:.65rem; padding:3px 7px;">{{ $prCount }}</span>
-        @endif
-    </a>
-@endif
             @if(auth()->user()->isAdmin())
+                <div class="sidebar-label">Poin & Reward</div>
+                <a href="{{ route('admin.redemptions.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.redemptions.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('admin.redemptions.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-gift" aria-hidden="true"></i></span> Penukaran Reward
+                    @php $pendingCount = \App\Models\PointRedemption::where('status', 'pending')->count(); @endphp
+                    @if($pendingCount > 0)
+                        <span class="ms-auto badge rounded-pill" style="background:#EF4444; color:#fff; font-size:.65rem; padding:3px 7px;">{{ $pendingCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('admin.points.adjustment.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.points.adjustment.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('admin.points.adjustment.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-sliders2" aria-hidden="true"></i></span> Penyesuaian Poin
+                </a>
+                <a href="{{ route('admin.reports.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('admin.reports.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i></span> Laporan Poin
+                </a>
+
                 <div class="sidebar-label">Master Data</div>
-                <a href="{{ route('points.merchandise.index') }}"
-                    class="nav-link {{ request()->routeIs('points.merchandise.*') ? 'active' : '' }}"
-                    @if(request()->routeIs('points.merchandise.*')) aria-current="page" @endif>
-                    <span class="nav-icon-box"><i class="bi bi-gift-fill" aria-hidden="true"></i></span> Master Hadiah
+                <a href="{{ route('admin.merchandises.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.merchandises.*') ? 'active' : '' }}"
+                    @if(request()->routeIs('admin.merchandises.*')) aria-current="page" @endif>
+                    <span class="nav-icon-box"><i class="bi bi-box-seam" aria-hidden="true"></i></span> Master Hadiah
                 </a>
                 <a href="{{ route('departments.index') }}"
                     class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}"

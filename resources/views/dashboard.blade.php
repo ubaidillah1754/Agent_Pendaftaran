@@ -27,8 +27,6 @@
             --rs-radius: 14px;
             --rs-radius-sm: 10px;
             --rs-shadow: 0 1px 2px rgba(16, 24, 32, .04), 0 8px 20px -12px rgba(16, 24, 32, .10);
-            /* bentuk arch yang sama dipakai di layout & halaman login — identitas
-                   visual berulang, bukan sekadar radius acak */
             --rs-arch-lg: 22px 22px 6px 6px;
             --rs-arch-sm: 13px 13px 4px 4px;
         }
@@ -39,7 +37,6 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* ---------- Cards: satu bahasa desain yang konsisten ---------- */
         .card {
             border: 1px solid var(--rs-border);
             border-radius: var(--rs-radius);
@@ -78,11 +75,6 @@
             text-decoration: none;
         }
 
-        .rs-card-link:hover {
-            color: var(--rs-primary-dark);
-        }
-
-        /* ---------- Hero: banner sapaan dengan ilustrasi gedung ---------- */
         .rs-hero {
             position: relative;
             overflow: hidden;
@@ -139,7 +131,6 @@
             height: auto;
         }
 
-        /* ---------- Stat cards: flat, jelas, tidak ramai ---------- */
         .stat-card {
             border-radius: var(--rs-radius);
             border: 1px solid var(--rs-border);
@@ -149,6 +140,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            height: 100%;
         }
 
         .stat-icon {
@@ -162,25 +154,10 @@
             flex-shrink: 0;
         }
 
-        .stat-card-a .stat-icon {
-            background: var(--rs-primary-soft);
-            color: var(--rs-primary);
-        }
-
-        .stat-card-b .stat-icon {
-            background: var(--rs-accent-soft);
-            color: var(--rs-accent);
-        }
-
-        .stat-card-c .stat-icon {
-            background: #EAF7EF;
-            color: #0F9D58;
-        }
-
-        .stat-card-d .stat-icon {
-            background: var(--rs-info-soft);
-            color: var(--rs-info);
-        }
+        .stat-card-a .stat-icon { background: var(--rs-primary-soft); color: var(--rs-primary); }
+        .stat-card-b .stat-icon { background: var(--rs-accent-soft); color: var(--rs-accent); }
+        .stat-card-c .stat-icon { background: #EAF7EF; color: #0F9D58; }
+        .stat-card-d .stat-icon { background: var(--rs-info-soft); color: var(--rs-info); }
 
         .stat-label {
             font-size: .72rem;
@@ -203,7 +180,6 @@
             color: var(--rs-muted);
         }
 
-        /* ---------- Quick actions: bersih, konsisten ---------- */
         .quick-action-btn {
             background: var(--rs-surface);
             border: 1px solid var(--rs-border);
@@ -237,197 +213,42 @@
             font-size: 1.15rem;
         }
 
-        .quick-action-btn.qa-1 .icon {
-            background: var(--rs-primary-soft);
-            color: var(--rs-primary);
-        }
+        .quick-action-btn.qa-1 .icon { background: var(--rs-primary-soft); color: var(--rs-primary); }
+        .quick-action-btn.qa-2 .icon { background: var(--rs-info-soft); color: var(--rs-info); }
+        .quick-action-btn.qa-3 .icon { background: var(--rs-accent-soft); color: var(--rs-accent); }
+        .quick-action-btn.qa-4 .icon { background: #EAF7EF; color: #0F9D58; }
 
-        .quick-action-btn.qa-2 .icon {
-            background: var(--rs-info-soft);
-            color: var(--rs-info);
-        }
+        .quick-action-btn span.label { font-size: .8rem; font-weight: 700; }
+        .quick-action-btn span.sub { font-size: .68rem; color: var(--rs-muted); font-weight: 500; margin-top: -6px; }
 
-        .quick-action-btn.qa-3 .icon {
-            background: var(--rs-accent-soft);
-            color: var(--rs-accent);
-        }
+        .chart-container { position: relative; height: 220px; }
 
-        .quick-action-btn.qa-4 .icon {
-            background: #EAF7EF;
-            color: #0F9D58;
-        }
-
-        .quick-action-btn span.label {
-            font-size: .8rem;
-            font-weight: 700;
-        }
-
-        .quick-action-btn span.sub {
-            font-size: .68rem;
-            color: var(--rs-muted);
-            font-weight: 500;
-            margin-top: -6px;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 220px;
-        }
-
-        /* ---------- Donut per poli ---------- */
-        .rs-donut-wrap {
-            position: relative;
-            width: 148px;
-            height: 148px;
-            flex-shrink: 0;
-        }
-
+        .rs-donut-wrap { position: relative; width: 148px; height: 148px; flex-shrink: 0; }
         .rs-donut-empty {
-            width: 148px;
-            height: 148px;
-            border-radius: 50%;
+            width: 148px; height: 148px; border-radius: 50%;
             border: 14px solid var(--rs-primary-soft);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 10px;
-            gap: 4px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 10px; gap: 4px;
         }
+        .rs-donut-empty i { font-size: 1.3rem; color: var(--rs-primary); }
+        .rs-donut-empty span { font-size: .7rem; color: var(--rs-muted); font-weight: 600; line-height: 1.3; }
 
-        .rs-donut-empty i {
-            font-size: 1.3rem;
-            color: var(--rs-primary);
-        }
-
-        .rs-donut-empty span {
-            font-size: .7rem;
-            color: var(--rs-muted);
-            font-weight: 600;
-            line-height: 1.3;
-        }
-
-        .rs-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            font-size: .8rem;
-        }
-
-        .rs-legend-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .rs-legend-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .rs-legend-name {
-            flex: 1;
-            color: var(--rs-ink);
-            font-weight: 500;
-        }
-
-        .rs-legend-pct {
-            color: var(--rs-muted);
-            font-weight: 700;
-            font-size: .75rem;
-        }
-
-        /* ---------- Antrian table ---------- */
-        .rs-table thead th {
-            background: var(--rs-primary-soft);
-            color: var(--rs-primary-dark);
-            font-size: .68rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            padding: 12px 14px;
-            border: none;
-        }
-
-        .rs-table tbody td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--rs-border);
-            vertical-align: middle;
-            font-size: .84rem;
-        }
-
-        .rs-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .rs-antrian-no {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 30px;
-            height: 26px;
-            padding: 0 6px;
-            border-radius: 7px;
-            background: var(--rs-primary-soft);
-            color: var(--rs-primary-dark);
-            font-weight: 800;
-            font-size: .78rem;
-        }
-
-        .rs-empty-state {
-            text-align: center;
-            padding: 34px 10px;
-            color: var(--rs-muted);
-        }
-
-        .rs-empty-state i {
-            font-size: 1.8rem;
-            color: #C9D6D1;
-        }
-
-        .rs-empty-state p {
-            margin: 10px 0 2px;
-            font-size: .85rem;
-            font-weight: 600;
-            color: var(--rs-ink);
-        }
-
-        .rs-empty-state small {
-            font-size: .74rem;
-        }
-
-        /* ---------- Info panel ---------- */
-        .rs-info-panel {
-            background: var(--rs-bg);
-            border: 1px solid var(--rs-border);
-            border-radius: var(--rs-radius-sm);
-        }
-
-        .rs-info-title {
-            color: var(--rs-ink) !important;
-        }
-
-        .rs-info-row {
-            color: var(--rs-ink) !important;
-        }
-
-        .rs-info-row+.rs-info-row {
-            margin-top: 6px;
-        }
+        .rs-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: .8rem; }
+        .rs-legend-item:last-child { margin-bottom: 0; }
+        .rs-legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .rs-legend-name { flex: 1; color: var(--rs-ink); font-weight: 500; }
+        .rs-legend-pct { color: var(--rs-muted); font-weight: 700; font-size: .75rem; }
     </style>
 @endpush
 
 @section('content')
 
-    <!-- Welcome -->
+    <!-- Welcome Hero -->
     <div class="rs-hero fade-in mb-4">
         <div>
-            <div class="rs-hero-eyebrow"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i> Assalamu'alaikum
-                Warahmatullah</div>
+            <div class="rs-hero-eyebrow"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i> Assalamu'alaikum Warahmatullah</div>
             <h2 class="rs-hero-title">My Sakinah Agent</h2>
-            <div class="rs-hero-sub">Ringkasan aktivitas pendaftaran &amp; antrian pasien hari ini,
+            <div class="rs-hero-sub">Ringkasan aktivitas pendaftaran, antrian, &amp; perolehan poin pasien hari ini,
                 {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</div>
         </div>
         <div class="rs-hero-illustration" aria-hidden="true">
@@ -456,6 +277,53 @@
             </svg>
         </div>
     </div>
+
+    <!-- Alert Pending Redemptions untuk Admin -->
+    @if(auth()->user()->isAdmin() && $pendingRedemptionsCount > 0)
+    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-4 fade-in" role="alert">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <div>
+                <strong>Ada {{ $pendingRedemptionsCount }} permohonan penukaran reward</strong> yang menunggu persetujuan Anda.
+            </div>
+        </div>
+        <a href="{{ route('admin.redemptions.index') }}" class="btn btn-sm btn-warning text-dark fw-bold" style="border-radius:8px;">
+            Proses Sekarang <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+    @endif
+
+    <!-- Widget Ringkasan Poin untuk Petugas -->
+    @if(auth()->user()->isPetugas())
+    <div class="card mb-4 fade-in" style="background:linear-gradient(135deg, #FAFDFB 0%, #E6F6F0 100%); border:1px solid #C4E9DD;">
+        <div class="card-body p-3 p-md-4">
+            <div class="row align-items-center g-3">
+                <div class="col-md-6 col-lg-7 d-flex align-items-center gap-3">
+                    <div style="width:54px; height:54px; border-radius:14px; background:var(--rs-primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:.75rem; text-transform:uppercase; font-weight:700; color:var(--rs-primary-dark); letter-spacing:.05em;">Saldo Poin Anda</div>
+                        <div style="font-size:1.65rem; font-weight:800; color:var(--rs-primary-dark); line-height:1.1;">
+                            {{ number_format($myPointStats['point_balance'] ?? 0) }} <span style="font-size:.9rem; font-weight:600;">Poin</span>
+                        </div>
+                        <div style="font-size:.75rem; color:var(--rs-muted); margin-top:2px;">
+                            Input pasien baru bernilai <strong>+10 poin</strong> setiap pendaftaran.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-5 d-flex justify-content-md-end gap-2">
+                    <a href="{{ route('points.katalog') }}" class="btn btn-sm text-white px-3" style="background:var(--rs-primary); border-radius:8px; font-weight:700; font-size:.82rem;">
+                        <i class="bi bi-gift-fill me-1"></i>Tukar Reward
+                    </a>
+                    <a href="{{ route('points.index') }}" class="btn btn-sm btn-light border px-3" style="border-radius:8px; font-weight:600; font-size:.82rem;">
+                        <i class="bi bi-speedometer2 me-1"></i>Detail Poin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     {{-- ═══════════ FILTER DASHBOARD (Admin only) ═══════════ --}}
     @if(auth()->user()->isAdmin())
@@ -525,72 +393,44 @@
                     </a>
                 </div>
             </div>
-            @if(request()->hasAny(['dari','sampai','department_id','doctor_id','user_id']))
-            <div class="mt-2 pt-2" style="border-top:1px solid var(--rs-border);">
-                <span style="font-size:.75rem; color:var(--rs-muted);">
-                    <i class="bi bi-info-circle me-1"></i>
-                    Filter aktif — statistik menampilkan data sesuai filter.
-                    @if(request('dari') || request('sampai'))
-                        Periode: <strong>{{ request('dari') ? \Carbon\Carbon::parse(request('dari'))->translatedFormat('d M Y') : '…' }}</strong>
-                        s/d <strong>{{ request('sampai') ? \Carbon\Carbon::parse(request('sampai'))->translatedFormat('d M Y') : '…' }}</strong>.
-                    @endif
-                </span>
-            </div>
-            @endif
         </form>
     </div>
     @endif
 
-    <!-- Welcome -->
-    <div class="rs-hero fade-in">
-        <div>
-            <div class="rs-hero-eyebrow"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i> Assalamu'alaikum
-                Warahmatullah</div>
-            <h2 class="rs-hero-title">My Sakinah Agent</h2>
-            <div class="rs-hero-sub">Ringkasan aktivitas pendaftaran &amp; antrian pasien hari ini,
-                {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
-            </div>
-        </div>
-        <div class="rs-hero-illustration" aria-hidden="true">
-            <svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="185" cy="30" r="16" fill="rgba(255,255,255,.10)" />
-                <circle cx="205" cy="55" r="9" fill="rgba(255,255,255,.10)" />
-                <ellipse cx="110" cy="122" rx="95" ry="7" fill="rgba(255,255,255,.08)" />
-                <rect x="12" y="82" width="11" height="38" rx="2" fill="rgba(255,255,255,.22)" />
-                <circle cx="17.5" cy="72" r="18" fill="rgba(255,255,255,.16)" />
-                <rect x="60" y="34" width="100" height="86" rx="5" fill="rgba(255,255,255,.24)" />
-                <g fill="rgba(255,255,255,.6)">
-                    <rect x="74" y="48" width="12" height="12" rx="2" />
-                    <rect x="94" y="48" width="12" height="12" rx="2" />
-                    <rect x="114" y="48" width="12" height="12" rx="2" />
-                    <rect x="134" y="48" width="12" height="12" rx="2" />
-                    <rect x="74" y="70" width="12" height="12" rx="2" />
-                    <rect x="94" y="70" width="12" height="12" rx="2" />
-                    <rect x="114" y="70" width="12" height="12" rx="2" />
-                    <rect x="134" y="70" width="12" height="12" rx="2" />
-                </g>
-                <rect x="98" y="92" width="24" height="28" rx="2" fill="rgba(255,255,255,.45)" />
-                <rect x="106" y="18" width="6" height="20" fill="rgba(255,255,255,.55)" />
-                <rect x="98" y="24" width="22" height="6" fill="rgba(255,255,255,.55)" />
-                <rect x="192" y="86" width="10" height="34" rx="2" fill="rgba(255,255,255,.2)" />
-                <circle cx="197" cy="76" r="15" fill="rgba(255,255,255,.14)" />
-            </svg>
-        </div>
-    </div>
+    <!-- Stat Cards -->
     <div class="row g-3 mb-4">
-        <!-- Stat Cards -->
-        <div class="col-12 col-md-6 fade-in">
+        <div class="col-12 col-sm-6 col-xl-3 fade-in">
             <div class="stat-card stat-card-a">
                 <div class="stat-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></div>
                 <div>
                     <div class="stat-label">Pendaftaran Hari Ini</div>
                     <div class="stat-value">{{ $stats['total_pendaftaran_hari_ini'] }}</div>
-                    <div class="stat-sub">Total pendaftar</div>
+                    <div class="stat-sub">Total pasien hari ini</div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6 fade-in fade-in-delay-1">
+        <div class="col-12 col-sm-6 col-xl-3 fade-in fade-in-delay-1">
             <div class="stat-card stat-card-b">
+                <div class="stat-icon" aria-hidden="true"><i class="bi bi-hourglass-split"></i></div>
+                <div>
+                    <div class="stat-label">Menunggu</div>
+                    <div class="stat-value">{{ $stats['menunggu'] }}</div>
+                    <div class="stat-sub">Antrian menunggu</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3 fade-in fade-in-delay-2">
+            <div class="stat-card stat-card-c">
+                <div class="stat-icon" aria-hidden="true"><i class="bi bi-check2-all"></i></div>
+                <div>
+                    <div class="stat-label">Selesai Dilayani</div>
+                    <div class="stat-value">{{ $stats['selesai'] }}</div>
+                    <div class="stat-sub">Selesai hari ini</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3 fade-in fade-in-delay-3">
+            <div class="stat-card stat-card-d">
                 <div class="stat-icon" aria-hidden="true"><i class="bi bi-calendar-event"></i></div>
                 <div>
                     <div class="stat-label">Pasien Terjadwal</div>
@@ -601,21 +441,18 @@
         </div>
     </div>
 
+    <!-- Charts Row -->
     <div class="row g-3 mb-4">
         <!-- Grafik 7 Hari -->
         <div class="col-lg-7 fade-in">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span class="rs-card-title"><i class="bi bi-graph-up" aria-hidden="true"></i>Tren Pendaftaran 7
-                        Hari</span>
-                    <span class="badge"
-                        style="background:var(--rs-primary-soft);color:var(--rs-primary-dark);font-weight:600;font-size:.72rem;">7
-                        Hari Terakhir</span>
+                    <span class="rs-card-title"><i class="bi bi-graph-up" aria-hidden="true"></i>Tren Pendaftaran 7 Hari</span>
+                    <span class="badge" style="background:var(--rs-primary-soft);color:var(--rs-primary-dark);font-weight:600;font-size:.72rem;">7 Hari Terakhir</span>
                 </div>
                 <div class="card-body">
                     <div class="chart-container">
-                        <canvas id="chartPendaftaran" role="img"
-                            aria-label="Grafik jumlah pendaftaran pasien selama 7 hari terakhir"></canvas>
+                        <canvas id="chartPendaftaran" role="img" aria-label="Grafik jumlah pendaftaran pasien selama 7 hari terakhir"></canvas>
                     </div>
                 </div>
             </div>
@@ -624,13 +461,11 @@
         <!-- Pendaftaran Per Poli -->
         <div class="col-lg-5 fade-in fade-in-delay-1">
             <div class="card h-100">
-                <div class="card-header"><span class="rs-card-title"><i class="bi bi-pie-chart" aria-hidden="true"></i>Per
-                        Poli Hari Ini</span></div>
+                <div class="card-header"><span class="rs-card-title"><i class="bi bi-pie-chart" aria-hidden="true"></i>Per Poli Hari Ini</span></div>
                 <div class="card-body d-flex align-items-center gap-4">
                     @if($stats['total_pendaftaran_hari_ini'] > 0)
                         <div class="rs-donut-wrap">
-                            <canvas id="chartPoli" role="img"
-                                aria-label="Diagram distribusi pendaftaran per poli hari ini"></canvas>
+                            <canvas id="chartPoli" role="img" aria-label="Diagram distribusi pendaftaran per poli hari ini"></canvas>
                         </div>
                         <div class="flex-1">
                             @foreach($pendaftaranPerPoli as $i => $p)
@@ -654,524 +489,43 @@
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
-        {{-- PENDING REDEMPTIONS (Admin Only) --}}
-        @if(auth()->user()->isAdmin() && isset($pendingRedemptions) && $pendingRedemptions->count() > 0)
-        <div class="col-12 fade-in">
-            <div class="card border-warning" style="border-left: 4px solid #F59E0B !important;">
-                <div class="card-header d-flex justify-content-between align-items-center bg-transparent">
-                    <span class="rs-card-title text-warning" style="color: #D97706 !important;">
-                        <i class="bi bi-gift-fill me-2" aria-hidden="true"></i>Menunggu Persetujuan Penukaran Poin
-                    </span>
-                    <a href="{{ route('points.admin') }}" class="rs-card-link text-warning">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table rs-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Petugas</th>
-                                    <th>Poin Ditukar</th>
-                                    <th>Jenis</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th class="text-end">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($pendingRedemptions as $redemption)
-                                <tr>
-                                    <td class="fw-600">{{ $redemption->user->name }}</td>
-                                    <td><span style="font-weight:800; color:var(--rs-accent);">{{ number_format($redemption->points) }}</span> Poin</td>
-                                    <td><span class="badge bg-light text-dark">{{ $redemption->type }}</span></td>
-                                    <td>{{ $redemption->created_at->format('d M Y, H:i') }}</td>
-                                    <td class="text-end">
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <form action="{{ route('points.redemption.update', $redemption) }}" method="POST" onsubmit="return confirm('Setujui penukaran ini?')">
-                                                @csrf @method('PATCH')
-                                                <input type="hidden" name="status" value="disetujui">
-                                                <input type="hidden" name="catatan" value="Disetujui dari dashboard">
-                                                <button type="submit" class="btn btn-sm text-white" style="background:#0F9D58; border-radius:6px; font-weight:600;"><i class="bi bi-check-lg"></i> Setuju</button>
-                                            </form>
-                                            <form action="{{ route('points.redemption.update', $redemption) }}" method="POST" onsubmit="return confirm('Tolak penukaran ini?')">
-                                                @csrf @method('PATCH')
-                                                <input type="hidden" name="status" value="ditolak">
-                                                <input type="hidden" name="catatan" value="Ditolak dari dashboard">
-                                                <button type="submit" class="btn btn-sm text-white" style="background:#B54545; border-radius:6px; font-weight:600;"><i class="bi bi-x-lg"></i> Tolak</button>
-                                            </form>
-                                            <a href="{{ route('points.redemption.cetak', $redemption) }}" target="_blank" class="btn btn-sm text-white" style="background:var(--rs-info); border-radius:6px; font-weight:600;" title="Cetak Resi">
-                                                <i class="bi bi-printer"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-    </div>
-
-    {{-- PENGAJUAN POIN PENDING (Admin Only) --}}
-    @if(auth()->user()->isAdmin() && isset($pendingPointRequestCount) && $pendingPointRequestCount > 0)
-    <div class="row g-3 mb-4">
-        <div class="col-12 fade-in">
-            <div class="card" style="border-left: 4px solid #8B5CF6 !important; border: 1px solid #E2E8F0;">
-                <div class="card-header d-flex justify-content-between align-items-center bg-transparent">
-                    <span class="rs-card-title" style="color:#7C3AED;">
-                        <i class="bi bi-send-check-fill me-2" aria-hidden="true"></i>
-                        Pengajuan Poin Menunggu Persetujuan
-                        <span class="ms-2 badge rounded-pill" style="background:#7C3AED; color:#fff; font-size:.7rem; padding:4px 10px;">{{ $pendingPointRequestCount }}</span>
-                    </span>
-                    <a href="{{ route('point-requests.admin') }}" class="rs-card-link" style="color:#7C3AED;">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table rs-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Petugas</th>
-                                    <th>Poin Diajukan</th>
-                                    <th>Alasan</th>
-                                    <th>Tanggal</th>
-                                    <th class="text-end">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($pendingPointRequests as $pr)
-                                <tr>
-                                    <td class="fw-600">{{ $pr->user->name }}</td>
-                                    <td><span style="font-weight:800; color:#B8912E;">{{ number_format($pr->points) }}</span> Poin</td>
-                                    <td style="max-width:200px; color:#64748B; font-size:.83rem;">{{ Str::limit($pr->reason, 50) }}</td>
-                                    <td style="color:#64748B; font-size:.83rem; white-space:nowrap;">{{ $pr->created_at->format('d M Y') }}</td>
-                                    <td class="text-end">
-                                        <a href="{{ route('point-requests.admin') }}" class="btn btn-sm text-white" style="background:#7C3AED; border-radius:6px; font-weight:600; font-size:.78rem;">
-                                            <i class="bi bi-arrow-right me-1"></i> Proses
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    <div class="row g-3">
-        {{-- Antrian Terbaru — disembunyikan
-        <div class="col-lg-8 fade-in">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span class="rs-card-title"><i class="bi bi-list-ol" aria-hidden="true"></i>Antrian Aktif Hari
-                        Ini</span>
-                    <a href="{{ route('antrian.index') }}" class="rs-card-link">
-                        Lihat Semua <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-                    </a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table rs-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>No. Antrian</th>
-                                    <th>Nama Pasien</th>
-                                    <th>Poli Tujuan</th>
-                                    <th>Waktu Daftar</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($antrianTerbaru as $reg)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td><span class="rs-antrian-no">{{ $reg->nomor_antrian }}</span></td>
-                                        <td class="fw-600">{{ $reg->patient->nama_pasien }}</td>
-                                        <td>{{ $reg->department->nama_poli }}</td>
-                                        <td>{{ $reg->created_at->format('H:i') }}</td>
-                                        <td><span class="badge badge-{{ $reg->status }}">{{ $reg->status_label }}</span></td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6">
-                                            <div class="rs-empty-state">
-                                                <i class="bi bi-inbox" aria-hidden="true"></i>
-                                                <p>Belum ada antrian aktif</p>
-                                                <small>Antrian akan muncul di sini ketika ada pendaftaran baru.</small>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        <!-- Antrian Terbaru -->
-        <!--
-<div class="col-lg-8 fade-in">
-    <div class="card">
+    <!-- Top Petugas Poin untuk Admin -->
+    @if(auth()->user()->isAdmin() && $topPetugas->count() > 0)
+    <div class="card mb-4 fade-in">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="rs-card-title">
-                <i class="bi bi-list-ol" aria-hidden="true"></i>
-                Antrian Aktif Hari Ini
-            </span>
-
-            <a href="{{ route('antrian.index') }}" class="rs-card-link">
-                Lihat Semua
-                <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-            </a>
-
+            <span class="rs-card-title"><i class="bi bi-trophy-fill text-warning"></i>Top Petugas Poin</span>
+            <a href="{{ route('admin.reports.index') }}" class="rs-card-link">Lihat Laporan Lengkap <i class="bi bi-arrow-right ms-1"></i></a>
         </div>
-        --}}
-
-
-        <!-- Quick Actions -->
-        <div class="col-lg-12 fade-in fade-in-delay-1">
-            <div class="card">
-                <div class="card-header"><span class="rs-card-title"><i class="bi bi-lightning" aria-hidden="true"></i>Aksi
-                        Cepat</span></div>
-                <div class="card-body">
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <a href="{{ route('registrations.create') }}" class="quick-action-btn qa-1">
-                                <span class="icon" aria-hidden="true"><i class="bi bi-clipboard2-plus-fill"></i></span>
-                                <span class="label">Daftar Pasien</span>
-                                <span class="sub">Pendaftaran baru</span>
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ route('registrations.index') }}" class="quick-action-btn qa-4">
-                                <span class="icon" aria-hidden="true"><i class="bi bi-table"></i></span>
-                                <span class="label">Pendaftaran</span>
-                                <span class="sub">Riwayat lengkap</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table rs-table mb-0">
                     <thead>
                         <tr>
-                            <th>No.</th>
-                            <th>No. Antrian</th>
-                            <th>Nama Pasien</th>
-                            <th>Poli Tujuan</th>
-                            <th>Waktu Daftar</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @forelse($antrianTerbaru as $reg)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>
-                                    <span class="rs-antrian-no">
-                                        {{ $reg->nomor_antrian }}
-                                    </span>
-                                </td>
-                                <td class="fw-600">
-                                    {{ $reg->patient->nama_pasien }}
-                                </td>
-                                <td>
-                                    {{ $reg->department->nama_poli }}
-                                </td>
-                                <td>
-                                    {{ $reg->created_at->format('H:i') }}
-                                </td>
-                                <td>
-                                    <span class="badge badge-{{ $reg->status }}">
-                                        {{ $reg->status_label }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6">
-                                    <div class="rs-empty-state">
-                                        <i class="bi bi-inbox" aria-hidden="true"></i>
-                                        <p>Belum ada antrian aktif</p>
-                                        <small>
-                                            Antrian akan muncul di sini ketika ada pendaftaran baru.
-                                        </small>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Ranking Poin -->
-<div class="col-lg-8 fade-in">
-
-    <div class="card h-100">
-
-        <div class="card-header d-flex justify-content-between align-items-center">
-
-            <span class="rs-card-title">
-                <i class="bi bi-trophy-fill" aria-hidden="true"></i>
-                Peringkat Poin Petugas
-            </span>
-
-            @if(auth()->user()->role === 'admin')
-                <a href="{{ route('points.admin') }}" class="rs-card-link">
-                    Lihat Semua
-                    <i class="bi bi-arrow-right ms-1"></i>
-                </a>
-            @endif
-
-        </div>
-
-        <div class="card-body">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-
-                <div>
-                    <div class="fw-bold" style="font-size:.85rem;">
-                        Ranking Bulan Ini
-                    </div>
-
-                    <div style="font-size:.7rem;color:var(--rs-muted);">
-                        {{ $namaBulanPoin }}
-                    </div>
-                </div>
-
-                <span class="point-month-badge">
-                    {{ $totalPendaftaranPoin }} pendaftaran
-                </span>
-
-            </div>
-
-            @if($rankingPoin->count() > 0)
-
-                <div class="table-responsive">
-
-                    <table class="point-ranking-table">
-
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Petugas</th>
-                                <th>Pendaftaran</th>
-                                <th class="text-end">Poin</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            @foreach($rankingPoin->take(5) as $petugas)
-
-                                <tr>
-
-                                    <td>
-                                        <span class="point-rank">
-                                            @if($loop->iteration === 1)
-                                                🥇
-                                            @elseif($loop->iteration === 2)
-                                                🥈
-                                            @elseif($loop->iteration === 3)
-                                                🥉
-                                            @else
-                                                {{ $loop->iteration }}
-                                            @endif
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <div style="font-weight:700;">
-                                            {{ $petugas->name }}
-                                        </div>
-
-                                        <div style="font-size:.65rem;color:var(--rs-muted);">
-                                            Petugas
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        {{ $petugas->total_pendaftaran ?? 0 }}
-                                    </td>
-
-                                    <td class="text-end">
-                                        <span class="point-score">
-                                            {{ $petugas->total_poin ?? 0 }} poin
-                                        </span>
-                                    </td>
-
-                                </tr>
-
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            @else
-
-                <div class="rs-empty-state">
-
-                    <i class="bi bi-trophy"></i>
-
-                    <p>Belum ada poin bulan ini</p>
-
-                    <small>
-                        Poin akan muncul setelah ada pendaftaran.
-                    </small>
-
-                </div>
-
-            @endif
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- Aksi Cepat -->
-<div class="col-lg-4 fade-in fade-in-delay-1">
-
-    <div class="card h-100">
-
-        <div class="card-header">
-
-            <span class="rs-card-title">
-                <i class="bi bi-lightning" aria-hidden="true"></i>
-                Aksi Cepat
-            </span>
-
-        </div>
-
-        <div class="card-body">
-
-            <div class="row g-2">
-
-                <div class="col-6">
-
-                    <a href="{{ route('registrations.create') }}"
-                       class="quick-action-btn qa-1">
-
-                        <span class="icon">
-                            <i class="bi bi-clipboard2-plus-fill"></i>
-                        </span>
-
-                        <span class="label">
-                            Daftar Pasien
-                        </span>
-
-                        <span class="sub">
-                            Pendaftaran baru
-                        </span>
-
-                    </a>
-
-                </div>
-
-                <div class="col-6">
-
-                    <a href="{{ route('registrations.index') }}"
-                       class="quick-action-btn qa-4">
-
-                        <span class="icon">
-                            <i class="bi bi-table"></i>
-                        </span>
-
-                        <span class="label">
-                            Pendaftaran
-                        </span>
-
-                        <span class="sub">
-                            Riwayat lengkap
-                        </span>
-
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-    </div>
-    {{-- ═══════════ RANKING POIN PETUGAS (Admin only) ═══════════ --}}
-    @if(auth()->user()->isAdmin() && $rankingPetugas && $rankingPetugas->isNotEmpty())
-    <div class="mt-4 fade-in">
-        <div class="table-card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <span class="d-flex align-items-center gap-2" style="font-weight:700; font-size:.95rem; color:var(--rs-ink);">
-                    <i class="bi bi-trophy" style="color:var(--rs-accent);" aria-hidden="true"></i>
-                    Ranking Poin Petugas
-                </span>
-                <a href="{{ route('points.admin') }}"
-                   style="font-size:.78rem; font-weight:700; color:var(--rs-primary); text-decoration:none;">
-                    Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
-                </a>
-            </div>
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4" style="width:56px;">#</th>
-                            <th>Petugas</th>
-                            <th>Total Pendaftaran</th>
-                            <th class="text-end">Poin Bulan Ini</th>
+                            <th class="ps-4">Peringkat</th>
+                            <th>Nama Petugas</th>
+                            <th class="text-center">Pasien Baru Diinput</th>
                             <th class="text-end pe-4">Saldo Poin</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($rankingPetugas as $i => $petugas)
+                        @foreach($topPetugas as $i => $petugas)
                         <tr>
                             <td class="ps-4">
-                                @if($i === 0 && $petugas->total_poin_earned > 0)
-                                    <i class="bi bi-trophy-fill" style="color:#D4AF37; font-size:1.05rem;" aria-label="Peringkat 1"></i>
-                                @elseif($i === 1 && $petugas->total_poin_earned > 0)
-                                    <i class="bi bi-trophy-fill" style="color:#A8A8A8; font-size:.98rem;" aria-label="Peringkat 2"></i>
-                                @elseif($i === 2 && $petugas->total_poin_earned > 0)
-                                    <i class="bi bi-trophy-fill" style="color:#C08552; font-size:.92rem;" aria-label="Peringkat 3"></i>
-                                @else
-                                    <span style="color:var(--rs-muted); font-weight:700; font-size:.85rem;">{{ $i + 1 }}</span>
+                                @if($i === 0) 🥇
+                                @elseif($i === 1) 🥈
+                                @elseif($i === 2) 🥉
+                                @else {{ $i + 1 }}
                                 @endif
                             </td>
                             <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div style="width:32px; height:32px; border-radius:10px;
-                                                background:{{ ['#E6F6F0','#E7F4F6','#FBF6E9','#F3E8FF','#FEE2E2'][$i % 5] }};
-                                                color:{{ ['#0F7B63','#0E7490','#B8912E','#7C3AED','#B54545'][$i % 5] }};
-                                                display:flex; align-items:center; justify-content:center;
-                                                font-weight:700; font-size:.76rem; flex-shrink:0;">
-                                        {{ strtoupper(substr($petugas->name, 0, 1)) }}
-                                    </div>
-                                    <span style="font-weight:600; font-size:.87rem; color:var(--rs-ink);">{{ $petugas->name }}</span>
-                                </div>
+                                <div class="fw-bold">{{ $petugas->name }}</div>
                             </td>
-                            <td style="color:var(--rs-muted); font-size:.85rem;">
-                                {{ number_format($petugas->total_pendaftaran_all ?? 0) }} pendaftaran
-                            </td>
-                            <td class="text-end">
-                                <span class="badge" style="background:var(--rs-primary-soft); color:var(--rs-primary-dark); font-size:.76rem;">
-                                    {{ number_format($petugas->total_poin_earned ?? 0) }} poin
-                                </span>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border">{{ $petugas->created_patients_count }} Pasien</span>
                             </td>
                             <td class="text-end pe-4">
-                                @php $saldo = $petugas->saldo_poin ?? 0; @endphp
-                                <span class="badge" style="background:{{ $saldo > 0 ? 'var(--rs-info-soft)' : '#F3F4F6' }}; color:{{ $saldo > 0 ? 'var(--rs-info)' : '#9CA3AF' }}; font-size:.76rem;">
-                                    {{ number_format($saldo) }} poin
+                                <span class="badge" style="background:var(--rs-accent-soft); color:var(--rs-accent); font-weight:800; font-size:.84rem;">
+                                    {{ number_format($petugas->point_balance) }} Poin
                                 </span>
                             </td>
                         </tr>
@@ -1182,6 +536,67 @@
         </div>
     </div>
     @endif
+
+    <!-- Quick Actions Row -->
+    <div class="row g-3">
+        <div class="col-12 fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <span class="rs-card-title"><i class="bi bi-lightning" aria-hidden="true"></i>Aksi Cepat</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <a href="{{ route('registrations.create') }}" class="quick-action-btn qa-1">
+                                <span class="icon" aria-hidden="true"><i class="bi bi-clipboard2-plus-fill"></i></span>
+                                <span class="label">Daftar Pasien</span>
+                                <span class="sub">Pendaftaran baru</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="{{ route('registrations.index') }}" class="quick-action-btn qa-2">
+                                <span class="icon" aria-hidden="true"><i class="bi bi-table"></i></span>
+                                <span class="label">Pendaftaran</span>
+                                <span class="sub">Data pendaftaran</span>
+                            </a>
+                        </div>
+                        @if(auth()->user()->isPetugas())
+                        <div class="col-6 col-md-3">
+                            <a href="{{ route('points.katalog') }}" class="quick-action-btn qa-3">
+                                <span class="icon" aria-hidden="true"><i class="bi bi-gift-fill"></i></span>
+                                <span class="label">Tukar Reward</span>
+                                <span class="sub">Katalog merchandise</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="{{ route('registrations.riwayat') }}" class="quick-action-btn qa-4">
+                                <span class="icon" aria-hidden="true"><i class="bi bi-clock-history"></i></span>
+                                <span class="label">Riwayat Saya</span>
+                                <span class="sub">Pendaftaran oleh saya</span>
+                            </a>
+                        </div>
+                        @endif
+                        @if(auth()->user()->isAdmin())
+                        <div class="col-6 col-md-3">
+                            <a href="{{ route('admin.redemptions.index') }}" class="quick-action-btn qa-3">
+                                <span class="icon" aria-hidden="true"><i class="bi bi-gift"></i></span>
+                                <span class="label">Penukaran Reward</span>
+                                <span class="sub">Persetujuan hadiah</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="{{ route('admin.reports.index') }}" class="quick-action-btn qa-4">
+                                <span class="icon" aria-hidden="true"><i class="bi bi-file-earmark-bar-graph"></i></span>
+                                <span class="label">Laporan Poin</span>
+                                <span class="sub">Rekapitulasi sistem</span>
+                            </a>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 

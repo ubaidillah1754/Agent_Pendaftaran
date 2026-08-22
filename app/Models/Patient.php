@@ -5,6 +5,9 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Patient extends Model
 {
@@ -25,6 +28,7 @@ class Patient extends Model
         'jenis_pembayaran',
         'no_bpjs',
         'no_asuransi',
+        'created_by',
     ];
 
     protected function casts(): array
@@ -36,18 +40,30 @@ class Patient extends Model
 
     // ─── Relasi ─────────────────────────────────────────────────────────────
 
-    /** Semua riwayat pendaftaran pasien ini */
-    public function registrations()
+    /** Petugas/User yang pertama kali menginput pasien ini */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /** Semua riwayat pendaftaran/kunjungan pasien ini */
+    public function registrations(): HasMany
     {
         return $this->hasMany(Registration::class);
     }
 
     /** Pendaftaran aktif (hari ini, status menunggu/dipanggil) */
-    public function pendaftaranHariIni()
+    public function pendaftaranHariIni(): HasMany
     {
         return $this->hasMany(Registration::class)
             ->whereDate('tanggal_daftar', today())
             ->whereIn('status', ['menunggu', 'dipanggil']);
+    }
+
+    /** Transaksi poin yang diperoleh dari pendaftaran pasien baru ini */
+    public function pointTransaction(): MorphOne
+    {
+        return $this->morphOne(PointTransaction::class, 'source');
     }
 
     // ─── Accessor ───────────────────────────────────────────────────────────
@@ -76,7 +92,7 @@ class Patient extends Model
 
     // ─── Scope ──────────────────────────────────────────────────────────────
 
-    /** Cari pasien berdasarkan NIK atau No. RM */
+    /** Cari pasien berdasarkan NIK, No. RM, atau Nama */
     public function scopeCariPasien($query, string $keyword)
     {
         return $query->where('nik', 'like', "%{$keyword}%")
