@@ -14,10 +14,14 @@ use App\Http\Controllers\Admin\MerchandiseController as AdminMerchandiseControll
 use App\Http\Controllers\Admin\PointRedemptionController as AdminPointRedemptionController;
 use App\Http\Controllers\Admin\PointAdjustmentController as AdminPointAdjustmentController;
 use App\Http\Controllers\Admin\PointReportController as AdminPointReportController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 // ── Redirect root ke dashboard atau login ────────────────────────────────────
 Route::get('/', fn() => redirect()->route('dashboard'));
+
+// ── Public Routes (tanpa login) ──────────────────────────────────────────────
+Route::get('/tracer/{kode_booking}', [PublicController::class, 'tracer'])->name('public.tracer');
 
 // ── Auth Routes (tamu saja) ──────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -115,6 +119,10 @@ Route::middleware('auth')->group(function () {
     // Batalkan pendaftaran
     Route::patch('registrations/{registration}/batal', [RegistrationController::class, 'batal'])
         ->name('registrations.batal');
+        
+    // Update status pendaftaran
+    Route::patch('registrations/{registration}/status', [RegistrationController::class, 'updateStatus'])
+        ->name('registrations.status');
         
     // Cetak antrian
     Route::get('registrations/{registration}/cetak', [RegistrationController::class, 'cetak'])

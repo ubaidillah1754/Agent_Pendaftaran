@@ -489,7 +489,7 @@
                 </div>
             </div>
             <div class="info-item">
-                <div class="info-label">Kode Boking</div>
+                <div class="info-label">Kode Booking</div>
                 <div class="info-value" style="font-size:1.05rem; color:var(--green-dark);">
                     {{ $registration->kode_booking ?? str_pad($registration->urutan_antrian, 6, '0', STR_PAD_LEFT) }}
                 </div>
@@ -503,12 +503,28 @@
         </div>
 
         {{-- ── FOOTER ── --}}
+        @php
+            $hasKodeBooking = !empty($registration->kode_booking);
+            $tracerUrl = $hasKodeBooking ? route('public.tracer', $registration->kode_booking) : null;
+            $qrUrl = $hasKodeBooking
+                ? 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&format=png&data=' . urlencode($tracerUrl)
+                : null;
+        @endphp
         <div class="footer">
             <div class="footer-msg">
                 <strong>Petunjuk Pasien</strong>
                 Harap menunggu di ruang tunggu poli yang bersangkutan.<br>
-                Patuhi protokol kesehatan & antri sesuai nomor.
+                Patuhi protokol kesehatan &amp; antri sesuai nomor.
+                @if($hasKodeBooking)
+                    <br><span style="color:var(--green); font-weight:600;">Scan QR untuk cek status antrean.</span>
+                @endif
             </div>
+            @if($hasKodeBooking)
+            <div style="text-align:center; flex-shrink:0;">
+                <img src="{{ $qrUrl }}" alt="QR Tracer" width="60" height="60" style="border-radius:6px; border:1px solid var(--border);"><br>
+                <span style="font-size:.5rem; color:var(--muted); display:block; margin-top:3px;">Scan QR Code</span>
+            </div>
+            @else
             <div style="text-align:right; font-size:.55rem; color:var(--muted); white-space:nowrap;">
                 Dicetak oleh:<br>
                 <strong style="color:var(--ink); font-size:.58rem;">
@@ -516,6 +532,7 @@
                 </strong><br>
                 {{ now()->format('d/m/Y H:i') }}
             </div>
+            @endif
         </div>
 
         <div class="bottom-strip"></div>

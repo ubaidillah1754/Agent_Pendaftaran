@@ -100,22 +100,56 @@
         </div>
     </div>
 
-    <div class="mt-3 d-flex gap-2 flex-wrap">
+    <div class="mt-3 d-flex gap-2 flex-wrap align-items-center">
         <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;border-radius:10px;">
             <i class="bi bi-arrow-left me-1"></i>Kembali
         </a>
-        @if($registration->status === 'menunggu')
-        <form action="{{ route('registrations.batal', $registration) }}" method="POST" onsubmit="return confirm('Batalkan pendaftaran ini?')">
-            @csrf @method('PATCH')
-            <button class="btn" style="background:#fef2f2;color:#ef4444;border-radius:10px;"><i class="bi bi-x-circle me-1"></i>Batalkan</button>
-        </form>
-        @endif
-        <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
-            <i class="bi bi-person me-1"></i>Profil Pasien
-        </a>
-        <a href="{{ route('registrations.cetak', $registration) }}" target="_blank" class="btn" style="background:var(--primary);color:#fff;border-radius:10px;">
-            <i class="bi bi-printer me-1"></i>Cetak Tracer
-        </a>
+        
+        <div class="ms-auto d-flex gap-2 flex-wrap">
+            @if($registration->status === 'menunggu')
+                <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
+                    @csrf @method('PATCH')
+                    <input type="hidden" name="status" value="dipanggil">
+                    <button type="submit" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
+                        <i class="bi bi-megaphone me-1"></i>Tandai Dipanggil
+                    </button>
+                </form>
+            @elseif($registration->status === 'dipanggil')
+                <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
+                    @csrf @method('PATCH')
+                    <input type="hidden" name="status" value="selesai">
+                    <button type="submit" class="btn" style="background:#ecfdf5;color:#047857;border-radius:10px;">
+                        <i class="bi bi-check-circle me-1"></i>Tandai Selesai
+                    </button>
+                </form>
+            @endif
+
+            @if($registration->status === 'selesai' && auth()->user()->isAdmin())
+                <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline" onsubmit="return confirm('Status pendaftaran ini sudah Selesai. Apakah Anda yakin ingin membatalkan status Selesai dan mengembalikannya ke Dipanggil?');">
+                    @csrf @method('PATCH')
+                    <input type="hidden" name="status" value="dipanggil">
+                    <button type="submit" class="btn btn-outline-warning" style="border-radius:10px;">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Koreksi Status Selesai
+                    </button>
+                </form>
+            @endif
+
+            @if($registration->status === 'menunggu')
+            <form action="{{ route('registrations.batal', $registration) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan pendaftaran ini?')">
+                @csrf @method('PATCH')
+                <button type="submit" class="btn" style="background:#fef2f2;color:#ef4444;border-radius:10px;">
+                    <i class="bi bi-x-circle me-1"></i>Batalkan
+                </button>
+            </form>
+            @endif
+            
+            <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
+                <i class="bi bi-person me-1"></i>Profil Pasien
+            </a>
+            <a href="{{ route('registrations.cetak', $registration) }}" target="_blank" class="btn" style="background:var(--primary);color:#fff;border-radius:10px;">
+                <i class="bi bi-printer me-1"></i>Cetak Tracer
+            </a>
+        </div>
     </div>
 </div>
 </div>

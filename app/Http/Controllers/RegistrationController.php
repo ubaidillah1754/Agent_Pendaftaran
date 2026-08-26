@@ -232,6 +232,27 @@ class RegistrationController extends Controller
         return back()->with('success', "Pendaftaran {$registration->nomor_antrian} berhasil dibatalkan.");
     }
 
+    /** Update status pendaftaran dari halaman detail */
+    public function updateStatus(Request $request, Registration $registration)
+    {
+        $request->validate([
+            'status' => ['required', 'in:menunggu,dipanggil,selesai,batal'],
+        ]);
+
+        $newStatus = $request->status;
+        $currentStatus = $registration->status;
+
+        // Admin override untuk status selesai
+        if ($currentStatus === 'selesai' && !Auth::user()->isAdmin()) {
+            return back()->with('error', 'Hanya admin yang dapat mengubah pendaftaran yang sudah selesai.');
+        }
+
+        $registration->update(['status' => $newStatus]);
+
+        $statusLabel = $registration->status_label;
+        return back()->with('success', "Status pendaftaran berhasil diubah menjadi {$statusLabel}.");
+    }
+
     /** Cetak tiket antrian */
     public function cetak(Registration $registration)
     {

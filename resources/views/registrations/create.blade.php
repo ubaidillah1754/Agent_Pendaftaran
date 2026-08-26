@@ -109,7 +109,7 @@
                             <span class="check-badge"><i class="bi bi-check-lg"></i></span>
                             <span class="icon-circle"><i class="bi bi-search"></i></span>
                             <h6>Pasien Lama</h6>
-                            <p>Cari berdasarkan NIK / No. RM</p>
+                            <p>Cari berdasarkan NIK</p>
                         </div>
                     </div>
                     <div class="col-6">
@@ -129,7 +129,7 @@
                         <label class="form-label">Cari Pasien <span class="text-danger">*</span></label>
                         <div class="search-wrap">
                             <i class="bi bi-search"></i>
-                            <input type="text" id="q-pasien" class="form-control" placeholder="Ketik NIK, No. RM, atau nama..." autocomplete="off">
+                            <input type="text" id="q-pasien" class="form-control" placeholder="Ketik NIK Pasien..." autocomplete="off">
                             <div id="search-result"></div>
                         </div>
                     </div>
