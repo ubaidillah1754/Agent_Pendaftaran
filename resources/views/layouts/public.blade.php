@@ -55,19 +55,7 @@
             flex: 1;
             padding: 40px 20px;
         }
-        .btn-login {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 999px;
-            padding: 8px 20px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .btn-login:hover {
-            background: white;
-            color: var(--primary);
-        }
+
         .footer-public {
             background: var(--surface);
             padding: 24px 0;
@@ -104,9 +92,7 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('public.cek') ? 'active' : '' }}" href="{{ route('public.cek') }}">Cek Pendaftaran</a>
                     </li>
-                    <li class="nav-item ms-lg-2 mt-3 mt-lg-0">
-                        <a class="btn-login text-decoration-none d-inline-block" href="{{ route('login') }}">Login Petugas</a>
-                    </li>
+
                 </ul>
             </div>
         </div>

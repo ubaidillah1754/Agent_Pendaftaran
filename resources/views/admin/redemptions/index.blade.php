@@ -191,90 +191,7 @@
                         </td>
                     </tr>
 
-                    <!-- Modal Approve -->
-                    @if($item->isPending())
-                    <div class="modal fade" id="modalApprove{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content" style="border-radius:12px;">
-                                <form action="{{ route('admin.redemptions.approve', $item) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="modal-header">
-                                        <h6 class="modal-title fw-bold">Persetujuan Penukaran Reward</h6>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body p-4 text-start">
-                                        <p style="font-size:.85rem;">Setujui penukaran reward <strong>{{ $item->merchandise_name }} ({{ $item->quantity }}x)</strong> untuk karyawan <strong>{{ $item->user->name }}</strong> senilai <strong>{{ number_format($item->total_points) }} poin</strong>?</p>
-                                        <div class="mb-2">
-                                            <label class="form-label" style="font-size:.75rem; font-weight:700;">Catatan Admin (Opsional)</label>
-                                            <input type="text" name="notes" class="form-control form-control-sm" placeholder="Contoh: Barang siap diambil di bagian HRD...">
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-sm btn-success fw-bold">Setujui Penukaran</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Modal Reject -->
-                    <div class="modal fade" id="modalReject{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content" style="border-radius:12px;">
-                                <form action="{{ route('admin.redemptions.reject', $item) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="modal-header">
-                                        <h6 class="modal-title fw-bold text-danger">Tolak Penukaran Reward</h6>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body p-4 text-start">
-                                        <p style="font-size:.85rem;">Anda akan menolak penukaran <strong>{{ $item->reference_code }}</strong>. Poin <strong>+{{ number_format($item->total_points) }}</strong> dan stok <strong>+{{ $item->quantity }}</strong> akan dikembalikan secara otomatis.</p>
-                                        <div class="mb-2">
-                                            <label class="form-label" style="font-size:.75rem; font-weight:700;">Alasan Penolakan <span class="text-danger">*</span></label>
-                                            <textarea name="reason" class="form-control form-control-sm" rows="2" placeholder="Contoh: Stok barang cacat fisik / salah pengajuan..." required></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                        <button type="submit" class="btn btn-sm btn-danger fw-bold">Tolak &amp; Kembalikan Poin</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Modal Cancel -->
-                    @if($item->isApproved())
-                    <div class="modal fade" id="modalCancel{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content" style="border-radius:12px;">
-                                <form action="{{ route('admin.redemptions.cancel', $item) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="modal-header">
-                                        <h6 class="modal-title fw-bold text-warning">Batalkan Penukaran</h6>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body p-4 text-start">
-                                        <p style="font-size:.85rem;">Batalkan penukaran <strong>{{ $item->reference_code }}</strong> yang sebelumnya sudah disetujui? Poin <strong>+{{ number_format($item->total_points) }}</strong> dan stok barang akan dikembalikan.</p>
-                                        <div class="mb-2">
-                                            <label class="form-label" style="font-size:.75rem; font-weight:700;">Alasan Pembatalan <span class="text-danger">*</span></label>
-                                            <textarea name="reason" class="form-control form-control-sm" rows="2" placeholder="Alasan pembatalan..." required></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                        <button type="submit" class="btn btn-sm btn-warning fw-bold">Batalkan &amp; Refund Poin</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
 
                     @empty
                     <tr>
@@ -293,4 +210,92 @@
     </div>
     @endif
 </div>
+
+@foreach($redemptions as $item)
+<!-- Modal Approve -->
+@if($item->isPending())
+<div class="modal fade" id="modalApprove{{ $item->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:12px;">
+            <form action="{{ route('admin.redemptions.approve', $item) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold">Persetujuan Penukaran Reward</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-start">
+                    <p style="font-size:.85rem;">Setujui penukaran reward <strong>{{ $item->merchandise_name }} ({{ $item->quantity }}x)</strong> untuk karyawan <strong>{{ $item->user->name }}</strong> senilai <strong>{{ number_format($item->total_points) }} poin</strong>?</p>
+                    <div class="mb-2">
+                        <label class="form-label" style="font-size:.75rem; font-weight:700;">Catatan Admin (Opsional)</label>
+                        <input type="text" name="notes" class="form-control form-control-sm" placeholder="Contoh: Barang siap diambil di bagian HRD...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-sm btn-success fw-bold">Setujui Penukaran</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Reject -->
+<div class="modal fade" id="modalReject{{ $item->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:12px;">
+            <form action="{{ route('admin.redemptions.reject', $item) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold text-danger">Tolak Penukaran Reward</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-start">
+                    <p style="font-size:.85rem;">Anda akan menolak penukaran <strong>{{ $item->reference_code }}</strong>. Poin <strong>+{{ number_format($item->total_points) }}</strong> dan stok <strong>+{{ $item->quantity }}</strong> akan dikembalikan secara otomatis.</p>
+                    <div class="mb-2">
+                        <label class="form-label" style="font-size:.75rem; font-weight:700;">Alasan Penolakan <span class="text-danger">*</span></label>
+                        <textarea name="reason" class="form-control form-control-sm" rows="2" placeholder="Contoh: Stok barang cacat fisik / salah pengajuan..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-sm btn-danger fw-bold">Tolak &amp; Kembalikan Poin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Modal Cancel -->
+@if($item->isApproved())
+<div class="modal fade" id="modalCancel{{ $item->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:12px;">
+            <form action="{{ route('admin.redemptions.cancel', $item) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold text-warning">Batalkan Penukaran</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-start">
+                    <p style="font-size:.85rem;">Batalkan penukaran <strong>{{ $item->reference_code }}</strong> yang sebelumnya sudah disetujui? Poin <strong>+{{ number_format($item->total_points) }}</strong> dan stok barang akan dikembalikan.</p>
+                    <div class="mb-2">
+                        <label class="form-label" style="font-size:.75rem; font-weight:700;">Alasan Pembatalan <span class="text-danger">*</span></label>
+                        <textarea name="reason" class="form-control form-control-sm" rows="2" placeholder="Alasan pembatalan..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-sm btn-warning fw-bold">Batalkan &amp; Refund Poin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+@endforeach
+
 @endsection

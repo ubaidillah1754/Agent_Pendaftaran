@@ -190,17 +190,19 @@ class RedemptionService
                 }
             }
 
-            // Kembalikan poin ke karyawan (type: reversal)
+            // Kembalikan poin ke karyawan (type: reversal) jika poin lebih dari 0
             $user = User::where('id', $locked->user_id)->firstOrFail();
-            $this->pointService->reverse(
-                user: $user,
-                amount: $locked->total_points,
-                sourceType: PointRedemption::class,
-                sourceId: $locked->id,
-                reference: "REV-{$locked->reference_code}",
-                description: "Pengembalian poin: Penukaran {$locked->merchandise_name} ditolak. Alasan: {$reason}",
-                actor: $admin
-            );
+            if ($locked->total_points > 0) {
+                $this->pointService->reverse(
+                    user: $user,
+                    amount: $locked->total_points,
+                    sourceType: PointRedemption::class,
+                    sourceId: $locked->id,
+                    reference: "REV-{$locked->reference_code}",
+                    description: "Pengembalian poin: Penukaran {$locked->merchandise_name} ditolak. Alasan: {$reason}",
+                    actor: $admin
+                );
+            }
 
             $this->auditService->log(
                 actor: $admin,
@@ -247,17 +249,19 @@ class RedemptionService
                 }
             }
 
-            // Kembalikan poin via reversal
+            // Kembalikan poin via reversal jika poin lebih dari 0
             $user = User::where('id', $locked->user_id)->firstOrFail();
-            $this->pointService->reverse(
-                user: $user,
-                amount: $locked->total_points,
-                sourceType: PointRedemption::class,
-                sourceId: $locked->id,
-                reference: "REV-{$locked->reference_code}",
-                description: "Pengembalian poin: Penukaran {$locked->merchandise_name} dibatalkan. Alasan: {$reason}",
-                actor: $actor
-            );
+            if ($locked->total_points > 0) {
+                $this->pointService->reverse(
+                    user: $user,
+                    amount: $locked->total_points,
+                    sourceType: PointRedemption::class,
+                    sourceId: $locked->id,
+                    reference: "REV-{$locked->reference_code}",
+                    description: "Pengembalian poin: Penukaran {$locked->merchandise_name} dibatalkan. Alasan: {$reason}",
+                    actor: $actor
+                );
+            }
 
             $this->auditService->log(
                 actor: $actor,

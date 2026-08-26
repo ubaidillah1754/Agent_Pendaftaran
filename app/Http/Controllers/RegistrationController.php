@@ -20,32 +20,50 @@ class RegistrationController extends Controller
 
     public function index(Request $request)
     {
-        $query = Registration::with(['patient', 'department', 'doctor'])
-            ->orderByDesc('tanggal_daftar')
-            ->orderBy('urutan_antrian');
+        $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
 
-        // Filter tanggal
-        if ($request->filled('tanggal')) {
-            $query->whereDate('tanggal_daftar', $request->tanggal);
-        } else {
-            // Default: tampilkan hari ini
-            $query->whereDate('tanggal_daftar', today());
-        }
+        // Base query for registrations
+        $baseQuery = Registration::with(['patient', 'department', 'doctor'])
+            ->whereDate('tanggal_daftar', $tanggal);
 
-        // Filter poli
         if ($request->filled('department_id')) {
-            $query->where('department_id', $request->department_id);
+            $baseQuery->where('department_id', $request->department_id);
         }
 
-        // Filter status
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $baseQuery->where('status', $request->status);
         }
 
-        $registrations = $query->paginate(20)->withQueryString();
-        $departments   = Department::active()->orderBy('nama_poli')->get();
+        // 1. Antrian Sedang Proses (menunggu, dipanggil)
+        $antrianProses = (clone $baseQuery)
+            ->whereIn('status', ['menunggu', 'dipanggil'])
+            ->orderBy('urutan_antrian')
+            ->paginate(5, ['*'], 'page_proses')->withQueryString();
 
-        return view('registrations.index', compact('registrations', 'departments'));
+        // 2. Antrian Selesai
+        $antrianSelesai = (clone $baseQuery)
+            ->where('status', 'selesai')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(5, ['*'], 'page_selesai')->withQueryString();
+
+        // 3. Data Pasien
+        $patientQuery = Patient::query();
+        if ($request->filled('search')) {
+            $patientQuery->where('nama_pasien', 'like', '%' . $request->search . '%')
+                         ->orWhere('no_rm', 'like', '%' . $request->search . '%');
+        }
+        $patients = $patientQuery->orderByDesc('created_at')->paginate(5, ['*'], 'page_pasien')->withQueryString();
+
+        // Stats
+        $departments = Department::active()->orderBy('nama_poli')->get();
+        $totalPendaftaran = (clone $baseQuery)->count();
+        $totalMenunggu = (clone $baseQuery)->where('status', 'menunggu')->count();
+        $totalSelesai = (clone $baseQuery)->where('status', 'selesai')->count();
+
+        return view('registrations.index', compact(
+            'antrianProses', 'antrianSelesai', 'patients', 'departments',
+            'totalPendaftaran', 'totalMenunggu', 'totalSelesai'
+        ));
     }
 
     public function create(Request $request)
