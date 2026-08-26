@@ -452,8 +452,8 @@
                 <div class="info-value">{{ $registration->department->nama_poli }}</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Tanggal Daftar</div>
-                <div class="info-value" style="font-weight:500;">{{ $registration->tanggal_daftar->translatedFormat('d F Y') }}</div>
+                <div class="info-label">Tanggal Kunjungan</div>
+                <div class="info-value" style="font-weight:500;">{{ $registration->tanggal_kunjungan->translatedFormat('d F Y') }}</div>
             </div>
             <div class="info-item full">
                 <div class="info-label">Dokter</div>
@@ -462,7 +462,7 @@
             <div class="info-item">
                 <div class="info-label">Jadwal</div>
                 <div class="info-value" style="font-weight:500;">
-                    {{ $registration->tanggal_daftar->translatedFormat('d F Y') }} <br>
+                    {{ $registration->tanggal_kunjungan->translatedFormat('d F Y') }} <br>
                     {{ $registration->doctorSchedule->hari }},
                     {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}
                 </div>

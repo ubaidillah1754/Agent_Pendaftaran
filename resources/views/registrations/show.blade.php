@@ -40,7 +40,7 @@
             <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.82rem;opacity:.8;">
                 <i class="bi bi-hospital"></i>{{ $registration->department->nama_poli }}
                 <span>&middot;</span>
-                <i class="bi bi-calendar-event"></i>{{ $registration->tanggal_daftar->format('d F Y') }}
+                <i class="bi bi-calendar-event"></i>{{ $registration->tanggal_kunjungan->format('d F Y') }}
             </div>
         </div>
     </div>
@@ -87,6 +87,7 @@
                         <span class="label">Jadwal</span>
                         <span class="value" style="font-weight:400;">{{ $registration->doctorSchedule->hari }}, {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}</span>
                     </div>
+                    <div class="info-row"><span class="label">Tgl Kunjungan</span><span class="value" style="font-weight:400;color:var(--primary);">{{ $registration->tanggal_kunjungan->format('d M Y') }}</span></div>
                     <div class="info-row"><span class="label">Tgl Daftar</span><span class="value" style="font-weight:400;">{{ $registration->tanggal_daftar->format('d M Y') }}</span></div>
                     <!--<div class="info-row"><span class="label">Urutan</span><span class="value" style="font-weight:400;">#{{ $registration->urutan_antrian }}</span></div>-->
                     <div class="info-row"><span class="label">Keluhan</span><span class="value" style="font-weight:400;">{{ $registration->keluhan ?? '-' }}</span></div>
@@ -103,22 +104,24 @@
         </a>
         
         <div class="ms-auto d-flex gap-2 flex-wrap">
-            @if($registration->status === 'menunggu')
-                <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" value="dipanggil">
-                    <button type="submit" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
-                        <i class="bi bi-megaphone me-1"></i>Tandai Dipanggil
-                    </button>
-                </form>
-            @elseif($registration->status === 'dipanggil')
-                <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" value="selesai">
-                    <button type="submit" class="btn" style="background:#ecfdf5;color:#047857;border-radius:10px;">
-                        <i class="bi bi-check-circle me-1"></i>Tandai Selesai
-                    </button>
-                </form>
+            @if(Auth::user()->isAdmin())
+                @if($registration->status === 'menunggu')
+                    <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="status" value="dipanggil">
+                        <button type="submit" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
+                            <i class="bi bi-megaphone me-1"></i>Tandai Dipanggil
+                        </button>
+                    </form>
+                @elseif($registration->status === 'dipanggil')
+                    <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="status" value="selesai">
+                        <button type="submit" class="btn" style="background:#ecfdf5;color:#047857;border-radius:10px;">
+                            <i class="bi bi-check-circle me-1"></i>Tandai Selesai
+                        </button>
+                    </form>
+                @endif
             @endif
 
             {{-- Koreksi status dihapus sesuai permintaan --}}

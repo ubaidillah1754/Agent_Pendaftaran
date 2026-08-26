@@ -156,7 +156,8 @@ class RegistrationController extends Controller
                 'doctor_schedule_id' => $schedule->id,
                 'department_id'      => $validated['department_id'],
                 'doctor_id'          => $validated['doctor_id'],
-                'tanggal_daftar'     => $tanggal,
+                'tanggal_daftar'     => now()->toDateString(),
+                'tanggal_kunjungan'  => $tanggal,
                 'nomor_antrian'      => $antrian['nomor_antrian'],
                 'urutan_antrian'     => $antrian['urutan'],
                 'kode_booking'       => $kodeBooking,
@@ -167,6 +168,7 @@ class RegistrationController extends Controller
         });
 
         $message = "Pendaftaran berhasil! Nomor antrian: {$registration->nomor_antrian}.";
+        
         if ($earnedPoints > 0) {
             $message .= " Anda mendapatkan +{$earnedPoints} poin untuk pendaftaran pasien baru.";
         }

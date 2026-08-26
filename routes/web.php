@@ -106,17 +106,6 @@ Route::middleware('auth')->group(function () {
         ->name('registrations.riwayat')
         ->middleware('role:petugas');
 
-    Route::resource('registrations', RegistrationController::class)
-        ->names([
-            'index'   => 'registrations.index',
-            'create'  => 'registrations.create',
-            'store'   => 'registrations.store',
-            'show'    => 'registrations.show',
-            'edit'    => 'registrations.edit',
-            'update'  => 'registrations.update',
-            'destroy' => 'registrations.destroy',
-        ]);
-
     // Batalkan pendaftaran
     Route::patch('registrations/{registration}/batal', [RegistrationController::class, 'batal'])
         ->name('registrations.batal');
@@ -128,6 +117,17 @@ Route::middleware('auth')->group(function () {
     // Cetak antrian
     Route::get('registrations/{registration}/cetak', [RegistrationController::class, 'cetak'])
         ->name('registrations.cetak');
+
+    Route::resource('registrations', RegistrationController::class)
+        ->names([
+            'index'   => 'registrations.index',
+            'create'  => 'registrations.create',
+            'store'   => 'registrations.store',
+            'show'    => 'registrations.show',
+            'edit'    => 'registrations.edit',
+            'update'  => 'registrations.update',
+            'destroy' => 'registrations.destroy',
+        ]);
 
     // ── Modul Antrian ─────────────────────────────────────────────────────────
     Route::get('/antrian',                                      [AntrianController::class, 'index'])->name('antrian.index');

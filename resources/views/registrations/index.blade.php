@@ -193,7 +193,7 @@
                     </td>
                     <td style="font-size:.82rem;">{{ $reg->department->nama_poli }}</td>
                     <td style="font-size:.82rem;">{{ $reg->doctor->nama_dokter }}</td>
-                    <td style="font-size:.82rem;">{{ $reg->tanggal_daftar->format('d M Y') }}</td>
+                    <td style="font-size:.82rem;">{{ $reg->tanggal_kunjungan->format('d M Y') }}</td>
                     <td>
                         <span class="badge" style="background:#f1efe4;color:#4a4335;">{{ strtoupper($reg->patient->jenis_pembayaran) }}</span>
                     </td>

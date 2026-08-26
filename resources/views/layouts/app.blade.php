@@ -925,7 +925,10 @@
             </a>
 
             <div class="sidebar-label">Pendaftaran</div>
-            <a href="{{ route('registrations.index') }}"
+            @php
+                $pendaftaranRoute = auth()->user()->isAdmin() ? route('registrations.index') : route('registrations.create');
+            @endphp
+            <a href="{{ $pendaftaranRoute }}"
                 class="nav-link {{ request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
                 @if(request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran

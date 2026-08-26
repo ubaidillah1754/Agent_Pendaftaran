@@ -15,6 +15,7 @@ class Registration extends Model
         'department_id',
         'doctor_id',
         'tanggal_daftar',
+        'tanggal_kunjungan',
         'nomor_antrian',
         'urutan_antrian',
         'kode_booking',
@@ -27,6 +28,7 @@ class Registration extends Model
     {
         return [
             'tanggal_daftar' => 'date',
+            'tanggal_kunjungan' => 'date',
         ];
     }
 

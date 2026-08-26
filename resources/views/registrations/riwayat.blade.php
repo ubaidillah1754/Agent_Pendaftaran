@@ -183,7 +183,7 @@
                         </div>
                     </td>
                     <td style="font-size:.85rem; color:var(--ink); white-space:nowrap;">
-                        {{ $reg->tanggal_daftar->translatedFormat('d M Y') }}
+                        {{ $reg->tanggal_kunjungan->translatedFormat('d M Y') }}
                         <div style="font-size:.72rem; color:var(--muted);">
                             {{ $reg->created_at->format('H:i') }} WIB
                         </div>
