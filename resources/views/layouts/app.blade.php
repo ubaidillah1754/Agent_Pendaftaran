@@ -924,6 +924,11 @@
                 <span class="nav-icon-box"><i class="bi bi-speedometer2" aria-hidden="true"></i></span> Dashboard
             </a>
 
+            <a href="{{ route('info.pendaftaran') }}" target="_blank"
+                class="nav-link {{ request()->routeIs('info.pendaftaran') ? 'active' : '' }}">
+                <span class="nav-icon-box"><i class="bi bi-window-sidebar" aria-hidden="true"></i></span> Portal Publik
+            </a>
+
             <div class="sidebar-label">Pendaftaran</div>
             @php
                 $pendaftaranRoute = auth()->user()->isAdmin() ? route('registrations.index') : route('registrations.create');

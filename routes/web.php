@@ -18,7 +18,8 @@ use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
 // ── Public Routes (tanpa login) ──────────────────────────────────────────────
-Route::get('/', [PublicController::class, 'index'])->name('public.index');
+Route::get('/', function () { return redirect()->route('login'); });
+Route::get('/info-pendaftaran', [PublicController::class, 'index'])->name('info.pendaftaran');
 Route::get('/jadwal-dokter', [PublicController::class, 'jadwal'])->name('public.jadwal');
 Route::get('/cek-pendaftaran', [PublicController::class, 'cek'])->name('public.cek');
 Route::post('/cek-pendaftaran', [PublicController::class, 'prosesCek'])->name('public.cek.post');

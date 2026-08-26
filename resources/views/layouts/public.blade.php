@@ -83,7 +83,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-public navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('public.index') }}">
+            <a class="navbar-brand" href="{{ route('info.pendaftaran') }}">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
                     <path d="M12 2L4 6V12C4 15.31 7.58 18.8 12 20C16.42 18.8 20 15.31 20 12V6L12 2Z" fill="rgba(255,255,255,.3)" stroke="#fff" stroke-width="1.5"/>
                     <path d="M11 8H13V11H16V13H13V16H11V13H8V11H11V8Z" fill="#fff"/>
@@ -96,7 +96,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center gap-3">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('public.index') ? 'active' : '' }}" href="{{ route('public.index') }}">Beranda</a>
+                        <a class="nav-link {{ request()->routeIs('info.pendaftaran') ? 'active' : '' }}" href="{{ route('info.pendaftaran') }}">Beranda</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('public.jadwal') ? 'active' : '' }}" href="{{ route('public.jadwal') }}">Jadwal Dokter</a>
