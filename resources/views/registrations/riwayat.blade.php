@@ -84,48 +84,40 @@
 
 {{-- ═══════════ FILTER BAR ═══════════ --}}
 <div class="filter-bar mb-4 fade-in">
-    <form method="GET" action="{{ route('registrations.riwayat') }}"
-          class="row g-2 align-items-end">
+    <form method="GET" action="{{ route('registrations.riwayat') }}" class="row g-3 align-items-end">
         <div class="col-md-3 col-sm-6">
-            <label class="form-label" style="font-size:.78rem; font-weight:700;">Dari Tanggal</label>
-            <input type="date" name="dari" class="form-control form-control-sm"
-                   value="{{ request('dari') }}"
-                   max="{{ date('Y-m-d') }}">
+            <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bulan</label>
+            <input type="month" name="bulan" class="form-control"
+                   value="{{ request('bulan', today()->format('Y-m')) }}"
+                   style="height: 44px; border-radius: 10px; border-color: var(--border);">
         </div>
         <div class="col-md-3 col-sm-6">
-            <label class="form-label" style="font-size:.78rem; font-weight:700;">Sampai Tanggal</label>
-            <input type="date" name="sampai" class="form-control form-control-sm"
-                   value="{{ request('sampai') }}"
-                   max="{{ date('Y-m-d') }}">
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <label class="form-label" style="font-size:.78rem; font-weight:700;">Poli</label>
-            <select name="department_id" class="form-select form-select-sm">
+            <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Poli</label>
+            <select name="department_id" class="form-select" style="height: 44px; border-radius: 10px; border-color: var(--border);">
                 <option value="">Semua Poli</option>
                 @foreach($departments as $dept)
-                    <option value="{{ $dept->id }}"
-                            {{ request('department_id') == $dept->id ? 'selected' : '' }}>
+                    <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
                         {{ $dept->nama_poli }}
                     </option>
                 @endforeach
             </select>
         </div>
-        <div class="col-md-1 col-sm-6">
-            <label class="form-label" style="font-size:.78rem; font-weight:700;">Status</label>
-            <select name="status" class="form-select form-select-sm">
-                <option value="">Semua</option>
+        <div class="col-md-3 col-sm-6">
+            <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Status</label>
+            <select name="status" class="form-select" style="height: 44px; border-radius: 10px; border-color: var(--border);">
+                <option value="">Semua Status</option>
                 <option value="menunggu"  {{ request('status') === 'menunggu'  ? 'selected' : '' }}>Menunggu</option>
                 <option value="dipanggil" {{ request('status') === 'dipanggil' ? 'selected' : '' }}>Dipanggil</option>
                 <option value="selesai"   {{ request('status') === 'selesai'   ? 'selected' : '' }}>Selesai</option>
                 <option value="batal"     {{ request('status') === 'batal'     ? 'selected' : '' }}>Batal</option>
             </select>
         </div>
-        <div class="col-md-2 col-sm-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary btn-sm flex-fill">
+        <div class="col-md-3 col-sm-6 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill fw-bold" style="height: 44px; border-radius: 10px; font-size: .85rem;">
                 <i class="bi bi-funnel me-1"></i>Filter
             </button>
-            <a href="{{ route('registrations.riwayat') }}" class="btn btn-sm flex-fill"
-               style="background:var(--bg); color:var(--muted); border:1px solid var(--border);">
+            <a href="{{ route('registrations.riwayat') }}" class="btn flex-fill fw-bold d-flex align-items-center justify-content-center"
+               style="height: 44px; background:var(--bg); color:var(--muted); border:1px solid var(--border); border-radius: 10px; font-size: .85rem; text-decoration: none;">
                 Reset
             </a>
         </div>

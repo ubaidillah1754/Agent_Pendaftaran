@@ -270,20 +270,12 @@ class RegistrationController extends Controller
             ->orderByDesc('tanggal_daftar')
             ->orderByDesc('created_at');
 
-        // Filter tanggal dari
-        if ($request->filled('dari')) {
-            $query->whereDate('created_at', '>=', $request->dari);
-        } else {
-            // Default: mulai dari kemarin
-            $query->whereDate('created_at', '>=', today()->subDay());
-        }
-
-        // Filter tanggal sampai
-        if ($request->filled('sampai')) {
-            $query->whereDate('created_at', '<=', $request->sampai);
-        } else {
-            // Default: sampai hari ini
-            $query->whereDate('created_at', '<=', today());
+        // Filter bulan (format: YYYY-MM)
+        $bulan = $request->input('bulan', today()->format('Y-m'));
+        if (preg_match('/^\d{4}-\d{2}$/', $bulan)) {
+            [$year, $month] = explode('-', $bulan);
+            $query->whereYear('created_at', $year)
+                  ->whereMonth('created_at', $month);
         }
 
         // Filter poli
