@@ -90,7 +90,7 @@
                             <option value="">— Pilih Poli —</option>
                             @foreach($departments as $d)
                                 <option value="{{ $d->id }}" {{ old('department_id') == $d->id ? 'selected' : '' }}>
-                                    {{ $d->kode_poli }} — {{ $d->nama_poli }}
+                                    {{ $d->nama_poli }}
                                 </option>
                             @endforeach
                         </select>

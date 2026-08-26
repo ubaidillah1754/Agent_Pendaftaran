@@ -37,9 +37,6 @@
                 <i class="bi bi-ticket-perforated me-1"></i>Nomor Antrian
             </div>
             <div style="font-size:5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->nomor_antrian }}</div>
-            <span class="badge mt-2" style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);font-size:.85rem;padding:6px 16px;border-radius:999px;">
-                {{ $registration->status_label }}
-            </span>
             <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.82rem;opacity:.8;">
                 <i class="bi bi-hospital"></i>{{ $registration->department->nama_poli }}
                 <span>&middot;</span>
@@ -124,15 +121,7 @@
                 </form>
             @endif
 
-            @if($registration->status === 'selesai' && auth()->user()->isAdmin())
-                <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline" onsubmit="return confirm('Status pendaftaran ini sudah Selesai. Apakah Anda yakin ingin membatalkan status Selesai dan mengembalikannya ke Dipanggil?');">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" value="dipanggil">
-                    <button type="submit" class="btn btn-outline-warning" style="border-radius:10px;">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>Koreksi Status Selesai
-                    </button>
-                </form>
-            @endif
+            {{-- Koreksi status dihapus sesuai permintaan --}}
 
             @if($registration->status === 'menunggu')
             <form action="{{ route('registrations.batal', $registration) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan pendaftaran ini?')">

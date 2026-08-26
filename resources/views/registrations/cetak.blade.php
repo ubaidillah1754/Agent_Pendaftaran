@@ -135,7 +135,7 @@
 
         /* ── NOMOR ANTRIAN HERO ── */
         .antrian-hero {
-            padding: 18px 20px 14px;
+            padding: 16px 20px 10px;
             text-align: center;
             background: var(--green-soft);
             border-bottom: 1.5px dashed var(--border);
@@ -147,27 +147,15 @@
             letter-spacing: .14em;
             text-transform: uppercase;
             color: var(--green);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .antrian-number {
             font-family: 'Amiri', serif;
-            font-size: 4.2rem;
+            font-size: 3.2rem;
             font-weight: 700;
             color: var(--green-dark);
             line-height: 1;
-            letter-spacing: .04em;
-        }
-        .antrian-status {
-            display: inline-block;
-            margin-top: 6px;
-            background: var(--green-dark);
-            color: #fff;
-            font-size: .62rem;
-            font-weight: 700;
-            padding: 3px 14px;
-            border-radius: 999px;
-            letter-spacing: .06em;
-            text-transform: uppercase;
+            letter-spacing: .01em;
         }
 
         /* ── SECTION TITLE ── */
@@ -314,12 +302,6 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            .antrian-status {
-                background: #0A5644 !important;
-                color: #fff !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
             .perforated {
                 background: linear-gradient(135deg, #F4F8F6 25%, transparent 25%),
                             linear-gradient(225deg, #F4F8F6 25%, transparent 25%) !important;
@@ -416,9 +398,6 @@
         <div class="antrian-hero">
             <div class="antrian-label">Nomor Antrian</div>
             <div class="antrian-number">{{ $registration->nomor_antrian }}</div>
-            <div class="antrian-status">
-                {{ strtoupper($registration->status_label) }}
-            </div>
         </div>
 
         {{-- ── INFO PASIEN ── --}}

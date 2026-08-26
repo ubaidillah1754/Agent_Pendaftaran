@@ -89,8 +89,7 @@
                     </td>
                     <td style="font-size:.82rem;color:#64748b;">{{ $doctor->nip ?? '-' }}</td>
                     <td>
-                        <span class="badge" style="background:var(--primary);color:#fff;">{{ $doctor->department->kode_poli ?? '-' }}</span>
-                        <span style="font-size:.82rem;"> {{ $doctor->department->nama_poli ?? '-' }}</span>
+                        <span class="badge" style="background:var(--primary);color:#fff;">{{ $doctor->department->nama_poli ?? '-' }}</span>
                     </td>
                     <td style="font-size:.82rem;">{{ $doctor->spesialisasi ?? '-' }}</td>
                     <td style="font-size:.82rem;">{{ $doctor->no_telepon ?? '-' }}</td>

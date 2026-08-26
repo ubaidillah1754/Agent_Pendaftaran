@@ -17,10 +17,11 @@ use App\Http\Controllers\Admin\PointReportController as AdminPointReportControll
 use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
-// ── Redirect root ke dashboard atau login ────────────────────────────────────
-Route::get('/', fn() => redirect()->route('dashboard'));
-
 // ── Public Routes (tanpa login) ──────────────────────────────────────────────
+Route::get('/', [PublicController::class, 'index'])->name('public.index');
+Route::get('/jadwal-dokter', [PublicController::class, 'jadwal'])->name('public.jadwal');
+Route::get('/cek-pendaftaran', [PublicController::class, 'cek'])->name('public.cek');
+Route::post('/cek-pendaftaran', [PublicController::class, 'prosesCek'])->name('public.cek.post');
 Route::get('/tracer/{kode_booking}', [PublicController::class, 'tracer'])->name('public.tracer');
 
 // ── Auth Routes (tamu saja) ──────────────────────────────────────────────────
@@ -183,5 +184,26 @@ Route::middleware('auth')->group(function () {
         // Laporan Rekapitulasi Poin, Ledger & Reward
         Route::get('/poin/laporan', [AdminPointReportController::class, 'index'])->name('reports.index');
     });
+});
 
+Route::get('/tools/update-kode-poli', function () {
+    $map = [
+        'Poli Umum' => 'UM',
+        'Poli Gigi' => 'GG',
+        'Poli Anak' => 'AN',
+        'Poli Kandungan' => 'KD',
+        'Poli Jantung' => 'JN',
+        'Poli Paru' => 'PR',
+        'Poli THT' => 'TH',
+        'Poli Urologi' => 'UR',
+        'Poli Gizi' => 'GZ',
+    ];
+    $count = 0;
+    foreach (\App\Models\Department::all() as $dept) {
+        if (isset($map[$dept->nama_poli])) {
+            $dept->update(['kode_poli' => $map[$dept->nama_poli]]);
+            $count++;
+        }
+    }
+    return "Berhasil update {$count} departemen.";
 });

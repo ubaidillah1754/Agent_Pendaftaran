@@ -2,11 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
+use App\Models\DoctorSchedule;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {
+    /**
+     * Beranda publik
+     */
+    public function index()
+    {
+        $departments = Department::active()->get();
+        return view('public.index', compact('departments'));
+    }
+
+    /**
+     * Jadwal praktik dokter publik
+     */
+    public function jadwal(Request $request)
+    {
+        $query = DoctorSchedule::with(['doctor', 'department'])->active();
+        
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+        if ($request->filled('hari')) {
+            $query->where('hari', $request->hari);
+        }
+        
+        $schedules = $query->orderBy('hari')->orderBy('jam_mulai')->get();
+        $departments = Department::active()->get();
+        
+        return view('public.jadwal', compact('schedules', 'departments'));
+    }
+
+    /**
+     * Halaman cek pendaftaran (form)
+     */
+    public function cek()
+    {
+        return view('public.cek');
+    }
+
+    /**
+     * Proses cek pendaftaran
+     */
+    public function prosesCek(Request $request)
+    {
+        $request->validate([
+            'kode_booking' => 'required|string',
+        ]);
+
+        return redirect()->route('public.tracer', $request->kode_booking);
+    }
+
     /**
      * Menampilkan halaman tracer publik berdasarkan kode booking.
      * Dapat diakses tanpa login — tidak ada middleware auth di route ini.

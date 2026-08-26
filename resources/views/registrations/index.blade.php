@@ -146,10 +146,10 @@
     <div class="card-body py-3">
         <form action="{{ route('registrations.index') }}" method="GET">
             <div class="row g-2 align-items-center">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal', date('Y-m-d')) }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <select name="department_id" class="form-select">
                         <option value="">Semua Poli</option>
                         @foreach($departments as $d)
@@ -157,17 +157,9 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <select name="status" class="form-select">
-                        <option value="">Semua Status</option>
-                        @foreach(['menunggu','dipanggil','selesai','batal'] as $s)
-                            <option value="{{ $s }}" {{ request('status') === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-auto">
-                    <button class="btn btn-primary" type="submit"><i class="bi bi-funnel me-1"></i>Filter</button>
-                    <a href="{{ route('registrations.index') }}" class="btn ms-1" style="background:var(--bg);color:#64766D;">Reset</a>
+                <div class="col-md-4 d-flex gap-2">
+                    <button class="btn btn-primary flex-fill" type="submit"><i class="bi bi-funnel me-1"></i>Filter</button>
+                    <a href="{{ route('registrations.index') }}" class="btn flex-fill" style="background:var(--bg);color:#64766D; border: 1px solid var(--border);">Reset</a>
                 </div>
             </div>
         </form>
@@ -180,14 +172,13 @@
         <table class="table table-hover align-middle mb-0 datatable">
             <thead>
                 <tr>
-                    <th>No. Antrian</th>
-                    <th>Pasien</th>
-                    <th>Poli</th>
-                    <th>Dokter</th>
-                    <th>Tgl Kunjungan</th>
-                    <th>Pembayaran</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Aksi</th>
+                    <th style="width:15%;">No. Antrian</th>
+                    <th style="width:20%;">Pasien</th>
+                    <th style="width:15%;">Poli</th>
+                    <th style="width:15%;">Dokter</th>
+                    <th style="width:12%;">Tgl Kunjungan</th>
+                    <th style="width:10%;">Pembayaran</th>
+                    <th class="text-center" style="width:13%;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -205,9 +196,6 @@
                     <td style="font-size:.82rem;">{{ $reg->tanggal_daftar->format('d M Y') }}</td>
                     <td>
                         <span class="badge" style="background:#f1efe4;color:#4a4335;">{{ strtoupper($reg->patient->jenis_pembayaran) }}</span>
-                    </td>
-                    <td class="text-center">
-                        <span class="badge badge-{{ $reg->status }}">{{ $reg->status_label }}</span>
                     </td>
                     <td class="text-center">
                         <div class="d-flex gap-1 justify-content-center">

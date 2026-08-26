@@ -62,7 +62,7 @@
                         <select name="department_id" class="form-select searchable @error('department_id') is-invalid @enderror" required placeholder="— Pilih Poli —">
                             @foreach($departments as $dept)
                                 <option value="{{ $dept->id }}" {{ old('department_id', $doctor->department_id) == $dept->id ? 'selected' : '' }}>
-                                    {{ $dept->kode_poli }} — {{ $dept->nama_poli }}
+                                    {{ $dept->nama_poli }}
                                 </option>
                             @endforeach
                         </select>

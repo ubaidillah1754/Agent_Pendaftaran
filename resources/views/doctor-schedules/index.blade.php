@@ -231,8 +231,7 @@
                             </button>
                         </td>
                         <td>
-                            <span class="jp-poli-badge">{{ $sch->department->kode_poli }}</span>
-                            <span class="ms-1">{{ $sch->department->nama_poli }}</span>
+                            <span class="jp-poli-badge">{{ $sch->department->nama_poli }}</span>
                         </td>
                         <td style="font-size:.82rem;">
                             <i class="bi bi-clock me-1 text-muted"></i>

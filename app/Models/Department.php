@@ -55,10 +55,14 @@ class Department extends Model
 
     /**
      * Hitung antrian berikutnya untuk poli ini pada tanggal tertentu.
-     * Format: {KODE_POLI}{3 digit urutan} → contoh: PU001
+     * Format: {NAMA_POLI}-{3 digit urutan} → contoh: JANTUNG-001 (Poli Jantung)
      */
     public function generateNomorAntrian(string $tanggal): array
     {
+        // Ambil nama poli (mengabaikan kata "Poli ")
+        $name = trim(str_ireplace('Poli', '', $this->nama_poli));
+        $prefix = strtoupper($name);
+
         // Ambil urutan terakhir hari ini untuk poli ini
         $lastUrutan = Registration::where('department_id', $this->id)
             ->where('tanggal_daftar', $tanggal)
@@ -66,7 +70,7 @@ class Department extends Model
             ->max('urutan_antrian') ?? 0;
 
         $urutan       = $lastUrutan + 1;
-        $nomorAntrian = strtoupper($this->kode_poli) . str_pad($urutan, 3, '0', STR_PAD_LEFT);
+        $nomorAntrian = $prefix . '-' . str_pad($urutan, 3, '0', STR_PAD_LEFT);
 
         return [
             'urutan'        => $urutan,
