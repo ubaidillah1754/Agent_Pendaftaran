@@ -88,6 +88,12 @@ class User extends Authenticatable
         return $this->hasMany(PointRedemption::class, 'user_id');
     }
 
+    /** Data poin legacy (petugas_points) — dipertahankan untuk kompatibilitas backward */
+    public function petugasPoints(): HasMany
+    {
+        return $this->hasMany(PetugasPoint::class, 'user_id');
+    }
+
     /** Log audit yang dilakukan oleh user ini */
     public function auditLogs(): HasMany
     {

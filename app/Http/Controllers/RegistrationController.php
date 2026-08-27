@@ -23,7 +23,7 @@ class RegistrationController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         if ($user->isPetugas()) {
-            return redirect()->route('registrations.create');
+            return $this->create($request);
         }
 
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
