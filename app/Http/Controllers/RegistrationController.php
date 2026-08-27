@@ -20,6 +20,10 @@ class RegistrationController extends Controller
 
     public function index(Request $request)
     {
+        if (Auth::user()->isPetugas()) {
+            return redirect()->route('registrations.create');
+        }
+
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
 
         // Base query: pendaftaran HARI INI yang sudah ambil antrean (punya nomor_antrian)
