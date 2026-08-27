@@ -94,8 +94,8 @@ class DashboardController extends Controller
                 ->where('status', 'menunggu')
                 ->count(),
 
-            'dipanggil' => (clone $baseQuery())
-                ->where('status', 'dipanggil')
+            'diperiksa' => (clone $baseQuery())
+                ->where('status', 'diperiksa')
                 ->count(),
 
             'selesai' => (clone $baseQuery())

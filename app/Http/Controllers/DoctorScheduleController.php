@@ -115,14 +115,14 @@ class DoctorScheduleController extends Controller
 
     public function destroy(DoctorSchedule $doctorSchedule)
     {
-        // Cegah hapus jika masih ada antrian aktif pada jadwal ini
+        // Cegah hapus jika masih ada pendaftaran aktif pada jadwal ini
         $ada = $doctorSchedule->registrations()
             ->whereDate('tanggal_daftar', today())
-            ->whereIn('status', ['menunggu', 'dipanggil'])
+            ->whereIn('status', ['menunggu', 'diperiksa'])
             ->exists();
 
         if ($ada) {
-            return back()->with('error', 'Jadwal tidak dapat dihapus karena masih ada antrian aktif hari ini.');
+            return back()->with('error', 'Jadwal tidak dapat dihapus karena masih ada pendaftaran aktif hari ini.');
         }
 
         $doctorSchedule->delete();

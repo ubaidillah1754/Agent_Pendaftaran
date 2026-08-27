@@ -18,30 +18,38 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Ubah ke VARCHAR dulu agar bisa menampung semua nilai sementara
-        DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status VARCHAR(30) NOT NULL DEFAULT 'pending'");
+        // 1. Ubah kolom menjadi VARCHAR sementara
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status VARCHAR(30) NOT NULL DEFAULT 'pending'");
+        }
 
         // 2. Konversi nilai lama ke nilai baru
         DB::table('point_redemptions')->where('status', 'disetujui')->update(['status' => 'approved']);
         DB::table('point_redemptions')->where('status', 'selesai')->update(['status' => 'completed']);
         DB::table('point_redemptions')->where('status', 'ditolak')->update(['status' => 'rejected']);
 
-        // 3. Ubah ke ENUM baru yang lengkap
-        DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status ENUM('pending','approved','completed','rejected','cancelled') NOT NULL DEFAULT 'pending'");
+        // 3. Ubah tipe kembali ke ENUM dengan nilai baru
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status ENUM('pending','approved','completed','rejected','cancelled') NOT NULL DEFAULT 'pending'");
+        }
     }
 
     public function down(): void
     {
-        // Kembalikan ke VARCHAR dulu
-        DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status VARCHAR(30) NOT NULL DEFAULT 'pending'");
+        // 1. Ubah kembali ke VARCHAR sementara
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status VARCHAR(30) NOT NULL DEFAULT 'pending'");
+        }
 
-        // Kembalikan nilai ke Bahasa Indonesia lama
+        // 2. Kembalikan data baru ke data lama
         DB::table('point_redemptions')->where('status', 'approved')->update(['status' => 'disetujui']);
         DB::table('point_redemptions')->where('status', 'completed')->update(['status' => 'selesai']);
         DB::table('point_redemptions')->where('status', 'rejected')->update(['status' => 'ditolak']);
         DB::table('point_redemptions')->where('status', 'cancelled')->update(['status' => 'pending']); // fallback
 
-        // Kembalikan ENUM lama
-        DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status ENUM('pending','disetujui','selesai','ditolak') NOT NULL DEFAULT 'selesai'");
+        // 3. Kembalikan tipe data kolom ENUM
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE point_redemptions MODIFY COLUMN status ENUM('pending','disetujui','selesai','ditolak') NOT NULL DEFAULT 'selesai'");
+        }
     }
 };

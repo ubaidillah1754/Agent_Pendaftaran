@@ -102,7 +102,7 @@ class DoctorController extends Controller
     {
         // Cegah hapus jika masih ada pendaftaran aktif
         $aktif = $doctor->registrations()
-            ->whereIn('status', ['menunggu', 'dipanggil'])
+            ->whereIn('status', ['menunggu', 'diperiksa'])
             ->exists();
 
         if ($aktif) {

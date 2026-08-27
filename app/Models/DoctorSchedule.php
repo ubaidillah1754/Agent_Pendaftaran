@@ -106,4 +106,52 @@ class DoctorSchedule extends Model
     {
         return ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
     }
+
+    /**
+     * Waktu mulai boleh ambil antrean = jam_mulai - 1 jam.
+     * Menggunakan Carbon agar timezone-aware.
+     *
+     * @param  string $tanggal  format Y-m-d
+     * @return \Carbon\Carbon
+     */
+    public function jamMulaiAmbilAntrean(string $tanggal): \Carbon\Carbon
+    {
+        return \Carbon\Carbon::parse("{$tanggal} {$this->jam_mulai}")->subHour();
+    }
+
+    /**
+     * Waktu expired = jam_selesai jadwal (inklusif: >=jam_selesai = expired).
+     *
+     * @param  string $tanggal  format Y-m-d
+     * @return \Carbon\Carbon
+     */
+    public function jamSelesaiAntrean(string $tanggal): \Carbon\Carbon
+    {
+        return \Carbon\Carbon::parse("{$tanggal} {$this->jam_selesai}");
+    }
+
+    /**
+     * Cek apakah waktu sekarang masuk dalam window pengambilan antrean.
+     * Window: [jam_mulai - 1jam) s/d jam_selesai (exclusive).
+     *
+     * @param  string $tanggal  format Y-m-d
+     * @return string  'ok' | 'too_early' | 'expired'
+     */
+    public function statusWindowAntrean(string $tanggal): string
+    {
+        $now        = now();
+        $mulaiAmbil = $this->jamMulaiAmbilAntrean($tanggal);
+        $selesai    = $this->jamSelesaiAntrean($tanggal);
+
+        if ($now->lt($mulaiAmbil)) {
+            return 'too_early';
+        }
+
+        if ($now->gte($selesai)) {
+            return 'expired';
+        }
+
+        return 'ok';
+    }
 }
+

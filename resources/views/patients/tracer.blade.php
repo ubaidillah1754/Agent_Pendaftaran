@@ -243,7 +243,7 @@
         .vs-selesai { background: #D1FAE5; color: #065F46; }
         .vs-menunggu { background: #FEF3C7; color: #92400E; }
         .vs-batal { background: #FEE2E2; color: #991B1B; }
-        .vs-dipanggil { background: #DBEAFE; color: #1E40AF; }
+        .vs-diperiksa { background: #DBEAFE; color: #1E40AF; }
 
         /* ── TANDA TANGAN AREA ─────────────────────── */
         .sign-row {
@@ -497,17 +497,15 @@
                 </div>
                 <div class="v-sub">
                     Tanggal: {{ $reg->tanggal_daftar->translatedFormat('d F Y') }} ·
-                    Antrian: {{ $reg->nomor_antrian }}
-                    @if($reg->keluhan)
-                        · Keluhan: {{ Str::limit($reg->keluhan, 60) }}
-                    @endif
+                    Kode Booking: {{ $reg->kode_booking }}
+
                 </div>
             </div>
             @php
                 $vsClass = match($reg->status) {
                     'selesai'   => 'vs-selesai',
                     'menunggu'  => 'vs-menunggu',
-                    'dipanggil' => 'vs-dipanggil',
+                    'diperiksa' => 'vs-diperiksa',
                     'batal'     => 'vs-batal',
                     default     => '',
                 };

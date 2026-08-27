@@ -85,11 +85,11 @@ class DepartmentController extends Controller
     {
         // Cegah hapus poli yang masih memiliki pendaftaran aktif
         $aktif = $department->registrations()
-            ->whereIn('status', ['menunggu', 'dipanggil'])
+            ->whereIn('status', ['menunggu', 'diperiksa'])
             ->exists();
 
         if ($aktif) {
-            return back()->with('error', 'Poli tidak dapat dihapus karena masih ada antrian aktif.');
+            return back()->with('error', 'Poli tidak dapat dihapus karena masih ada pendaftaran aktif.');
         }
 
         $nama = $department->nama_poli;

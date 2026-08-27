@@ -22,9 +22,10 @@ class RegistrationController extends Controller
     {
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
 
-        // Base query for registrations
+        // Base query: pendaftaran HARI INI yang sudah ambil antrean (punya nomor_antrian)
         $baseQuery = Registration::with(['patient', 'department', 'doctor'])
-            ->whereDate('tanggal_daftar', $tanggal);
+            ->whereDate('tanggal_kunjungan', $tanggal)
+            ->whereNotNull('nomor_antrian');
 
         if ($request->filled('department_id')) {
             $baseQuery->where('department_id', $request->department_id);
@@ -34,35 +35,65 @@ class RegistrationController extends Controller
             $baseQuery->where('status', $request->status);
         }
 
-        // 1. Antrian Sedang Proses (menunggu, dipanggil)
-        $antrianProses = (clone $baseQuery)
-            ->whereIn('status', ['menunggu', 'dipanggil'])
-            ->orderBy('urutan_antrian')
-            ->paginate(5, ['*'], 'page_proses')->withQueryString();
+        // 1. Antrean Aktif (menunggu / diperiksa) — sudah ambil nomor antrean
+        $pendaftaranProses = (clone $baseQuery)
+            ->whereIn('status', ['menunggu', 'diperiksa'])
+            ->orderBy('nomor_antrian')
+            ->paginate(10, ['*'], 'page_proses')->withQueryString();
 
-        // 2. Antrian Selesai
-        $antrianSelesai = (clone $baseQuery)
+        // 2. Antrean Selesai hari ini — sudah selesai dilayani
+        $pendaftaranSelesai = (clone $baseQuery)
             ->where('status', 'selesai')
             ->orderBy('updated_at', 'desc')
-            ->paginate(5, ['*'], 'page_selesai')->withQueryString();
+            ->paginate(10, ['*'], 'page_selesai')->withQueryString();
 
-        // 3. Data Pasien
-        $patientQuery = Patient::query();
+        // 3. Seluruh Data Pendaftaran (semua record dari tabel registrations)
+        $allRegistrationsQuery = Registration::with(['patient', 'department', 'doctor']);
         if ($request->filled('search')) {
-            $patientQuery->where('nama_pasien', 'like', '%' . $request->search . '%')
-                         ->orWhere('no_rm', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $allRegistrationsQuery->where(function($q) use ($search) {
+                $q->whereHas('patient', function($q2) use ($search) {
+                    $q2->where('nama_pasien', 'like', '%' . $search . '%')
+                       ->orWhere('no_rm', 'like', '%' . $search . '%');
+                })->orWhere('kode_booking', 'like', '%' . $search . '%');
+            });
         }
-        $patients = $patientQuery->orderByDesc('created_at')->paginate(5, ['*'], 'page_pasien')->withQueryString();
+        $allRegistrations = $allRegistrationsQuery->orderByDesc('created_at')->paginate(10, ['*'], 'page_all')->withQueryString();
 
-        // Stats
-        $departments = Department::active()->orderBy('nama_poli')->get();
-        $totalPendaftaran = (clone $baseQuery)->count();
-        $totalMenunggu = (clone $baseQuery)->where('status', 'menunggu')->count();
-        $totalSelesai = (clone $baseQuery)->where('status', 'selesai')->count();
+        // 4. Panel Antrean (Pasien Aktif & Pasien Berikutnya)
+        $pasienAktif = null;
+        $pasienBerikutnya = null;
+
+        if ($request->filled('department_id')) {
+            // Cari pasien yang sedang diproses di poli ini pada hari ini
+            $pasienAktif = Registration::with(['patient', 'department'])
+                ->whereDate('tanggal_kunjungan', $tanggal)
+                ->where('department_id', $request->department_id)
+                ->where('status', 'diperiksa')
+                ->whereNotNull('nomor_antrian')
+                ->first();
+
+            // Cari pasien menunggu berikutnya di poli ini pada hari ini
+            $pasienBerikutnya = Registration::with(['patient', 'department'])
+                ->whereDate('tanggal_kunjungan', $tanggal)
+                ->where('department_id', $request->department_id)
+                ->where('status', 'menunggu')
+                ->whereNotNull('nomor_antrian')
+                // Urutkan berdasarkan urutan nomor antrean numerik
+                ->orderByRaw("CAST(SUBSTRING(nomor_antrian, 5) AS UNSIGNED) ASC")
+                ->first();
+        }
+
+        // Stats — hitung dari antrean hari ini
+        $departments    = Department::active()->orderBy('nama_poli')->get();
+        $totalAntrean   = (clone $baseQuery)->count();
+        $totalMenunggu  = (clone $baseQuery)->where('status', 'menunggu')->count();
+        $totalSelesai   = (clone $baseQuery)->where('status', 'selesai')->count();
 
         return view('registrations.index', compact(
-            'antrianProses', 'antrianSelesai', 'patients', 'departments',
-            'totalPendaftaran', 'totalMenunggu', 'totalSelesai'
+            'pendaftaranProses', 'pendaftaranSelesai', 'allRegistrations', 'departments',
+            'totalAntrean', 'totalMenunggu', 'totalSelesai',
+            'pasienAktif', 'pasienBerikutnya'
         ));
     }
 
@@ -99,7 +130,6 @@ class RegistrationController extends Controller
             'doctor_id'          => ['required', 'exists:doctors,id'],
             'doctor_schedule_id' => ['required', 'exists:doctor_schedules,id'],
             'tanggal_daftar'     => ['required', 'date', 'after_or_equal:today'],
-            'keluhan'            => ['nullable', 'string', 'max:1000'],
         ], [
             'mode_pasien.required'        => 'Mode pendaftaran wajib dipilih.',
             'patient_id.required_if'      => 'Pasien wajib dipilih untuk pendaftaran pasien lama.',
@@ -159,14 +189,8 @@ class RegistrationController extends Controller
                 abort(back()->withInput()->withErrors(['department_id' => 'Pasien sudah terdaftar di poli ini pada tanggal tersebut.']));
             }
 
-            // ── Generate Nomor Antrian ────────────────────────────────────────
-            $department = Department::findOrFail($validated['department_id']);
-            $antrian    = $department->generateNomorAntrian($tanggal);
-
-            // ── Generate Kode Booking Unik ────────────────────────────────────
-            do {
-                $kodeBooking = strtoupper(\Illuminate\Support\Str::random(6));
-            } while (Registration::where('kode_booking', $kodeBooking)->exists());
+            // ── Generate Kode Booking Unik BK-XXXX ────────────────────────────
+            $kodeBooking = Registration::generateKodeBooking();
 
             // ── Simpan Pendaftaran ────────────────────────────────────────────
             return Registration::create([
@@ -176,16 +200,13 @@ class RegistrationController extends Controller
                 'doctor_id'          => $validated['doctor_id'],
                 'tanggal_daftar'     => now()->toDateString(),
                 'tanggal_kunjungan'  => $tanggal,
-                'nomor_antrian'      => $antrian['nomor_antrian'],
-                'urutan_antrian'     => $antrian['urutan'],
                 'kode_booking'       => $kodeBooking,
-                'keluhan'            => $validated['keluhan'] ?? null,
                 'status'             => 'menunggu',
                 'created_by'         => Auth::id(),
             ]);
         });
 
-        $message = "Pendaftaran berhasil! Nomor antrian: {$registration->nomor_antrian}.";
+        $message = "Pendaftaran berhasil! Kode booking: {$registration->kode_booking}.";
         
         if ($earnedPoints > 0) {
             $message .= " Anda mendapatkan +{$earnedPoints} poin untuk pendaftaran pasien baru.";
@@ -218,11 +239,11 @@ class RegistrationController extends Controller
             return back()->with('error', 'Pendaftaran tidak dapat diubah.');
         }
 
-        $validated = $request->validate([
-            'keluhan' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        $registration->update($validated);
+        // Jika tidak ada data lain yang bisa diubah, kita biarkan kosong atau update field lain jika ada
+        // (contoh: di sini validasi keluhan dihapus, maka tidak ada yang diupdate dari form ini, 
+        // tapi kita biarkan blok validasi kosong atau kembalikan response sukses)
+        
+        // $registration->update($validated);
 
         return redirect()->route('registrations.show', $registration)
             ->with('success', 'Data pendaftaran berhasil diperbarui.');
@@ -249,14 +270,14 @@ class RegistrationController extends Controller
 
         $registration->update(['status' => 'batal']);
 
-        return back()->with('success', "Pendaftaran {$registration->nomor_antrian} berhasil dibatalkan.");
+        return back()->with('success', "Pendaftaran {$registration->kode_booking} berhasil dibatalkan.");
     }
 
     /** Update status pendaftaran dari halaman detail */
     public function updateStatus(Request $request, Registration $registration)
     {
         $request->validate([
-            'status' => ['required', 'in:menunggu,dipanggil,selesai,batal'],
+            'status' => ['required', 'in:menunggu,diperiksa,selesai,batal'],
         ]);
 
         $newStatus = $request->status;
@@ -318,5 +339,56 @@ class RegistrationController extends Controller
         return view('registrations.riwayat', compact(
             'registrations', 'departments', 'totalPendaftaran', 'totalPoin'
         ));
+    }
+
+    /** 
+     * Panggil Pasien Berikutnya secara atomik.
+     * Mengubah pasien 'diperiksa' menjadi 'selesai' dan
+     * pasien 'menunggu' urutan berikutnya menjadi 'diperiksa'.
+     */
+    public function panggilBerikutnya(Request $request)
+    {
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+            'tanggal'       => 'required|date',
+        ]);
+
+        $departmentId = $request->department_id;
+        $tanggal      = $request->tanggal;
+
+        try {
+            DB::transaction(function () use ($departmentId, $tanggal) {
+                // 1. Ambil pasien yang SEDANG DIPROSES dan kunci (lock for update)
+                $pasienAktif = Registration::whereDate('tanggal_kunjungan', $tanggal)
+                    ->where('department_id', $departmentId)
+                    ->where('status', 'diperiksa')
+                    ->whereNotNull('nomor_antrian')
+                    ->lockForUpdate()
+                    ->first();
+
+                // 2. Jika ada, selesaikan
+                if ($pasienAktif) {
+                    $pasienAktif->update(['status' => 'selesai']);
+                }
+
+                // 3. Cari pasien MENUNGGU berikutnya
+                $pasienBerikutnya = Registration::whereDate('tanggal_kunjungan', $tanggal)
+                    ->where('department_id', $departmentId)
+                    ->where('status', 'menunggu')
+                    ->whereNotNull('nomor_antrian')
+                    ->orderByRaw("CAST(SUBSTRING(nomor_antrian, 5) AS UNSIGNED) ASC")
+                    ->lockForUpdate()
+                    ->first();
+
+                // 4. Jika ada, ubah jadi DIPROSES
+                if ($pasienBerikutnya) {
+                    $pasienBerikutnya->update(['status' => 'diperiksa']);
+                }
+            });
+
+            return back()->with('success', 'Berhasil memanggil pasien berikutnya.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memanggil pasien berikutnya. Silakan coba lagi.');
+        }
     }
 }

@@ -107,7 +107,7 @@
             <select name="status" class="form-select" style="height: 44px; border-radius: 10px; border-color: var(--border);">
                 <option value="">Semua Status</option>
                 <option value="menunggu"  {{ request('status') === 'menunggu'  ? 'selected' : '' }}>Menunggu</option>
-                <option value="dipanggil" {{ request('status') === 'dipanggil' ? 'selected' : '' }}>Dipanggil</option>
+                <option value="diperiksa" {{ request('status') === 'diperiksa' ? 'selected' : '' }}>Diperiksa</option>
                 <option value="selesai"   {{ request('status') === 'selesai'   ? 'selected' : '' }}>Selesai</option>
                 <option value="batal"     {{ request('status') === 'batal'     ? 'selected' : '' }}>Batal</option>
             </select>
@@ -143,7 +143,7 @@
                     <th>Pasien</th>
                     <th>Poli / Dokter</th>
                     <th>Tanggal</th>
-                    <th>No. Antrian</th>
+
                     <th>Status</th>
                     <th class="text-center">Poin</th>
                     <th class="text-end pe-4">Aksi</th>
@@ -188,17 +188,12 @@
                             {{ $reg->created_at->format('H:i') }} WIB
                         </div>
                     </td>
-                    <td>
-                        <span style="font-family:'Spectral',serif; font-size:1.1rem;
-                                     font-weight:800; color:var(--primary);">
-                            {{ $reg->nomor_antrian }}
-                        </span>
-                    </td>
+
                     <td>
                         @php
                             $badgeClass = match($reg->status) {
                                 'menunggu'  => 'badge-menunggu',
-                                'dipanggil' => 'badge-dipanggil',
+                                'diperiksa' => 'badge-diperiksa',
                                 'selesai'   => 'badge-selesai',
                                 'batal'     => 'badge-batal',
                                 default     => '',

@@ -124,11 +124,11 @@ class PatientController extends Controller
 
     public function destroy(Patient $patient)
     {
-        // Cegah hapus jika masih ada antrian aktif
+        // Cegah hapus jika masih ada pendaftaran aktif
         $aktif = $patient->pendaftaranHariIni()->exists();
 
         if ($aktif) {
-            return back()->with('error', 'Pasien tidak dapat dihapus karena masih memiliki antrian aktif hari ini.');
+            return back()->with('error', 'Pasien tidak dapat dihapus karena masih memiliki pendaftaran aktif hari ini.');
         }
 
         $nama = $patient->nama_pasien;

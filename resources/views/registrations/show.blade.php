@@ -3,7 +3,7 @@
 @section('page-title','Detail Pendaftaran')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('registrations.index') }}">Pendaftaran</a></li>
-    <li class="breadcrumb-item active">{{ $registration->nomor_antrian }}</li>
+    <li class="breadcrumb-item active">{{ $registration->kode_booking }}</li>
 @endsection
 
 @push('styles')
@@ -36,7 +36,7 @@
             <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;opacity:.7;">
                 <i class="bi bi-ticket-perforated me-1"></i>Nomor Antrian
             </div>
-            <div style="font-size:5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->nomor_antrian }}</div>
+            <div style="font-size:5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->kode_booking }}</div>
             <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.82rem;opacity:.8;">
                 <i class="bi bi-hospital"></i>{{ $registration->department->nama_poli }}
                 <span>&middot;</span>
@@ -89,8 +89,7 @@
                     </div>
                     <div class="info-row"><span class="label">Tgl Kunjungan</span><span class="value" style="font-weight:400;color:var(--primary);">{{ $registration->tanggal_kunjungan->format('d M Y') }}</span></div>
                     <div class="info-row"><span class="label">Tgl Daftar</span><span class="value" style="font-weight:400;">{{ $registration->tanggal_daftar->format('d M Y') }}</span></div>
-                    <!--<div class="info-row"><span class="label">Urutan</span><span class="value" style="font-weight:400;">#{{ $registration->urutan_antrian }}</span></div>-->
-                    <div class="info-row"><span class="label">Keluhan</span><span class="value" style="font-weight:400;">{{ $registration->keluhan ?? '-' }}</span></div>
+
                     <div class="info-row"><span class="label">Petugas</span><span class="value" style="font-weight:400;">{{ $registration->createdBy->name }}</span></div>
                     <div class="info-row"><span class="label">Waktu Daftar</span><span class="value" style="font-weight:400;">{{ $registration->created_at->format('d M Y H:i') }}</span></div>
                 </div>
@@ -108,12 +107,12 @@
                 @if($registration->status === 'menunggu')
                     <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
                         @csrf @method('PATCH')
-                        <input type="hidden" name="status" value="dipanggil">
-                        <button type="submit" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
-                            <i class="bi bi-megaphone me-1"></i>Tandai Dipanggil
+                        <input type="hidden" name="status" value="diperiksa">
+                        <button type="submit" class="btn btn-primary h-100 px-4 fw-bold">
+                            <i class="bi bi-megaphone me-1"></i>Tandai Diperiksa
                         </button>
                     </form>
-                @elseif($registration->status === 'dipanggil')
+                @elseif($registration->status === 'diperiksa')
                     <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
                         @csrf @method('PATCH')
                         <input type="hidden" name="status" value="selesai">

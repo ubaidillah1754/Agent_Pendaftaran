@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Registration extends Model
 {
@@ -16,10 +17,9 @@ class Registration extends Model
         'doctor_id',
         'tanggal_daftar',
         'tanggal_kunjungan',
-        'nomor_antrian',
-        'urutan_antrian',
         'kode_booking',
-        'keluhan',
+        'status_booking',
+        'nomor_antrian',
         'status',
         'created_by',
     ];
@@ -27,7 +27,7 @@ class Registration extends Model
     protected function casts(): array
     {
         return [
-            'tanggal_daftar' => 'date',
+            'tanggal_daftar'    => 'date',
             'tanggal_kunjungan' => 'date',
         ];
     }
@@ -86,49 +86,126 @@ class Registration extends Model
         return $query->where('department_id', $departmentId);
     }
 
-    /** Hanya yang menunggu atau sedang dipanggil (antrian aktif) */
+    /** Hanya yang menunggu atau sedang diperiksa (antrean aktif) */
     public function scopeAktif($query)
     {
-        return $query->whereIn('status', ['menunggu', 'dipanggil']);
+        return $query->whereIn('status', ['menunggu', 'diperiksa']);
+    }
+
+    /** Antrean hari ini untuk department tertentu yang sudah punya nomor antrean */
+    public function scopeAntreanHariIni($query, int $departmentId, string $tanggal)
+    {
+        return $query
+            ->where('department_id', $departmentId)
+            ->where('tanggal_kunjungan', $tanggal)
+            ->whereNotNull('nomor_antrian')
+            ->whereNotIn('status', ['batal']);
     }
 
     // ─── Accessor ───────────────────────────────────────────────────────────
 
-    /** Label status dengan badge warna */
+    /** Label status antrean */
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'menunggu'  => 'Menunggu',
-            'dipanggil' => 'Dipanggil',
-            'selesai'   => 'Selesai',
-            'batal'     => 'Batal',
-            default     => ucfirst($this->status),
+            'menunggu'   => 'Menunggu',
+            'diperiksa'  => 'Diperiksa',
+            'selesai'    => 'Selesai',
+            'batal'      => 'Batal',
+            default      => ucfirst($this->status),
         };
     }
 
-    /** Kelas badge Bootstrap berdasarkan status */
+    /** Kelas badge Bootstrap berdasarkan status antrean */
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'menunggu'  => 'warning',
-            'dipanggil' => 'primary',
-            'selesai'   => 'success',
-            'batal'     => 'danger',
-            default     => 'secondary',
+            'menunggu'   => 'warning',
+            'diperiksa'  => 'primary',
+            'selesai'    => 'success',
+            'batal'      => 'danger',
+            default      => 'secondary',
+        };
+    }
+
+    /** Label status booking */
+    public function getStatusBookingLabelAttribute(): string
+    {
+        return match ($this->status_booking) {
+            'pending'   => 'Belum Digunakan',
+            'used'      => 'Sudah Digunakan',
+            'expired'   => 'Expired',
+            'cancelled' => 'Dibatalkan',
+            default     => ucfirst($this->status_booking ?? 'pending'),
         };
     }
 
     // ─── Static Helper ──────────────────────────────────────────────────────
 
     /**
-     * Daftar transisi status yang valid.
-     * Digunakan untuk validasi update status antrian.
+     * Generate kode booking unik format BK-XXXX.
+     * Menggunakan karakter yang tidak membingungkan (tanpa 0,1,I,O).
+     * Loop hingga menemukan kode yang belum ada di database.
+     */
+    public static function generateKodeBooking(): string
+    {
+        $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        do {
+            $suffix = '';
+            for ($i = 0; $i < 4; $i++) {
+                $suffix .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+            $kode = 'BK-' . $suffix;
+        } while (static::where('kode_booking', $kode)->exists());
+
+        return $kode;
+    }
+
+    /**
+     * Generate nomor antrean berikutnya untuk department + tanggal tertentu.
+     * Format: PAR-001, JAN-001, dll. (3 huruf pertama nama poli tanpa kata "Poli").
+     * Mengambil MAX nomor terakhir kemudian +1 (bukan count).
+     * Thread-safe: harus dipanggil dalam DB::transaction dengan LOCK.
+     *
+     * @param int    $departmentId
+     * @param string $tanggal      format Y-m-d
+     * @return string  misal "PAR-004"
+     * @throws \RuntimeException jika nomor antrean melebihi batas 999
+     */
+    public static function generateNomorAntrian(int $departmentId, string $tanggal): string
+    {
+        $department = DB::table('departments')->where('id', $departmentId)->first();
+        $namaPoli = $department ? $department->nama_poli : 'Poli';
+        $namaTanpaPoli = trim(str_ireplace('Poli ', '', $namaPoli));
+        $prefix = strtoupper(substr($namaTanpaPoli, 0, 3));
+
+        // Ambil nomor terbesar yang sudah ada hari ini di poli ini (untuk tanggal kunjungan)
+        $lastNomor = DB::table('registrations')
+            ->where('department_id', $departmentId)
+            ->where('tanggal_kunjungan', $tanggal)
+            ->whereNotNull('nomor_antrian')
+            ->where('nomor_antrian', 'like', $prefix . '-%')
+            ->whereNotIn('status', ['batal'])
+            ->lockForUpdate()  // pesimistic lock untuk request bersamaan
+            ->max(DB::raw("CAST(SUBSTRING(nomor_antrian, 5) AS UNSIGNED)"));
+
+        $urutan = ($lastNomor ?? 0) + 1;
+
+        if ($urutan > 999) {
+            throw new \RuntimeException("Nomor antrean sudah mencapai batas maksimum ({$prefix}-999) untuk hari ini.");
+        }
+
+        return $prefix . '-' . str_pad($urutan, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Daftar transisi status antrean yang valid.
      */
     public static function transisiStatusValid(): array
     {
         return [
-            'menunggu'  => ['dipanggil', 'batal'],
-            'dipanggil' => ['selesai', 'menunggu'],
+            'menunggu'  => ['diperiksa', 'batal'],
+            'diperiksa' => ['selesai', 'menunggu'],
             'selesai'   => [],
             'batal'     => [],
         ];

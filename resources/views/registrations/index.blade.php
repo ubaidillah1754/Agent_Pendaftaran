@@ -354,9 +354,9 @@
                     <i class="bi bi-clipboard2-check-fill"></i>
                 </div>
                 <div class="stat-info">
-                    <div class="stat-val">{{ $totalPendaftaran }}</div>
-                    <div class="stat-label">Total Pendaftaran</div>
-                    <div class="stat-sub">Hari ini</div>
+                    <div class="stat-val">{{ $totalAntrean }}</div>
+                    <div class="stat-label">Total Antrean</div>
+                    <div class="stat-sub">Hari ini (sudah ambil nomor)</div>
                 </div>
             </div>
         </div>
@@ -417,7 +417,7 @@
                 <select name="status" class="form-select" style="width: 150px;">
                     <option value="">Semua Status</option>
                     <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-                    <option value="dipanggil" {{ request('status') == 'dipanggil' ? 'selected' : '' }}>Dipanggil</option>
+                    <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>Diperiksa</option>
                     <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
                 </select>
 
@@ -433,20 +433,85 @@
         </div>
     </form>
 
+    <!-- Panel Antrean -->
+    @if(request('department_id'))
+    <div class="custom-card fade-in mb-4" style="border: 2px solid #059669;">
+        <div class="custom-card-header text-white" style="background: #059669; font-size: 1rem; padding: 16px 20px;">
+            <i class="bi bi-display me-2"></i> PANEL ANTREAN - {{ $departments->firstWhere('id', request('department_id'))->nama_poli ?? 'Poli' }}
+        </div>
+        <div class="card-body p-4">
+            <div class="row text-center mb-4">
+                <!-- Pasien Sedang Ditangani -->
+                <div class="col-md-6 border-end">
+                    <h6 class="text-muted fw-bold mb-3" style="letter-spacing: 1px;">PASIEN SEDANG DITANGANI</h6>
+                    @if($pasienAktif)
+                        <div class="p-3 bg-light rounded-3 d-inline-block shadow-sm mb-2" style="min-width: 250px;">
+                            <h2 class="fw-bold mb-1" style="color: #059669; font-size: 2.5rem;">{{ $pasienAktif->nomor_antrian }}</h2>
+                            <h5 class="mb-2 text-dark">{{ $pasienAktif->patient->nama_pasien }}</h5>
+                            <span class="badge" style="background-color: #059669; font-size: 0.9rem; padding: 8px 16px;">DIPROSES</span>
+                        </div>
+                    @else
+                        <div class="p-3 mt-4">
+                            <h5 class="text-muted"><i class="bi bi-person-x fs-2 d-block mb-2 text-light"></i>Tidak ada pasien</h5>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Pasien Berikutnya -->
+                <div class="col-md-6">
+                    <h6 class="text-muted fw-bold mb-3" style="letter-spacing: 1px;">PASIEN BERIKUTNYA</h6>
+                    @if($pasienBerikutnya)
+                        <div class="p-3 bg-light rounded-3 d-inline-block shadow-sm mb-2" style="min-width: 250px; opacity: 0.8;">
+                            <h2 class="fw-bold mb-1 text-secondary" style="font-size: 2.5rem;">{{ $pasienBerikutnya->nomor_antrian }}</h2>
+                            <h5 class="mb-2 text-dark">{{ $pasienBerikutnya->patient->nama_pasien }}</h5>
+                            <span class="badge badge-menunggu-abu" style="font-size: 0.9rem; padding: 8px 16px;">MENUNGGU</span>
+                        </div>
+                    @else
+                        <div class="p-3 mt-4">
+                            <h5 class="text-muted"><i class="bi bi-person-dash fs-2 d-block mb-2 text-light"></i>Tidak ada pasien berikutnya</h5>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            
+            <div class="text-center mt-2">
+                <form action="{{ route('registrations.panggil-berikutnya') }}" method="POST" id="form-panggil-berikutnya" onsubmit="disablePanggilButton()">
+                    @csrf
+                    <input type="hidden" name="department_id" value="{{ request('department_id') }}">
+                    <input type="hidden" name="tanggal" value="{{ request('tanggal', date('Y-m-d')) }}">
+                    <button type="submit" class="btn btn-lg fw-bold px-5 py-3 shadow" 
+                            style="background: #059669; color: white; border-radius: 50px; font-size: 1.1rem; transition: all 0.3s;" 
+                            id="btn-panggil-berikutnya" 
+                            {{ !$pasienAktif && !$pasienBerikutnya ? 'disabled' : '' }}>
+                        <i class="bi bi-megaphone-fill me-2"></i> PANGGIL PASIEN BERIKUTNYA
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    @else
+    <div class="info-alert fade-in mb-4">
+        <i class="bi bi-info-circle-fill" style="color: #059669;"></i>
+        <div class="info-alert-text" style="color: #065f46;">
+            <strong>Panel Antrean disembunyikan.</strong> Silakan pilih <strong>Poli</strong> pada form filter di atas untuk mengaktifkan fitur Panggil Pasien Berikutnya.
+        </div>
+    </div>
+    @endif
+
     <div class="row fade-in">
         <!-- Antrian Sedang Proses -->
         <div class="col-lg-6 mb-4">
             <div class="custom-card h-100 d-flex flex-column">
                 <div class="custom-card-header header-green">
-                    <i class="bi bi-file-earmark-text"></i> ANTRIAN (SEDANG PROSES)
+                    <i class="bi bi-file-earmark-text"></i> PENDAFTARAN (SEDANG PROSES)
                 </div>
                 <div class="table-container flex-grow-1">
                     <table class="table-custom">
                         <thead>
                             <tr>
-                                <th>No. Urut</th>
+                                <th>No.</th>
                                 <th>Nama Pasien</th>
-                                <th>Kode Booking</th>
+                                <th>No. Antrean</th>
                                 <th>Poli</th>
                                 <th>Dokter</th>
                                 <th>Status</th>
@@ -455,17 +520,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($antrianProses as $i => $reg)
+                            @forelse($pendaftaranProses as $i => $reg)
                                 <tr>
-                                    <td>{{ $reg->urutan_antrian }}</td>
-                                    <td>{{ $reg->patient->nama_pasien }}</td>
-                                    <td>{{ $reg->kode_booking }}</td>
+                                    <td>{{ $i + 1 + ($pendaftaranProses->currentPage() - 1) * $pendaftaranProses->perPage() }}</td>
+                                    <td>
+                                        {{ $reg->patient->nama_pasien }}
+                                        <div class="text-muted" style="font-size: 0.7rem;">{{ $reg->patient->no_rm }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="font-size: 0.85rem; padding: 5px 10px; background: var(--bs-indigo); color: white;">
+                                            {{ $reg->nomor_antrian ?? '-' }}
+                                        </span>
+                                    </td>
                                     <td>{{ $reg->department->nama_poli }}</td>
                                     <td>{{ $reg->doctor->nama_dokter }}</td>
                                     <td>
                                         @php
                                             $idx = $i + 1;
-                                            if ($reg->status == 'dipanggil' || $idx <= 3) {
+                                            if ($reg->status == 'diperiksa' || $idx <= 3) {
                                                 if ($idx == 1)
                                                     $badgeClass = 'badge-proses-1';
                                                 elseif ($idx == 2)
@@ -488,7 +560,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-4">Tidak ada antrian yang sedang diproses.
+                                    <td colspan="8" class="text-center text-muted py-4">Tidak ada pendaftaran yang sedang diproses.
                                     </td>
                                 </tr>
                             @endforelse
@@ -496,23 +568,9 @@
                     </table>
                 </div>
 
-                @if($antrianProses->count() > 0)
-                    <div class="info-alert">
-                        <i class="bi bi-info-circle-fill"></i>
-                        <div class="info-alert-text">
-                            <strong>Informasi Antrean</strong>
-                            <ul>
-                                <li>3 urutan teratas (berwarna) sedang ditangani dokter.</li>
-                                <li>Setelah selesai, pasien akan otomatis pindah ke tabel SELESAI.</li>
-                                <li>Pasien berikutnya akan naik urutan.</li>
-                            </ul>
-                        </div>
-                    </div>
-                @endif
-
-                <div class="table-footer">
-                    Menampilkan {{ $antrianProses->count() }} dari {{ $antrianProses->total() }} data
-                    {{ $antrianProses->links('pagination::bootstrap-4') }}
+                <div class="table-footer mt-auto">
+                    Menampilkan {{ $pendaftaranProses->count() }} dari {{ $pendaftaranProses->total() }} data
+                    {{ $pendaftaranProses->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>
@@ -529,7 +587,7 @@
                             <tr>
                                 <th>No.</th>
                                 <th>Nama Pasien</th>
-                                <th>Kode Booking</th>
+                                <th>No. Antrean</th>
                                 <th>Poli</th>
                                 <th>Dokter</th>
                                 <th>Selesai Dilayani</th>
@@ -537,11 +595,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($antrianSelesai as $i => $reg)
+                            @forelse($pendaftaranSelesai as $i => $reg)
                                 <tr>
-                                    <td>{{ $i + 1 + ($antrianSelesai->currentPage() - 1) * $antrianSelesai->perPage() }}</td>
-                                    <td>{{ $reg->patient->nama_pasien }}</td>
-                                    <td>{{ $reg->kode_booking }}</td>
+                                    <td>{{ $i + 1 + ($pendaftaranSelesai->currentPage() - 1) * $pendaftaranSelesai->perPage() }}</td>
+                                    <td>{{ $reg->patient->nama_pasien }}<div class="text-muted" style="font-size: 0.7rem;">{{ $reg->patient->no_rm }}</div></td>
+                                    <td>
+                                        <span class="badge" style="font-size: 0.85rem; padding: 5px 10px; background: var(--bs-indigo); color: white;">
+                                            {{ $reg->nomor_antrian ?? '-' }}
+                                        </span>
+                                    </td>
                                     <td>{{ $reg->department->nama_poli }}</td>
                                     <td>{{ $reg->doctor->nama_dokter }}</td>
                                     <td>{{ $reg->updated_at->format('H:i') }}</td>
@@ -560,50 +622,63 @@
                     </table>
                 </div>
                 <div class="table-footer mt-auto">
-                    Menampilkan {{ $antrianSelesai->count() }} dari {{ $antrianSelesai->total() }} data
-                    {{ $antrianSelesai->links('pagination::bootstrap-4') }}
+                    Menampilkan {{ $pendaftaranSelesai->count() }} dari {{ $pendaftaranSelesai->total() }} data
+                    {{ $pendaftaranSelesai->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Data Pasien Terdaftar -->
+    <!-- Seluruh Data Pendaftaran -->
     <div class="custom-card fade-in">
         <div class="custom-card-header header-purple" style="background-color: #faf5ff;">
-            <i class="bi bi-people-fill"></i> DATA PASIEN TERDAFTAR
+            <i class="bi bi-card-list"></i> SELURUH DATA PENDAFTARAN
         </div>
         <div class="table-container">
             <table class="table-custom">
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>No. Rekam Medis</th>
+                        <th>Kode Booking</th>
+                        <th>No. RM</th>
                         <th>Nama Pasien</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Tanggal Lahir</th>
-                        <th>No. Telepon</th>
-                        <th>Alamat</th>
+                        <th>Poli</th>
+                        <th>Dokter</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($patients as $i => $patient)
+                    @forelse($allRegistrations as $i => $reg)
                         <tr>
-                            <td>{{ $i + 1 + ($patients->currentPage() - 1) * $patients->perPage() }}</td>
-                            <td>{{ $patient->no_rm }}</td>
-                            <td>{{ $patient->nama_pasien }}</td>
-                            <td>{{ $patient->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($patient->tanggal_lahir)->format('d/m/Y') }}</td>
-                            <td>{{ $patient->no_telepon ?? '-' }}</td>
-                            <td class="text-truncate" style="max-width: 200px;">{{ $patient->alamat }}</td>
+                            <td>{{ $i + 1 + ($allRegistrations->currentPage() - 1) * $allRegistrations->perPage() }}</td>
+                            <td><span style="font-family: monospace; font-weight: bold;">{{ $reg->kode_booking ?? '-' }}</span></td>
+                            <td>{{ $reg->patient->no_rm }}</td>
+                            <td>{{ $reg->patient->nama_pasien }}</td>
+                            <td>{{ $reg->department->nama_poli }}</td>
+                            <td>{{ $reg->doctor->nama_dokter }}</td>
+                            <td>{{ \Carbon\Carbon::parse($reg->tanggal_kunjungan)->format('d/m/Y') }}</td>
+                            <td>
+                                @php
+                                    $badgeClass = match($reg->status) {
+                                        'menunggu'  => 'badge-menunggu',
+                                        'diperiksa' => 'badge-diperiksa',
+                                        'selesai'   => 'badge-selesai',
+                                        'batal'     => 'badge-batal',
+                                        default     => '',
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ ucfirst($reg->status) }}</span>
+                            </td>
                             <td>
                                 <div class="d-flex gap-1">
-                                    <a href="{{ route('patients.show', $patient) }}" class="btn-action-sm btn-action-view"><i
+                                    <a href="{{ route('registrations.show', $reg) }}" class="btn-action-sm btn-action-view"><i
                                             class="bi bi-eye-fill"></i></a>
-                                    <a href="{{ route('patients.edit', $patient) }}" class="btn-action-sm btn-action-edit"><i
+                                    <a href="{{ route('registrations.edit', $reg) }}" class="btn-action-sm btn-action-edit"><i
                                             class="bi bi-pencil-fill"></i></a>
-                                    <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Hapus pasien ini?');">
+                                    <form action="{{ route('registrations.destroy', $reg) }}" method="POST" class="d-inline"
+                                        onsubmit="return confirm('Hapus pendaftaran ini?');">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn-action-sm btn-action-delete"><i
                                                 class="bi bi-trash-fill"></i></button>
@@ -613,18 +688,29 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-4">Data pasien tidak ditemukan.</td>
+                            <td colspan="9" class="text-center text-muted py-4">Data pendaftaran tidak ditemukan.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
         <div class="table-footer">
-            Menampilkan {{ $patients->count() }} dari {{ $patients->total() }} data
-            <div>
-                {{ $patients->links('pagination::bootstrap-4') }}
-            </div>
+            Menampilkan {{ $allRegistrations->count() }} dari {{ $allRegistrations->total() }} data
+            {{ $allRegistrations->links('pagination::bootstrap-4') }}
         </div>
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    function disablePanggilButton() {
+        const btn = document.getElementById('btn-panggil-berikutnya');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Memproses...';
+        }
+        return true;
+    }
+</script>
+@endpush

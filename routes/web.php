@@ -23,6 +23,7 @@ Route::get('/info-pendaftaran', [PublicController::class, 'index'])->name('info.
 Route::get('/jadwal-dokter', [PublicController::class, 'jadwal'])->name('public.jadwal');
 Route::get('/cek-pendaftaran', [PublicController::class, 'cek'])->name('public.cek');
 Route::post('/cek-pendaftaran', [PublicController::class, 'prosesCek'])->name('public.cek.post');
+Route::post('/ambil-antrean', [PublicController::class, 'ambilAntrean'])->name('public.ambil.antrean');
 Route::get('/tracer/{kode_booking}', [PublicController::class, 'tracer'])->name('public.tracer');
 
 // ── Auth Routes (tamu saja) ──────────────────────────────────────────────────
@@ -119,6 +120,10 @@ Route::middleware('auth')->group(function () {
     Route::get('registrations/{registration}/cetak', [RegistrationController::class, 'cetak'])
         ->name('registrations.cetak');
 
+    // Panggil pasien berikutnya secara atomik
+    Route::post('registrations/panggil-berikutnya', [RegistrationController::class, 'panggilBerikutnya'])
+        ->name('registrations.panggil-berikutnya');
+
     Route::resource('registrations', RegistrationController::class)
         ->names([
             'index'   => 'registrations.index',
@@ -130,22 +135,20 @@ Route::middleware('auth')->group(function () {
             'destroy' => 'registrations.destroy',
         ]);
 
-    // ── Modul Antrian ─────────────────────────────────────────────────────────
-    Route::get('/antrian',                                      [AntrianController::class, 'index'])->name('antrian.index');
-    Route::patch('/antrian/{registration}/panggil',             [AntrianController::class, 'panggil'])->name('antrian.panggil');
-    Route::patch('/antrian/{registration}/selesai',             [AntrianController::class, 'selesai'])->name('antrian.selesai');
-    Route::patch('/antrian/{registration}/status',              [AntrianController::class, 'updateStatus'])->name('antrian.update-status');
-    Route::get('/antrian/display/{department}',                 [AntrianController::class, 'display'])->name('antrian.display');
-
     // ── AJAX Endpoints ────────────────────────────────────────────────────────
     Route::prefix('ajax')->name('ajax.')->group(function () {
-        Route::get('doctors',            [AjaxController::class, 'getDoctors'])->name('doctors');
-        Route::get('schedules',          [AjaxController::class, 'getSchedules'])->name('schedules');
-        Route::get('kuota',              [AjaxController::class, 'getKuota'])->name('kuota');
-        Route::get('cari-pasien',        [AjaxController::class, 'cariPasien'])->name('cari-pasien');
-        Route::get('nomor-antrian',      [AjaxController::class, 'getNomorAntrian'])->name('nomor-antrian');
-        Route::get('antrian/{department}',[AjaxController::class, 'getAntrianPoli'])->name('antrian-poli');
+        Route::get('doctors',       [AjaxController::class, 'getDoctors'])->name('doctors');
+        Route::get('schedules',     [AjaxController::class, 'getSchedules'])->name('schedules');
+        Route::get('kuota',         [AjaxController::class, 'getKuota'])->name('kuota');
+        Route::get('cari-pasien',   [AjaxController::class, 'cariPasien'])->name('cari-pasien');
     });
+
+    // ── Modul Antrean (Staff + Admin) ─────────────────────────────────────────
+    Route::get('/antrian', [AntrianController::class, 'index'])->name('antrian.index');
+    Route::patch('/antrian/{registration}/panggil', [AntrianController::class, 'panggil'])->name('antrian.panggil');
+    Route::patch('/antrian/{registration}/selesai', [AntrianController::class, 'selesai'])->name('antrian.selesai');
+    Route::patch('/antrian/{registration}/tunda',   [AntrianController::class, 'tunda'])->name('antrian.tunda');
+    Route::patch('/antrian/{registration}/status',  [AntrianController::class, 'updateStatus'])->name('antrian.status');
 
     // ══════════════════════════════════════════════════════════════════════════
     // SISTEM POIN & REWARD (PETUGAS)

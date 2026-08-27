@@ -630,7 +630,7 @@
             color: #92400e;
         }
 
-        .badge-dipanggil {
+        .badge-diperiksa {
             background: var(--tile-soft);
             color: #0c5c73;
         }
@@ -1014,6 +1014,14 @@
                     class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}"
                     @if(request()->routeIs('departments.*')) aria-current="page" @endif>
                     <span class="nav-icon-box"><i class="bi bi-person-badge" aria-hidden="true"></i></span> Data Poli
+                </a>
+                <a href="{{ route('registrations.index') }}"
+                    class="nav-link {{ request()->routeIs('registrations.*') ? 'active' : '' }}">
+                    <span class="nav-icon-box"><i class="bi bi-card-checklist"></i></span> Pendaftaran
+                </a>
+                <a href="{{ route('antrian.index') }}"
+                    class="nav-link {{ request()->routeIs('antrian.*') ? 'active' : '' }}">
+                    <span class="nav-icon-box"><i class="bi bi-people"></i></span> Antrean
                 </a>
                 <a href="{{ route('doctors.index') }}"
                     class="nav-link {{ request()->routeIs('doctors.*') ? 'active' : '' }}"

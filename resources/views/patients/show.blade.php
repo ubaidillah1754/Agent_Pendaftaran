@@ -390,7 +390,7 @@
                                     <td style="font-size:.82rem;">{{ $reg->tanggal_daftar->format('d M Y') }}<br><span
                                             class="text-muted"
                                             style="font-size:.72rem;">{{ $reg->tanggal_daftar->format('H:i') }} WIB</span></td>
-                                    <td class="fw-900" style="color:var(--primary);font-size:1rem;">{{ $reg->nomor_antrian }}
+                                    <td class="fw-900" style="color:var(--primary);font-size:1rem;">{{ $reg->kode_booking }}
                                     </td>
                                     <td style="font-size:.82rem;">{{ $reg->department->nama_poli }}</td>
                                     <td style="font-size:.82rem;">{{ $reg->doctor->nama_dokter }}</td>

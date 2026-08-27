@@ -5,127 +5,138 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\Registration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * AntrianController
+ *
+ * Mengelola tampilan dan aksi antrean untuk staff/admin:
+ * - Tampilan daftar antrean per poli per tanggal
+ * - Memanggil pasien (menunggu → diperiksa)
+ * - Menyelesaikan pemeriksaan (diperiksa → selesai)
+ */
 class AntrianController extends Controller
 {
-    /** Halaman monitor antrian per poli */
+    /**
+     * Halaman utama antrean — tampilkan daftar antrean hari ini.
+     */
     public function index(Request $request)
     {
-        $departments    = Department::active()->orderBy('nama_poli')->get();
-        $selectedDeptId = $request->input('department_id', $departments->first()?->id);
-        $selectedDept   = $departments->find($selectedDeptId);
+        $tanggal      = $request->input('tanggal', today()->toDateString());
+        $departmentId = $request->input('department_id');
 
-        $antrian = [];
-        if ($selectedDept) {
-            $antrian = Registration::with(['patient', 'doctor'])
-                ->where('department_id', $selectedDeptId)
-                ->whereDate('tanggal_daftar', today())
-                ->orderBy('urutan_antrian')
-                ->get();
+        $departments = Department::active()->orderBy('nama_poli')->get();
+
+        // Base query: hanya yang sudah punya nomor antrean, untuk tanggal kunjungan tsb
+        $query = Registration::with(['patient', 'department', 'doctor', 'doctorSchedule'])
+            ->whereDate('tanggal_kunjungan', $tanggal)
+            ->whereNotNull('nomor_antrian')
+            ->whereNotIn('status', ['batal']);
+
+        if ($departmentId) {
+            $query->where('department_id', $departmentId);
         }
 
-        // Statistik ringkas
+        // Urutkan: A01, A02, A03, ... (sort by urutan numerik di nomor_antrian)
+        $query->orderByRaw("CAST(SUBSTRING(nomor_antrian, 2) AS UNSIGNED) ASC");
+
+        $antrean = $query->get();
+
+        // Pisahkan berdasarkan status
+        $menunggu   = $antrean->whereIn('status', ['menunggu']);
+        $diperiksa  = $antrean->where('status', 'diperiksa');
+        $selesai    = $antrean->where('status', 'selesai');
+
+        // Stats hari ini
         $stats = [
-            'menunggu'  => collect($antrian)->where('status', 'menunggu')->count(),
-            'dipanggil' => collect($antrian)->where('status', 'dipanggil')->count(),
-            'selesai'   => collect($antrian)->where('status', 'selesai')->count(),
-            'batal'     => collect($antrian)->where('status', 'batal')->count(),
+            'total'     => $antrean->count(),
+            'menunggu'  => $menunggu->count(),
+            'diperiksa' => $diperiksa->count(),
+            'selesai'   => $selesai->count(),
         ];
 
-        return view('antrian.index', compact('departments', 'selectedDept', 'antrian', 'stats'));
+        return view('antrian.index', compact(
+            'antrean', 'menunggu', 'diperiksa', 'selesai',
+            'departments', 'departmentId', 'tanggal', 'stats'
+        ));
     }
 
-    /** Panggil pasien berikutnya (menunggu → dipanggil) */
+    /**
+     * Panggil pasien: menunggu → diperiksa
+     */
     public function panggil(Registration $registration)
     {
         if ($registration->status !== 'menunggu') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Pasien tidak dalam status menunggu.',
-            ], 422);
+            return back()->with('error', "Pasien {$registration->nomor_antrian} tidak dalam status menunggu.");
         }
 
-        $registration->update(['status' => 'dipanggil']);
+        if (!$registration->nomor_antrian) {
+            return back()->with('error', 'Pasien ini belum memiliki nomor antrean.');
+        }
 
-        return response()->json([
-            'success'        => true,
-            'message'        => "Pasien {$registration->nomor_antrian} dipanggil.",
-            'nomor_antrian'  => $registration->nomor_antrian,
-            'nama_pasien'    => $registration->patient->nama_pasien,
-            'status'         => 'dipanggil',
-        ]);
+        $registration->update(['status' => 'diperiksa']);
+
+        return back()->with('success',
+            "Pasien {$registration->nomor_antrian} — {$registration->patient->nama_pasien} dipanggil untuk diperiksa."
+        );
     }
 
-    /** Tandai selesai (dipanggil → selesai) */
+    /**
+     * Selesaikan pemeriksaan: diperiksa → selesai
+     */
     public function selesai(Registration $registration)
     {
-        if ($registration->status !== 'dipanggil') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Pasien belum dipanggil.',
-            ], 422);
+        if ($registration->status !== 'diperiksa') {
+            return back()->with('error', "Pasien {$registration->nomor_antrian} tidak dalam status diperiksa.");
         }
 
         $registration->update(['status' => 'selesai']);
 
-        return response()->json([
-            'success'       => true,
-            'message'       => "Antrian {$registration->nomor_antrian} selesai.",
-            'nomor_antrian' => $registration->nomor_antrian,
-            'status'        => 'selesai',
-        ]);
+        return back()->with('success',
+            "Pasien {$registration->nomor_antrian} — {$registration->patient->nama_pasien} selesai diperiksa."
+        );
     }
 
-    /** Update status generik via AJAX (digunakan dari form tabel) */
+    /**
+     * Kembalikan pasien diperiksa ke menunggu (undo panggil)
+     */
+    public function tunda(Registration $registration)
+    {
+        if ($registration->status !== 'diperiksa') {
+            return back()->with('error', "Pasien tidak dalam status diperiksa.");
+        }
+
+        $registration->update(['status' => 'menunggu']);
+
+        return back()->with('success',
+            "Pasien {$registration->nomor_antrian} dikembalikan ke status menunggu."
+        );
+    }
+
+    /**
+     * Update status antrean secara fleksibel (untuk admin)
+     */
     public function updateStatus(Request $request, Registration $registration)
     {
         $request->validate([
-            'status' => ['required', 'in:menunggu,dipanggil,selesai,batal'],
+            'status' => ['required', 'in:menunggu,diperiksa,selesai,batal'],
         ]);
 
-        $newStatus    = $request->status;
-        $transisiSah  = Registration::transisiStatusValid();
-        $allowed      = $transisiSah[$registration->status] ?? [];
+        $newStatus     = $request->status;
+        $currentStatus = $registration->status;
+        $transisi      = Registration::transisiStatusValid();
 
-        if (!in_array($newStatus, $allowed)) {
-            return response()->json([
-                'success' => false,
-                'message' => "Tidak dapat mengubah status dari '{$registration->status}' ke '{$newStatus}'.",
-            ], 422);
+        if (!in_array($newStatus, $transisi[$currentStatus] ?? [])) {
+            // Admin bisa override jika diperlukan — cek role
+            if (!Auth::user()->isAdmin()) {
+                return back()->with('error',
+                    "Transisi status dari {$currentStatus} ke {$newStatus} tidak valid."
+                );
+            }
         }
 
         $registration->update(['status' => $newStatus]);
 
-        return response()->json([
-            'success'       => true,
-            'message'       => 'Status antrian diperbarui.',
-            'status'        => $registration->status,
-            'status_label'  => $registration->status_label,
-            'status_badge'  => $registration->status_badge,
-        ]);
-    }
-
-    /**
-     * Halaman display antrian publik per poli.
-     * Halaman ini bisa dipasang di TV/monitor di ruang tunggu.
-     */
-    public function display(Department $department)
-    {
-        $sedangDipanggil = Registration::with('patient')
-            ->where('department_id', $department->id)
-            ->whereDate('tanggal_daftar', today())
-            ->where('status', 'dipanggil')
-            ->orderByDesc('updated_at')
-            ->first();
-
-        $menunggu = Registration::with('patient')
-            ->where('department_id', $department->id)
-            ->whereDate('tanggal_daftar', today())
-            ->where('status', 'menunggu')
-            ->orderBy('urutan_antrian')
-            ->limit(5)
-            ->get();
-
-        return view('antrian.display', compact('department', 'sedangDipanggil', 'menunggu'));
+        return back()->with('success', "Status antrean diperbarui menjadi {$registration->fresh()->status_label}.");
     }
 }

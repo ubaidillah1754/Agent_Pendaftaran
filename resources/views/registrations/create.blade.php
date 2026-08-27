@@ -70,7 +70,7 @@
     .card { border:1px solid #e7ece9; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,20,.04); }
     .card-header { background:#fff; border-bottom:1px solid #eef2f0; font-weight:700; }
 
-    .keluhan-wrap { position:relative; }
+
     .char-counter { position:absolute; right:12px; bottom:10px; font-size:.72rem; color:#9ca8a2; }
 </style>
 @endpush
@@ -235,34 +235,9 @@
                     <!-- Preview Antrian -->
                     <div class="col-12">
                         <div id="antrian-preview">
-                            <div style="font-size:.72rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;">Nomor Antrian Anda</div>
-                            <div class="antrian-number" id="nomor-preview">—</div>
-                            <div id="kuota-info" style="font-size:.8rem;color:#475d52;margin-top:4px;"></div>
+                            <div class="d-none" id="nomor-preview">—</div>
+                            <div id="kuota-info" style="font-size:.9rem;font-weight:700;color:var(--primary-dark);text-align:center;margin-bottom:8px;"></div>
                             <div class="kuota-bar"><div class="kuota-fill" id="kuota-fill" style="width:0%"></div></div>
-                        </div>
-                    </div>
-
-                    <!-- Keluhan -->
-                    <div class="col-12 d-none">
-                        <label class="form-label d-flex align-items-center gap-1" for="keluhan">
-                            <i class="bi bi-chat-left-text" style="color:var(--primary); font-size:.85rem;"></i>
-                            Keluhan / Keterangan Kunjungan
-                        </label>
-                        <div class="keluhan-wrap">
-                            <textarea name="keluhan" id="keluhan"
-                                      class="form-control @error('keluhan') is-invalid @enderror"
-                                      rows="5"
-                                      maxlength="1000"
-                                      placeholder="Contoh: Sakit kepala sejak 2 hari lalu, demam, batuk berdahak...&#10;&#10;Tuliskan keluhan utama pasien secara singkat dan jelas (opsional)"
-                                      style="resize:vertical; min-height:120px; padding:12px 14px; padding-bottom:2rem; line-height:1.6; font-size:.875rem;">{{ old('keluhan') }}</textarea>
-                            <span class="char-counter" id="keluhan-counter" style="pointer-events:none;">0/1000</span>
-                        </div>
-                        @error('keluhan')
-                            <div class="invalid-feedback" style="font-size:.78rem;">{{ $message }}</div>
-                        @enderror
-                        <div class="mt-1" style="font-size:.75rem; color:var(--muted);">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Opsional. Informasi ini membantu dokter mempersiapkan pemeriksaan.
                         </div>
                     </div>
                 </div>
@@ -478,10 +453,6 @@ document.addEventListener('click', e => {
     if (!e.target.closest('#panel-lama')) document.getElementById('search-result').innerHTML = '';
 });
 
-const keluhanEl = document.getElementById('keluhan');
-const counterEl = document.getElementById('keluhan-counter');
-function updateCounter() { counterEl.textContent = keluhanEl.value.length + '/1000'; }
-keluhanEl.addEventListener('input', updateCounter);
-updateCounter();
+
 </script>
 @endpush

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Tracer – {{ $registration->nomor_antrian }}</title>
+    <title>Cetak Tracer – {{ $registration->kode_booking }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -394,10 +394,10 @@
         {{-- ── PERFORATED EDGE ── --}}
         <div class="perforated"></div>
 
-        {{-- ── NOMOR ANTRIAN ── --}}
+        {{-- ── KODE BOOKING ── --}}
         <div class="antrian-hero">
-            <div class="antrian-label">Nomor Antrian</div>
-            <div class="antrian-number">{{ $registration->nomor_antrian }}</div>
+            <div class="antrian-label">Kode Booking</div>
+            <div class="antrian-number">{{ $registration->kode_booking }}</div>
         </div>
 
         {{-- ── INFO PASIEN ── --}}
@@ -467,18 +467,7 @@
                     {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}
                 </div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Kode Booking</div>
-                <div class="info-value" style="font-size:1.05rem; color:var(--green-dark);">
-                    {{ $registration->kode_booking ?? str_pad($registration->urutan_antrian, 6, '0', STR_PAD_LEFT) }}
-                </div>
-            </div>
-            @if($registration->keluhan)
-            <div class="info-item full">
-                <div class="info-label">Keluhan Utama</div>
-                <div class="info-value" style="font-weight:400;">{{ $registration->keluhan }}</div>
-            </div>
-            @endif
+
         </div>
 
         {{-- ── FOOTER ── --}}

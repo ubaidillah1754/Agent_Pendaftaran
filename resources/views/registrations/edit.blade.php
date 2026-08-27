@@ -3,7 +3,7 @@
 @section('page-title','Edit Pendaftaran')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('registrations.index') }}">Pendaftaran</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('registrations.show', $registration) }}">{{ $registration->nomor_antrian }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('registrations.show', $registration) }}">{{ $registration->kode_booking }}</a></li>
     <li class="breadcrumb-item active">Edit</li>
 @endsection
 
@@ -47,10 +47,10 @@
     <div class="edit-hero fade-in">
         <div class="hero-text">
             <h4><i class="bi bi-pencil-square me-2"></i>Edit Pendaftaran</h4>
-            <p>Perbarui data keluhan untuk pendaftaran ini</p>
+            <p>Formulir ubah data pendaftaran pasien</p>
         </div>
         <div class="antrian-badge">
-            <div class="num">{{ $registration->nomor_antrian }}</div>
+            <div class="num">{{ $registration->kode_booking }}</div>
             <div class="lbl">No. Antrian</div>
         </div>
     </div>
@@ -108,7 +108,7 @@
                         <span class="label">Status</span>
                         <span class="value">
                             @php
-                                $statusColors = ['menunggu'=>'#fef9c3,#854d0e','dipanggil'=>'#dbeafe,#1e40af','selesai'=>'#d1fae5,#065f46','batal'=>'#fee2e2,#991b1b'];
+                                $statusColors = ['menunggu'=>'#fef9c3,#854d0e','diperiksa'=>'#dbeafe,#1e40af','selesai'=>'#d1fae5,#065f46','batal'=>'#fee2e2,#991b1b'];
                                 [$bg,$fg] = explode(',', $statusColors[$registration->status] ?? '#f3f4f6,#374151');
                             @endphp
                             <span class="badge" style="background:{{ $bg }};color:{{ $fg }};">{{ $registration->status_label }}</span>
@@ -131,25 +131,6 @@
                     <form action="{{ route('registrations.update', $registration) }}" method="POST">
                         @csrf
                         @method('PUT')
-
-                        <div class="mb-4">
-                            <label for="keluhan" class="form-label">
-                                Keluhan / Anamnesis
-                                <span class="text-muted fw-normal ms-1">(opsional)</span>
-                            </label>
-                            <textarea
-                                id="keluhan"
-                                name="keluhan"
-                                rows="5"
-                                class="form-control @error('keluhan') is-invalid @enderror"
-                                placeholder="Tuliskan keluhan utama pasien..."
-                                style="resize:vertical;"
-                            >{{ old('keluhan', $registration->keluhan) }}</textarea>
-                            @error('keluhan')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <div class="form-text">Maks. 1000 karakter. Data lain (poli, dokter, jadwal) tidak dapat diubah setelah pendaftaran dibuat.</div>
-                        </div>
 
                         <div class="d-flex gap-2 flex-wrap">
                             <a href="{{ route('registrations.show', $registration) }}"

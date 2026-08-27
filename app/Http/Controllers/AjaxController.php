@@ -86,19 +86,10 @@ class AjaxController extends Controller
         $sisaKuota = $schedule->sisaKuota($tanggal);
         $department = $schedule->department;
 
-        // Preview nomor antrian berikutnya
-        $lastUrutan = Registration::where('department_id', $schedule->department_id)
-            ->where('tanggal_daftar', $tanggal)
-            ->whereNotIn('status', ['batal'])
-            ->max('urutan_antrian') ?? 0;
-
-        $nomorBerikutnya = strtoupper($department->kode_poli) . str_pad($lastUrutan + 1, 3, '0', STR_PAD_LEFT);
-
         return response()->json([
             'valid'            => true,
             'sisa_kuota'       => $sisaKuota,
             'kuota_total'      => $schedule->kuota,
-            'nomor_berikutnya' => $nomorBerikutnya,
             'penuh'            => $sisaKuota <= 0,
             'message'          => $sisaKuota > 0
                 ? "Sisa kuota: {$sisaKuota} dari {$schedule->kuota}"
@@ -132,57 +123,5 @@ class AjaxController extends Controller
             ]);
 
         return response()->json($patients);
-    }
-
-    /**
-     * Preview nomor antrian berikutnya untuk poli + tanggal tertentu.
-     * GET /ajax/nomor-antrian?department_id=1&tanggal=2026-01-20
-     */
-    public function getNomorAntrian(Request $request)
-    {
-        $request->validate([
-            'department_id' => 'required|exists:departments,id',
-            'tanggal'       => 'required|date',
-        ]);
-
-        $department = Department::findOrFail($request->department_id);
-        $antrian    = $department->generateNomorAntrian($request->tanggal);
-
-        return response()->json([
-            'nomor_antrian' => $antrian['nomor_antrian'],
-            'urutan'        => $antrian['urutan'],
-        ]);
-    }
-
-    /**
-     * Data antrian real-time per poli (untuk halaman display antrian).
-     * GET /ajax/antrian/{department}
-     */
-    public function getAntrianPoli(Department $department)
-    {
-        $antrian = Registration::with('patient')
-            ->where('department_id', $department->id)
-            ->whereDate('tanggal_daftar', today())
-            ->orderBy('urutan_antrian')
-            ->get()
-            ->map(fn($r) => [
-                'id'            => $r->id,
-                'nomor_antrian' => $r->nomor_antrian,
-                'nama_pasien'   => $r->patient->nama_pasien,
-                'status'        => $r->status,
-                'status_label'  => $r->status_label,
-                'status_badge'  => $r->status_badge,
-                'updated_at'    => $r->updated_at->format('H:i'),
-            ]);
-
-        return response()->json([
-            'department' => $department->nama_poli,
-            'antrian'    => $antrian,
-            'stats'      => [
-                'menunggu'  => $antrian->where('status', 'menunggu')->count(),
-                'dipanggil' => $antrian->where('status', 'dipanggil')->count(),
-                'selesai'   => $antrian->where('status', 'selesai')->count(),
-            ],
-        ]);
     }
 }
