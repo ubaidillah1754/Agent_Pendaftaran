@@ -8,6 +8,7 @@ use App\Models\DoctorSchedule;
 use App\Models\Patient;
 use App\Models\Registration;
 use App\Services\PatientService;
+use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,8 @@ use Illuminate\Support\Facades\DB;
 class RegistrationController extends Controller
 {
     public function __construct(
-        protected PatientService $patientService
+        protected PatientService $patientService,
+        protected PointService   $pointService
     ) {}
 
     public function index(Request $request)
@@ -113,7 +115,7 @@ class RegistrationController extends Controller
             // ── Generate Nomor Antrean & Kode Booking Unik ──────────────────
             $nomorAntrian = Registration::generateNomorAntrian($validated['department_id'], $tanggal);
             $kodeBooking  = Registration::generateKodeBooking();
-            $urutanAntrian = (int) substr($nomorAntrian, 4);
+            $urutanAntrian = (int) (explode('-', $nomorAntrian)[1] ?? 1);
 
             // ── Simpan Pendaftaran ────────────────────────────────────────────
             return Registration::create([
@@ -129,6 +131,26 @@ class RegistrationController extends Controller
                 'created_by'         => Auth::id(),
             ]);
         });
+
+        // ── Berikan poin kepada petugas yang mendaftarkan ────────────────
+        /** @var \App\Models\User $petugas */
+        $petugas = Auth::user();
+        if ($petugas->isPetugas()) {
+            $registration->load(['patient', 'department']);
+            $pointsToEarn = (int) config('points.earn_per_registration', 5);
+            $reference    = "EARN-REG-{$registration->id}";
+            $description  = "Poin pendaftaran rawat jalan: {$registration->patient->nama_pasien} ke {$registration->department->nama_poli} (Antrian: {$registration->nomor_antrian})";
+
+            $this->pointService->earn(
+                user:        $petugas,
+                amount:      $pointsToEarn,
+                sourceType:  Registration::class,
+                sourceId:    $registration->id,
+                reference:   $reference,
+                description: $description,
+                creator:     $petugas
+            );
+        }
 
         session()->flash('success', "Pendaftaran berhasil! Nomor Antrean: {$registration->nomor_antrian} | Kode Booking: {$registration->kode_booking}");
 
@@ -163,17 +185,17 @@ class RegistrationController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $query = Registration::with(['patient', 'department', 'doctor'])
+        $query = Registration::with(['patient', 'department', 'doctor', 'pointTransaction'])
             ->where('created_by', $user->id)
             ->orderByDesc('tanggal_daftar')
             ->orderByDesc('created_at');
 
-        // Filter bulan (format: YYYY-MM)
-        $bulan = $request->input('bulan', today()->format('Y-m'));
-        if (preg_match('/^\d{4}-\d{2}$/', $bulan)) {
+        // Filter bulan berdasarkan tanggal_daftar (tanggal pasien didaftarkan)
+        $bulan = $request->input('bulan');
+        if ($bulan && preg_match('/^\d{4}-\d{2}$/', $bulan)) {
             [$year, $month] = explode('-', $bulan);
-            $query->whereYear('created_at', $year)
-                  ->whereMonth('created_at', $month);
+            $query->whereYear('tanggal_daftar', $year)
+                  ->whereMonth('tanggal_daftar', $month);
         }
 
         // Filter poli

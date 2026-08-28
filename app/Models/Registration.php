@@ -60,9 +60,9 @@ class Registration extends Model
     }
 
     /** Poin yang didapat dari pendaftaran ini */
-    public function petugasPoint()
+    public function pointTransaction()
     {
-        return $this->hasOne(PetugasPoint::class);
+        return $this->morphOne(PointTransaction::class, 'source');
     }
 
     // ─── Scope ──────────────────────────────────────────────────────────────

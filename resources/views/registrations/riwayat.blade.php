@@ -88,7 +88,7 @@
         <div class="col-md-4 col-sm-6">
             <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bulan</label>
             <input type="month" name="bulan" class="form-control"
-                   value="{{ request('bulan', today()->format('Y-m')) }}"
+                   value="{{ request('bulan') }}"
                    style="height: 44px; border-radius: 10px; border-color: var(--border);">
         </div>
         <div class="col-md-4 col-sm-6">
@@ -185,10 +185,10 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        @if($reg->petugasPoint)
+                        @if($reg->pointTransaction)
                             <span class="badge"
                                   style="background:var(--primary-soft); color:var(--primary); font-size:.75rem;">
-                                +{{ $reg->petugasPoint->points }} poin
+                                +{{ $reg->pointTransaction->amount }} poin
                             </span>
                         @else
                             <span style="color:var(--muted); font-size:.8rem;">—</span>

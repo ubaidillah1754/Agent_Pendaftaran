@@ -926,11 +926,19 @@
                 <span class="nav-icon-box"><i class="bi bi-speedometer2" aria-hidden="true"></i></span> Dashboard
             </a>
 
+            @if(auth()->user()->isAdmin())
             <a href="{{ route('registrations.index') }}"
                 class="nav-link {{ (request()->routeIs('registrations.*') || request()->routeIs('patients.*')) && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
                 @if((request()->routeIs('registrations.*') || request()->routeIs('patients.*')) && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
+            @elseif(auth()->user()->isPetugas())
+            <a href="{{ route('registrations.create') }}"
+                class="nav-link {{ request()->routeIs('registrations.create') || request()->routeIs('registrations.store') ? 'active' : '' }}"
+                @if(request()->routeIs('registrations.create') || request()->routeIs('registrations.store')) aria-current="page" @endif>
+                <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Daftar Pasien
+            </a>
+            @endif
 
             @if(auth()->user()->isPetugas())
             <a href="{{ route('registrations.riwayat') }}"
@@ -1082,7 +1090,7 @@
                     <span>{{ now()->translatedFormat('l, d F Y') }}</span>
                 </div>
                 @if(auth()->user()->isAdmin() || auth()->user()->isPetugas())
-                    <a href="{{ auth()->user()->isAdmin() ? route('registrations.create') : route('registrations.index') }}"
+                    <a href="{{ route('registrations.create') }}"
                         class="btn btn-brand btn-sm d-none d-md-flex align-items-center gap-1">
                         <i class="bi bi-plus-circle" aria-hidden="true"></i> Daftar Pasien
                     </a>

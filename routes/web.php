@@ -96,15 +96,21 @@ Route::middleware('auth')->group(function () {
     Route::get('registrations/{registration}/cetak', [RegistrationController::class, 'cetak'])
         ->name('registrations.cetak');
 
-    Route::resource('registrations', RegistrationController::class)
-        ->only(['index', 'create', 'store', 'show', 'destroy'])
-        ->names([
-            'index'   => 'registrations.index',
-            'create'  => 'registrations.create',
-            'store'   => 'registrations.store',
-            'show'    => 'registrations.show',
-            'destroy' => 'registrations.destroy',
-        ]);
+    // Hanya admin yang boleh melihat daftar semua pendaftaran & menghapus
+    Route::middleware('role:admin')->group(function () {
+        Route::get('registrations', [RegistrationController::class, 'index'])
+            ->name('registrations.index');
+        Route::delete('registrations/{registration}', [RegistrationController::class, 'destroy'])
+            ->name('registrations.destroy');
+    });
+
+    // Admin & Petugas dapat membuat dan melihat detail pendaftaran
+    Route::get('registrations/create', [RegistrationController::class, 'create'])
+        ->name('registrations.create');
+    Route::post('registrations', [RegistrationController::class, 'store'])
+        ->name('registrations.store');
+    Route::get('registrations/{registration}', [RegistrationController::class, 'show'])
+        ->name('registrations.show');
 
     // ── AJAX Endpoints ────────────────────────────────────────────────────────
     Route::prefix('ajax')->name('ajax.')->group(function () {

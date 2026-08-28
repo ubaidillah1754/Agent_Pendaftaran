@@ -8,7 +8,16 @@ return [
     | Jumlah poin yang diperoleh karyawan ketika berhasil mendaftarkan
     | seorang pasien baru yang valid ke dalam sistem.
     */
-    'earn_per_new_patient' => env('POINTS_PER_NEW_PATIENT', 10),
+    'earn_per_new_patient'  => env('POINTS_PER_NEW_PATIENT', 10),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Poin per Pendaftaran Rawat Jalan
+    |--------------------------------------------------------------------------
+    | Jumlah poin yang diperoleh karyawan ketika berhasil mendaftarkan
+    | pasien (lama maupun baru) ke poli rawat jalan.
+    */
+    'earn_per_registration' => env('POINTS_PER_REGISTRATION', 5),
 
     /*
     |--------------------------------------------------------------------------
