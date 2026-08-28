@@ -20,6 +20,11 @@ class RegistrationController extends Controller
 
     public function index(Request $request)
     {
+        // Petugas tidak punya akses ke halaman index, langsung ke form buat baru
+        if (auth()->user()->isPetugas()) {
+            return redirect()->route('registrations.create');
+        }
+
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
 
         // Base query: pendaftaran HARI INI yang sudah ambil antrean (punya nomor_antrian)
@@ -39,13 +44,13 @@ class RegistrationController extends Controller
         $pendaftaranProses = (clone $baseQuery)
             ->whereIn('status', ['menunggu', 'diperiksa'])
             ->orderBy('nomor_antrian')
-            ->paginate(10, ['*'], 'page_proses')->withQueryString();
+            ->paginate(7, ['*'], 'page_proses')->withQueryString();
 
         // 2. Antrean Selesai hari ini — sudah selesai dilayani
         $pendaftaranSelesai = (clone $baseQuery)
             ->where('status', 'selesai')
             ->orderBy('updated_at', 'desc')
-            ->paginate(10, ['*'], 'page_selesai')->withQueryString();
+            ->paginate(7, ['*'], 'page_selesai')->withQueryString();
 
         // 3. Seluruh Data Pendaftaran (semua record dari tabel registrations)
         $allRegistrationsQuery = Registration::with(['patient', 'department', 'doctor']);
@@ -58,6 +63,11 @@ class RegistrationController extends Controller
                 })->orWhere('kode_booking', 'like', '%' . $search . '%');
             });
         }
+        
+        if ($request->filled('filter_poli')) {
+            $allRegistrationsQuery->where('department_id', $request->filter_poli);
+        }
+        
         $allRegistrations = $allRegistrationsQuery->orderByDesc('created_at')->paginate(10, ['*'], 'page_all')->withQueryString();
 
         // 4. Panel Antrean (Pasien Aktif & Pasien Berikutnya)

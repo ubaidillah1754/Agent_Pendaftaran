@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AjaxController;
-use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
@@ -143,12 +142,7 @@ Route::middleware('auth')->group(function () {
         Route::get('cari-pasien',   [AjaxController::class, 'cariPasien'])->name('cari-pasien');
     });
 
-    // ── Modul Antrean (Staff + Admin) ─────────────────────────────────────────
-    Route::get('/antrian', [AntrianController::class, 'index'])->name('antrian.index');
-    Route::patch('/antrian/{registration}/panggil', [AntrianController::class, 'panggil'])->name('antrian.panggil');
-    Route::patch('/antrian/{registration}/selesai', [AntrianController::class, 'selesai'])->name('antrian.selesai');
-    Route::patch('/antrian/{registration}/tunda',   [AntrianController::class, 'tunda'])->name('antrian.tunda');
-    Route::patch('/antrian/{registration}/status',  [AntrianController::class, 'updateStatus'])->name('antrian.status');
+
 
     // ══════════════════════════════════════════════════════════════════════════
     // SISTEM POIN & REWARD (PETUGAS)

@@ -1,0 +1,8 @@
+Untuk demo berikutnya, cukup jalankan:
+
+bash
+php artisan demo:generate
+Atau ubah jumlah pasien per poli dengan:
+
+bash
+php artisan demo:generate --poli=10

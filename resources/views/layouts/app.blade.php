@@ -21,6 +21,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Tom Select CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     
 
     <style>
@@ -1015,14 +1017,7 @@
                     @if(request()->routeIs('departments.*')) aria-current="page" @endif>
                     <span class="nav-icon-box"><i class="bi bi-person-badge" aria-hidden="true"></i></span> Data Poli
                 </a>
-                <a href="{{ route('registrations.index') }}"
-                    class="nav-link {{ request()->routeIs('registrations.*') ? 'active' : '' }}">
-                    <span class="nav-icon-box"><i class="bi bi-card-checklist"></i></span> Pendaftaran
-                </a>
-                <a href="{{ route('antrian.index') }}"
-                    class="nav-link {{ request()->routeIs('antrian.*') ? 'active' : '' }}">
-                    <span class="nav-icon-box"><i class="bi bi-people"></i></span> Antrean
-                </a>
+
                 <a href="{{ route('doctors.index') }}"
                     class="nav-link {{ request()->routeIs('doctors.*') ? 'active' : '' }}"
                     @if(request()->routeIs('doctors.*')) aria-current="page" @endif>

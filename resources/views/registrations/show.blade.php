@@ -34,7 +34,7 @@
         <div style="position:absolute;inset:0;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.08'%3E%3Crect x='16' y='16' width='32' height='32' transform='rotate(45 32 32)'/%3E%3Crect x='16' y='16' width='32' height='32'/%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
         <div class="card-body py-4" style="position:relative;z-index:1;">
             <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;opacity:.7;">
-                <i class="bi bi-ticket-perforated me-1"></i>Nomor Antrian
+                <i class="bi bi-ticket-perforated me-1"></i>KODE BOOKING
             </div>
             <div style="font-size:5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->kode_booking }}</div>
             <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.82rem;opacity:.8;">

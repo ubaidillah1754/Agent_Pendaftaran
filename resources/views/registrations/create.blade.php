@@ -3,7 +3,9 @@
 @section('page-title','Pendaftaran Rawat Jalan')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('registrations.index') }}">Pendaftaran</a></li>
+    @if(auth()->user()->isAdmin())
+        <li class="breadcrumb-item"><a href="{{ route('registrations.index') }}">Pendaftaran</a></li>
+    @endif
     <li class="breadcrumb-item active">Form Baru</li>
 @endsection
 @push('styles')

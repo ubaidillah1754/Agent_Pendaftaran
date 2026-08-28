@@ -328,6 +328,55 @@
         .btn-action-sm:hover {
             filter: brightness(0.95);
         }
+
+        /* Custom Pagination */
+        .custom-pagination {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .custom-pagination .pag-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .custom-pagination .pag-btn:hover:not(.disabled) {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        .custom-pagination .pag-btn.active {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        .custom-pagination .pag-btn.disabled {
+            opacity: 0.4;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .custom-pagination .pag-info {
+            font-size: 0.75rem;
+            color: #6b7280;
+            padding: 0 6px;
+            white-space: nowrap;
+        }
     </style>
 @endpush
 
@@ -399,13 +448,13 @@
     </div>
 
     <!-- Filter Form -->
-    <form action="{{ route('registrations.index') }}" method="GET" class="fade-in">
+    <form action="{{ route('registrations.index') }}" method="GET" class="fade-in" style="position: relative; z-index: 10;">
         <div class="filter-wrapper">
             <div class="filter-group">
                 <input type="date" name="tanggal" class="form-control" style="width: 150px;"
                     value="{{ request('tanggal', date('Y-m-d')) }}">
 
-                <select name="department_id" class="form-select" style="width: 200px;">
+                <select name="department_id" class="form-select searchable" placeholder="Semua Poli" style="width: 200px;">
                     <option value="">Semua Poli</option>
                     @foreach($departments as $d)
                         <option value="{{ $d->id }}" {{ request('department_id') == $d->id ? 'selected' : '' }}>
@@ -569,8 +618,26 @@
                 </div>
 
                 <div class="table-footer mt-auto">
-                    Menampilkan {{ $pendaftaranProses->count() }} dari {{ $pendaftaranProses->total() }} data
-                    {{ $pendaftaranProses->links('pagination::bootstrap-4') }}
+                    <span>Menampilkan {{ $pendaftaranProses->firstItem() ?? 0 }}–{{ $pendaftaranProses->lastItem() ?? 0 }} dari {{ $pendaftaranProses->total() }} data</span>
+                    <div class="custom-pagination">
+                        @if($pendaftaranProses->onFirstPage())
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-double-left"></i></span>
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-left"></i></span>
+                        @else
+                            <a href="{{ $pendaftaranProses->url(1) }}" class="pag-btn" title="Halaman pertama"><i class="bi bi-chevron-double-left"></i></a>
+                            <a href="{{ $pendaftaranProses->previousPageUrl() }}" class="pag-btn" title="Sebelumnya"><i class="bi bi-chevron-left"></i></a>
+                        @endif
+
+                        <span class="pag-info">Hal {{ $pendaftaranProses->currentPage() }} / {{ $pendaftaranProses->lastPage() }}</span>
+
+                        @if($pendaftaranProses->hasMorePages())
+                            <a href="{{ $pendaftaranProses->nextPageUrl() }}" class="pag-btn" title="Berikutnya"><i class="bi bi-chevron-right"></i></a>
+                            <a href="{{ $pendaftaranProses->url($pendaftaranProses->lastPage()) }}" class="pag-btn" title="Halaman terakhir"><i class="bi bi-chevron-double-right"></i></a>
+                        @else
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-right"></i></span>
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-double-right"></i></span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -622,8 +689,26 @@
                     </table>
                 </div>
                 <div class="table-footer mt-auto">
-                    Menampilkan {{ $pendaftaranSelesai->count() }} dari {{ $pendaftaranSelesai->total() }} data
-                    {{ $pendaftaranSelesai->links('pagination::bootstrap-4') }}
+                    <span>Menampilkan {{ $pendaftaranSelesai->firstItem() ?? 0 }}–{{ $pendaftaranSelesai->lastItem() ?? 0 }} dari {{ $pendaftaranSelesai->total() }} data</span>
+                    <div class="custom-pagination">
+                        @if($pendaftaranSelesai->onFirstPage())
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-double-left"></i></span>
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-left"></i></span>
+                        @else
+                            <a href="{{ $pendaftaranSelesai->url(1) }}" class="pag-btn" title="Halaman pertama"><i class="bi bi-chevron-double-left"></i></a>
+                            <a href="{{ $pendaftaranSelesai->previousPageUrl() }}" class="pag-btn" title="Sebelumnya"><i class="bi bi-chevron-left"></i></a>
+                        @endif
+
+                        <span class="pag-info">Hal {{ $pendaftaranSelesai->currentPage() }} / {{ $pendaftaranSelesai->lastPage() }}</span>
+
+                        @if($pendaftaranSelesai->hasMorePages())
+                            <a href="{{ $pendaftaranSelesai->nextPageUrl() }}" class="pag-btn" title="Berikutnya"><i class="bi bi-chevron-right"></i></a>
+                            <a href="{{ $pendaftaranSelesai->url($pendaftaranSelesai->lastPage()) }}" class="pag-btn" title="Halaman terakhir"><i class="bi bi-chevron-double-right"></i></a>
+                        @else
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-right"></i></span>
+                            <span class="pag-btn disabled"><i class="bi bi-chevron-double-right"></i></span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -631,8 +716,31 @@
 
     <!-- Seluruh Data Pendaftaran -->
     <div class="custom-card fade-in">
-        <div class="custom-card-header header-purple" style="background-color: #faf5ff;">
-            <i class="bi bi-card-list"></i> SELURUH DATA PENDAFTARAN
+        <div class="custom-card-header header-purple" style="background-color: #faf5ff; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;">
+            <div>
+                <i class="bi bi-card-list"></i> SELURUH DATA PENDAFTARAN
+            </div>
+            <div>
+                <form action="{{ route('registrations.index') }}" method="GET" class="d-flex" style="margin: 0;">
+                    @if(request('department_id'))
+                        <input type="hidden" name="department_id" value="{{ request('department_id') }}">
+                    @endif
+                    @if(request('tanggal'))
+                        <input type="hidden" name="tanggal" value="{{ request('tanggal') }}">
+                    @endif
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    <select name="filter_poli" class="form-select form-select-sm searchable" placeholder="Semua Poli" onchange="this.form.submit()" style="min-width: 200px; border-radius: 20px;">
+                        <option value="">Semua Poli</option>
+                        @foreach($departments as $dept)
+                            <option value="{{ $dept->id }}" {{ request('filter_poli') == $dept->id ? 'selected' : '' }}>
+                                {{ $dept->nama_poli }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
         </div>
         <div class="table-container">
             <table class="table-custom">
