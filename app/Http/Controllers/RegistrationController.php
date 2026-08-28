@@ -22,8 +22,9 @@ class RegistrationController extends Controller
     {
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
 
+        // Filter berdasarkan tanggal_daftar (tanggal mendaftar/hari ini), bukan tanggal_kunjungan
         $query = Registration::with(['patient', 'department', 'doctor'])
-            ->whereDate('tanggal_kunjungan', $tanggal);
+            ->whereDate('tanggal_daftar', $tanggal);
 
         if ($request->filled('department_id')) {
             $query->where('department_id', $request->department_id);
@@ -40,9 +41,9 @@ class RegistrationController extends Controller
             });
         }
 
-        $registrations   = $query->orderBy('nomor_antrian')->paginate(15)->withQueryString();
-        $departments     = Department::active()->orderBy('nama_poli')->get();
-        $totalPendaftaran = Registration::whereDate('tanggal_kunjungan', $tanggal)->count();
+        $registrations    = $query->orderBy('nomor_antrian')->paginate(15)->withQueryString();
+        $departments      = Department::active()->orderBy('nama_poli')->get();
+        $totalPendaftaran = Registration::whereDate('tanggal_daftar', $tanggal)->count();
 
         return view('registrations.index', compact(
             'registrations', 'departments', 'totalPendaftaran', 'tanggal'
@@ -129,7 +130,8 @@ class RegistrationController extends Controller
 
         session()->flash('success', "Pendaftaran berhasil! Nomor Antrean: {$registration->nomor_antrian} | Kode Booking: {$registration->kode_booking}");
 
-        return redirect()->route('registrations.cetak', $registration);
+        // Redirect ke halaman konfirmasi (show) terlebih dahulu, bukan langsung cetak
+        return redirect()->route('registrations.show', $registration);
     }
 
     public function show(Registration $registration)

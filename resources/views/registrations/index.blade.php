@@ -177,7 +177,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="stat-val">{{ $totalPendaftaran }}</div>
-                    <div class="stat-label">Total Pendaftaran Hari Ini</div>
+                    <div class="stat-label">Pendaftaran Terdaftar Hari Ini</div>
                 </div>
             </div>
         </div>

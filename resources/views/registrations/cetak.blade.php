@@ -403,11 +403,7 @@
     </button>
 
     <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                window.print();
-            }, 800);
-        });
+        // Cetak hanya jika user klik tombol, tidak otomatis
     </script>
 </body>
 </html>
