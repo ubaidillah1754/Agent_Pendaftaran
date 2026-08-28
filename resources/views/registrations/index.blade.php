@@ -199,6 +199,7 @@
         <div class="filter-wrapper">
             <div class="filter-group">
                 <input type="date" name="tanggal" class="form-control" style="width: 160px;"
+                    title="Filter berdasarkan Tanggal Kunjungan"
                     value="{{ request('tanggal', date('Y-m-d')) }}">
 
                 <select name="department_id" class="form-select" style="width: 200px;">

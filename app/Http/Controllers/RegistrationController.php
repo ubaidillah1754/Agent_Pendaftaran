@@ -24,7 +24,7 @@ class RegistrationController extends Controller
     {
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
 
-        // Filter berdasarkan tanggal_daftar (tanggal mendaftar/hari ini), bukan tanggal_kunjungan
+        // Filter berdasarkan tanggal_daftar (tanggal pasien didaftarkan oleh petugas)
         $query = Registration::with(['patient', 'department', 'doctor'])
             ->whereDate('tanggal_daftar', $tanggal);
 
@@ -191,7 +191,7 @@ class RegistrationController extends Controller
             ->orderByDesc('created_at');
 
         // Filter bulan berdasarkan tanggal_daftar (tanggal pasien didaftarkan)
-        $bulan = $request->input('bulan');
+        $bulan = $request->input('bulan', today()->format('Y-m'));
         if ($bulan && preg_match('/^\d{4}-\d{2}$/', $bulan)) {
             [$year, $month] = explode('-', $bulan);
             $query->whereYear('tanggal_daftar', $year)

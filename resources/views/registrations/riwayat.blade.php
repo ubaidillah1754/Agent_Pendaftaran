@@ -88,7 +88,7 @@
         <div class="col-md-4 col-sm-6">
             <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bulan</label>
             <input type="month" name="bulan" class="form-control"
-                   value="{{ request('bulan') }}"
+                   value="{{ request('bulan', today()->format('Y-m')) }}"
                    style="height: 44px; border-radius: 10px; border-color: var(--border);">
         </div>
         <div class="col-md-4 col-sm-6">
@@ -134,7 +134,7 @@
                     <th>Kode Booking</th>
                     <th>Pasien</th>
                     <th>Poli / Dokter</th>
-                    <th>Tanggal Kunjungan</th>
+                    <th>Tanggal Daftar</th>
                     <th class="text-center">Poin</th>
                     <th class="text-end pe-4">Aksi</th>
                 </tr>
@@ -179,7 +179,7 @@
                         </div>
                     </td>
                     <td style="font-size:.85rem; color:var(--ink); white-space:nowrap;">
-                        {{ $reg->tanggal_kunjungan ? $reg->tanggal_kunjungan->translatedFormat('d M Y') : '-' }}
+                        {{ $reg->tanggal_daftar ? $reg->tanggal_daftar->translatedFormat('d M Y') : '-' }}
                         <div style="font-size:.72rem; color:var(--muted);">
                             {{ $reg->created_at->format('H:i') }} WIB
                         </div>
