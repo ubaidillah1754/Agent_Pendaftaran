@@ -48,8 +48,9 @@
     .kode-badge {
         display: inline-block;
         background: linear-gradient(135deg, var(--primary), #12885F);
-        color: #fff; font-weight: 700; font-size: .76rem; letter-spacing: .05em;
-        padding: 4px 10px; border-radius: 8px;
+        color: #fff; font-weight: 800; font-size: .65rem; letter-spacing: .08em;
+        padding: 2px 7px; border-radius: 5px;
+        text-transform: uppercase; white-space: nowrap;
     }
     .status-pill {
         display: inline-flex; align-items: center; gap: 5px;
@@ -124,7 +125,7 @@
             <thead>
                 <tr>
                     <th width="60">#</th>
-                    <th width="90">Kode</th>
+                    <th width="70">Kode</th>
                     <th>Nama Poli</th>
                     <th>Deskripsi</th>
                     <th width="80" class="text-center">Dokter</th>

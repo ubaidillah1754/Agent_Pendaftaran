@@ -19,6 +19,7 @@ class Registration extends Model
         'tanggal_kunjungan',
         'kode_booking',
         'nomor_antrian',
+        'urutan_antrian',
         'created_by',
     ];
 

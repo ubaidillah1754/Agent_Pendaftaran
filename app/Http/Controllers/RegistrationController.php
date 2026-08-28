@@ -113,6 +113,7 @@ class RegistrationController extends Controller
             // ── Generate Nomor Antrean & Kode Booking Unik ──────────────────
             $nomorAntrian = Registration::generateNomorAntrian($validated['department_id'], $tanggal);
             $kodeBooking  = Registration::generateKodeBooking();
+            $urutanAntrian = (int) substr($nomorAntrian, 4);
 
             // ── Simpan Pendaftaran ────────────────────────────────────────────
             return Registration::create([
@@ -123,6 +124,7 @@ class RegistrationController extends Controller
                 'tanggal_daftar'     => now()->toDateString(),
                 'tanggal_kunjungan'  => $tanggal,
                 'nomor_antrian'      => $nomorAntrian,
+                'urutan_antrian'     => $urutanAntrian,
                 'kode_booking'       => $kodeBooking,
                 'created_by'         => Auth::id(),
             ]);

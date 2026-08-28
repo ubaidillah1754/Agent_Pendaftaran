@@ -82,7 +82,6 @@
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Kode Ref</th>
                                 <th>Karyawan</th>
                                 <th>Penyesuaian</th>
                                 <th>Alasan</th>
@@ -94,9 +93,6 @@
                             <tr>
                                 <td style="font-size:.82rem; white-space:nowrap;">
                                     {{ $adj->created_at->format('d M Y, H:i') }}
-                                </td>
-                                <td>
-                                    <code style="font-weight:700; color:var(--rs-ink); font-size:.8rem;">{{ $adj->reference }}</code>
                                 </td>
                                 <td>
                                     <div class="fw-bold" style="font-size:.88rem; color:var(--rs-ink);">{{ $adj->user->name }}</div>
@@ -118,7 +114,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">
+                                <td colspan="5" class="text-center py-4 text-muted">
                                     Belum ada riwayat penyesuaian poin yang dicatat.
                                 </td>
                             </tr>
