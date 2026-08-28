@@ -63,9 +63,7 @@ class DemoQueueSeeder extends Seeder
                     'tanggal_daftar' => $tanggalHariIni,
                     'tanggal_kunjungan' => $tanggalHariIni,
                     'kode_booking' => $kodeBooking,
-                    'status_booking' => 'used',
                     'nomor_antrian' => $nomorAntrian,
-                    'status' => 'menunggu',
                     'created_by' => $user->id,
                 ]);
             });

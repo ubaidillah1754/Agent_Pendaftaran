@@ -85,13 +85,13 @@
 {{-- ═══════════ FILTER BAR ═══════════ --}}
 <div class="filter-bar mb-4 fade-in">
     <form method="GET" action="{{ route('registrations.riwayat') }}" class="row g-3 align-items-end">
-        <div class="col-md-3 col-sm-6">
+        <div class="col-md-4 col-sm-6">
             <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bulan</label>
             <input type="month" name="bulan" class="form-control"
                    value="{{ request('bulan', today()->format('Y-m')) }}"
                    style="height: 44px; border-radius: 10px; border-color: var(--border);">
         </div>
-        <div class="col-md-3 col-sm-6">
+        <div class="col-md-4 col-sm-6">
             <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Poli</label>
             <select name="department_id" class="form-select" style="height: 44px; border-radius: 10px; border-color: var(--border);">
                 <option value="">Semua Poli</option>
@@ -102,17 +102,7 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <label class="form-label text-muted mb-2" style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Status</label>
-            <select name="status" class="form-select" style="height: 44px; border-radius: 10px; border-color: var(--border);">
-                <option value="">Semua Status</option>
-                <option value="menunggu"  {{ request('status') === 'menunggu'  ? 'selected' : '' }}>Menunggu</option>
-                <option value="diperiksa" {{ request('status') === 'diperiksa' ? 'selected' : '' }}>Diperiksa</option>
-                <option value="selesai"   {{ request('status') === 'selesai'   ? 'selected' : '' }}>Selesai</option>
-                <option value="batal"     {{ request('status') === 'batal'     ? 'selected' : '' }}>Batal</option>
-            </select>
-        </div>
-        <div class="col-md-3 col-sm-6 d-flex gap-2">
+        <div class="col-md-4 col-sm-12 d-flex gap-2">
             <button type="submit" class="btn btn-primary flex-fill fw-bold" style="height: 44px; border-radius: 10px; font-size: .85rem;">
                 <i class="bi bi-funnel me-1"></i>Filter
             </button>
@@ -140,11 +130,11 @@
             <thead>
                 <tr>
                     <th class="ps-4" style="width:48px;">#</th>
+                    <th>Nomor Antrean</th>
+                    <th>Kode Booking</th>
                     <th>Pasien</th>
                     <th>Poli / Dokter</th>
-                    <th>Tanggal</th>
-
-                    <th>Status</th>
+                    <th>Tanggal Kunjungan</th>
                     <th class="text-center">Poin</th>
                     <th class="text-end pe-4">Aksi</th>
                 </tr>
@@ -155,6 +145,12 @@
                     <td class="ps-4" style="color:var(--muted); font-size:.82rem;">
                         {{ $registrations->firstItem() + $loop->index }}
                     </td>
+                    <td>
+                        <span class="badge bg-success fs-6" style="border-radius: 6px;">
+                            {{ $reg->nomor_antrian }}
+                        </span>
+                    </td>
+                    <td><code class="fw-bold fs-6 text-dark">{{ $reg->kode_booking }}</code></td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             <div style="width:30px; height:30px; border-radius:var(--arch-sm);
@@ -183,23 +179,10 @@
                         </div>
                     </td>
                     <td style="font-size:.85rem; color:var(--ink); white-space:nowrap;">
-                        {{ $reg->tanggal_kunjungan->translatedFormat('d M Y') }}
+                        {{ $reg->tanggal_kunjungan ? $reg->tanggal_kunjungan->translatedFormat('d M Y') : '-' }}
                         <div style="font-size:.72rem; color:var(--muted);">
                             {{ $reg->created_at->format('H:i') }} WIB
                         </div>
-                    </td>
-
-                    <td>
-                        @php
-                            $badgeClass = match($reg->status) {
-                                'menunggu'  => 'badge-menunggu',
-                                'diperiksa' => 'badge-diperiksa',
-                                'selesai'   => 'badge-selesai',
-                                'batal'     => 'badge-batal',
-                                default     => '',
-                            };
-                        @endphp
-                        <span class="badge {{ $badgeClass }}">{{ $reg->status_label }}</span>
                     </td>
                     <td class="text-center">
                         @if($reg->petugasPoint)
@@ -218,6 +201,13 @@
                            title="Lihat detail">
                             <i class="bi bi-eye"></i>
                         </a>
+                        <a href="{{ route('registrations.cetak', $reg) }}"
+                           target="_blank"
+                           class="btn btn-sm"
+                           style="background:#f0fdf4; color:#059669; border-radius:8px;"
+                           title="Cetak Tracer">
+                            <i class="bi bi-printer"></i>
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -225,12 +215,7 @@
                     <td colspan="8" class="text-center py-5" style="color:var(--muted);">
                         <i class="bi bi-inbox d-block mb-2" style="font-size:2rem; opacity:.35;" aria-hidden="true"></i>
                         <span style="font-size:.875rem;">
-                            @if(request()->hasAny(['dari', 'sampai', 'department_id', 'status']))
-                                Tidak ada data yang cocok dengan filter yang dipilih.
-                                <a href="{{ route('registrations.riwayat') }}" style="color:var(--primary);">Reset filter</a>
-                            @else
-                                Belum ada pendaftaran yang Anda proses.
-                            @endif
+                            Belum ada pendaftaran yang Anda proses.
                         </span>
                     </td>
                 </tr>

@@ -89,39 +89,9 @@ class DashboardController extends Controller
         // ── Statistik Utama ──────────────────────────────────────────
         $stats = [
             'total_pendaftaran_hari_ini' => (clone $baseQuery())->count(),
-
-            'menunggu' => (clone $baseQuery())
-                ->where('status', 'menunggu')
-                ->count(),
-
-            'diperiksa' => (clone $baseQuery())
-                ->where('status', 'diperiksa')
-                ->count(),
-
-            'selesai' => (clone $baseQuery())
-                ->where('status', 'selesai')
-                ->count(),
-
-            'batal' => (clone $baseQuery())
-                ->where('status', 'batal')
-                ->count(),
-
-            // Jadwal mendatang
-            'terjadwal' => Registration::whereDate(
-                'tanggal_daftar',
-                '>',
-                $today
-            )
-                ->where('status', 'menunggu')
-                ->count(),
-
             'total_pasien' => Patient::count(),
-
-            'total_dokter' => Doctor::where('is_active', true)
-                ->count(),
-
-            'total_poli' => Department::where('is_active', true)
-                ->count(),
+            'total_dokter' => Doctor::where('is_active', true)->count(),
+            'total_poli'   => Department::where('is_active', true)->count(),
         ];
 
         // ── Pendaftaran Per Poli ─────────────────────────────────────

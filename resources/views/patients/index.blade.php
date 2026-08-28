@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title','Data Pasien')
-@section('page-title','Data Pasien')
+@section('title','Data Pasien Terdaftar')
+@section('page-title','Data Pasien Terdaftar')
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Data Pasien</li>
@@ -23,7 +23,6 @@
     }
     .dp-wrap { font-family:'Poppins', sans-serif; }
 
-    /* ===== Hero ===== */
     .dp-hero {
         position:relative; overflow:hidden;
         border-radius:24px; padding:26px 30px; margin-bottom:20px;
@@ -36,15 +35,11 @@
     }
     .dp-hero h5 { margin:0 0 4px;font-weight:700;font-size:1.2rem;color:#064E3B; }
     .dp-hero p { margin:0;font-size:.85rem;color:#0f766e;opacity:.85; }
-    .dp-hero .hero-illus { margin-left:auto; }
-    .dp-hero .hero-illus svg { width:150px;height:100px; }
 
-    /* ===== Stat cards ===== */
     .dp-stat {
         border-radius:14px;padding:16px 18px;background:#fff;border:1px solid var(--hp-border);
-        display:flex;align-items:center;gap:14px;box-shadow:var(--hp-shadow);transition:transform .15s;
+        display:flex;align-items:center;gap:14px;box-shadow:var(--hp-shadow);
     }
-    .dp-stat:hover { transform: translateY(-3px); }
     .dp-stat .icon {
         width:44px;height:44px;border-radius:22px 22px 6px 6px;flex-shrink:0;
         display:flex;align-items:center;justify-content:center;font-size:1.15rem;
@@ -52,7 +47,6 @@
     .dp-stat .num { font-size:1.5rem;font-weight:800;line-height:1;color:#0f172a; }
     .dp-stat .lbl { font-size:.76rem;color:#64766D;margin-top:3px; }
 
-    /* ===== Action bar ===== */
     .dp-actionbar {
         border-radius:16px;background:#fff;border:1px solid var(--hp-border);box-shadow:var(--hp-shadow);
         padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;
@@ -60,36 +54,17 @@
     .dp-search { position:relative;flex:1;min-width:240px; }
     .dp-search i { position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8; }
     .dp-search input {
-        width:100%;padding:11px 14px 11px 40px;border-radius:12px;border:1.5px solid var(--hp-border);
+        width:100%;padding:10px 14px 10px 40px;border-radius:12px;border:1.5px solid var(--hp-border);
         font-size:.86rem;font-family:inherit;
     }
     .dp-search input:focus { outline:none;border-color:var(--hp-secondary);box-shadow:0 0 0 4px rgba(20,184,166,.14); }
 
-    .btn-dp-primary {
-        background:linear-gradient(135deg,var(--hp-primary),var(--hp-secondary));color:#fff;border:none;
-        border-radius:12px;padding:10px 16px;font-weight:600;font-size:.84rem;white-space:nowrap;
-    }
     .btn-dp-gold {
         background:linear-gradient(135deg,var(--hp-accent),#e8c766);color:#fff;border:none;
-        border-radius:12px;padding:10px 16px;font-weight:600;font-size:.84rem;white-space:nowrap;
+        border-radius:12px;padding:10px 16px;font-weight:600;font-size:.84rem;white-space:nowrap;text-decoration:none;
     }
-    .btn-dp-ghost {
-        background:#fff;border:1.5px solid var(--hp-border);color:#475569;border-radius:12px;
-        padding:10px 14px;font-weight:600;font-size:.84rem;white-space:nowrap;
-    }
-    .btn-dp-ghost:hover { border-color:var(--hp-secondary);color:var(--hp-primary); }
 
-    /* ===== Filter row ===== */
-    .dp-filter { border-radius:16px;background:#fff;border:1px solid var(--hp-border);box-shadow:var(--hp-shadow);padding:16px 18px;margin-bottom:16px; }
-    .dp-filter label { font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:5px;display:block; }
-    .dp-filter select { border-radius:10px;border:1.5px solid var(--hp-border);font-size:.85rem;padding:8px 12px; }
-
-    /* ===== Table ===== */
     .dp-table-card { border-radius:var(--hp-radius);border:1px solid var(--hp-border);box-shadow:var(--hp-shadow);overflow:hidden; }
-    .dp-table-card .card-header {
-        background:#fff;border-bottom:1px solid var(--hp-border);padding:16px 20px;font-weight:600;font-size:.92rem;
-        display:flex;align-items:center;gap:10px;
-    }
     .dp-table-card thead th {
         background:#F8FAFC;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:#64766D;
         font-weight:700;border-bottom:1px solid var(--hp-border);padding:12px 16px;
@@ -106,18 +81,15 @@
 
     .btn-dp-icon {
         width:32px;height:32px;border-radius:11px 11px 4px 4px;border:none;display:inline-flex;
-        align-items:center;justify-content:center;font-size:.85rem;
+        align-items:center;justify-content:center;font-size:.85rem;text-decoration:none;
     }
 
-    /* ===== Empty state ===== */
     .dp-empty { text-align:center;padding:56px 20px; }
     .dp-empty .icon-wrap {
         width:74px;height:74px;border-radius:37px 37px 8px 8px;margin:0 auto 18px;background:#ECFDF5;
         display:flex;align-items:center;justify-content:center;
     }
     .dp-empty .icon-wrap i { font-size:1.8rem;color:var(--hp-primary); }
-    .dp-empty h6 { font-weight:800;margin-bottom:4px; }
-    .dp-empty p { color:#64766D;font-size:.85rem;margin-bottom:18px; }
 </style>
 @endpush
 
@@ -128,71 +100,54 @@
 <div class="dp-hero fade-in">
     <div class="hero-icon"><i class="bi bi-people-fill"></i></div>
     <div>
-        <h5>Data Pasien</h5>
-        <p>Kelola seluruh data pasien Rumah Sakit Islam Sakinah.</p>
-    </div>
-    <div class="hero-illus" aria-hidden="true">
-        <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="150" cy="70" r="62" fill="#ffffff" opacity=".35"/>
-            <rect x="130" y="40" width="64" height="90" rx="4" fill="#0F766E" opacity=".85"/>
-            <g fill="#ffffff" opacity=".8">
-                <rect x="140" y="52" width="10" height="10" rx="1"/><rect x="156" y="52" width="10" height="10" rx="1"/><rect x="172" y="52" width="10" height="10" rx="1"/>
-                <rect x="140" y="68" width="10" height="10" rx="1"/><rect x="156" y="68" width="10" height="10" rx="1"/><rect x="172" y="68" width="10" height="10" rx="1"/>
-                <rect x="140" y="84" width="10" height="10" rx="1"/><rect x="156" y="84" width="10" height="10" rx="1"/><rect x="172" y="84" width="10" height="10" rx="1"/>
-            </g>
-            <rect x="157" y="18" width="8" height="20" fill="#D4AF37"/>
-            <rect x="151" y="24" width="20" height="8" fill="#D4AF37"/>
-            <rect x="18" y="30" width="70" height="90" rx="10" fill="#ffffff" stroke="#5EEAD4" stroke-width="2"/>
-            <rect x="38" y="24" width="30" height="14" rx="4" fill="#14B8A6"/>
-            <rect x="32" y="50" width="46" height="7" rx="3" fill="#99F6E4"/>
-            <rect x="32" y="64" width="46" height="7" rx="3" fill="#99F6E4"/>
-            <rect x="32" y="78" width="30" height="7" rx="3" fill="#99F6E4"/>
-            <circle cx="66" cy="98" r="12" fill="#D1FAE5"/>
-            <path d="M60 98 l4 4 l8 -9" stroke="#0F766E" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <h5>Data Pasien Terdaftar</h5>
+        <p>Daftar pasien yang terdaftar di Sistem RS Islam Sakinah.</p>
     </div>
 </div>
 
-<!-- Stat cards (only values the controller actually provides) -->
+<!-- Stat cards -->
 <div class="row g-3 mb-3">
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-4">
         <div class="dp-stat">
             <div class="icon" style="background:#E0F2F6;color:var(--hp-secondary);"><i class="bi bi-people-fill"></i></div>
-            <div><div class="num">{{ $patients->count() }}</div><div class="lbl">Total Pasien</div></div>
+            <div><div class="num">{{ $patients->total() }}</div><div class="lbl">Total Pasien Terdaftar</div></div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="dp-stat">
-            <div class="icon" style="background:#ECFDF5;color:var(--hp-primary);"><i class="bi bi-file-earmark-person-fill"></i></div>
-            <div><div class="num">{{ $patients->count() }}</div><div class="lbl">Pasien di Halaman Ini</div></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-4">
         <div class="dp-stat">
             <div class="icon" style="background:#DCFCE7;color:#15803D;"><i class="bi bi-hospital-fill"></i></div>
-            <div><div class="num">{{ $patients->where('jenis_pembayaran','bpjs')->count() }}</div><div class="lbl">BPJS (hal. ini)</div></div>
+            <div><div class="num">{{ $patients->where('jenis_pembayaran','bpjs')->count() }}</div><div class="lbl">Pasien BPJS (Hal. ini)</div></div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-4">
         <div class="dp-stat">
             <div class="icon" style="background:#F1F5F9;color:#475569;"><i class="bi bi-credit-card-fill"></i></div>
-            <div><div class="num">{{ $patients->where('jenis_pembayaran','umum')->count() }}</div><div class="lbl">Umum (hal. ini)</div></div>
+            <div><div class="num">{{ $patients->where('jenis_pembayaran','umum')->count() }}</div><div class="lbl">Pasien Umum (Hal. ini)</div></div>
         </div>
     </div>
 </div>
 
-<!-- Action bar: search (functional, uses existing ?q=) + create buttons -->
+<!-- Search bar -->
 <div class="dp-actionbar fade-in">
-    <a href="{{ route('patients.create') }}" class="btn-dp-primary"><i class="bi bi-person-plus me-1"></i>Pasien Baru</a>
-    <a href="{{ route('registrations.create') }}" class="btn-dp-gold"><i class="bi bi-clipboard2-plus me-1"></i>Daftar Rawat Jalan</a>
-    <button type="button" class="btn-dp-ghost" onclick="alert('Fitur Export Excel belum tersedia — perlu ditambahkan di controller.')"><i class="bi bi-file-earmark-excel me-1"></i>Export Excel</button>
-    <button type="button" class="btn-dp-ghost" onclick="alert('Fitur Export PDF belum tersedia — perlu ditambahkan di controller.')"><i class="bi bi-file-earmark-pdf me-1"></i>Export PDF</button>
+    <form action="{{ route('patients.index') }}" method="GET" class="w-100 d-flex gap-2 align-items-center">
+        <div class="dp-search">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" placeholder="Cari NIK, No. RM, atau Nama Pasien..." value="{{ request('q') }}">
+        </div>
+        <button type="submit" class="btn btn-sm text-white px-3 py-2 fw-bold" style="background:var(--hp-primary); border-radius:10px;">
+            <i class="bi bi-search me-1"></i>Cari
+        </button>
+        @if(request('q'))
+            <a href="{{ route('patients.index') }}" class="btn btn-sm btn-light border px-3 py-2" style="border-radius:10px;">Reset</a>
+        @endif
+        <a href="{{ route('registrations.create') }}" class="btn-dp-gold ms-auto"><i class="bi bi-clipboard2-plus me-1"></i>Daftar Rawat Jalan</a>
+    </form>
 </div>
 
 <div class="dp-table-card fade-in">
     @if($patients->count())
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 datatable">
+        <table class="table table-hover align-middle mb-0">
             <thead>
                 <tr>
                     <th>No. RM</th>
@@ -202,7 +157,7 @@
                     <th>No. HP</th>
                     <th>Pembayaran</th>
                     <th class="text-center">Kunjungan</th>
-                    <th class="text-center" width="130">Aksi</th>
+                    <th class="text-center" width="100">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -237,8 +192,7 @@
                     <td class="text-center">
                         <div class="d-flex gap-1 justify-content-center">
                             <a href="{{ route('patients.show', $patient) }}" class="btn-dp-icon" style="background:#eaf6f8;color:#0E7490;" title="Detail"><i class="bi bi-eye-fill"></i></a>
-                            <a href="{{ route('registrations.create', ['patient_id'=>$patient->id]) }}" class="btn-dp-icon" style="background:#fdf7e6;color:var(--hp-accent);" title="Daftarkan"><i class="bi bi-clipboard2-plus-fill"></i></a>
-                            <a href="{{ route('patients.edit', $patient) }}" class="btn-dp-icon" style="background:#eaf4ef;color:var(--hp-primary);" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="{{ route('registrations.create', ['patient_id'=>$patient->id]) }}" class="btn-dp-icon" style="background:#fdf7e6;color:var(--hp-accent);" title="Daftar Rawat Jalan"><i class="bi bi-clipboard2-plus-fill"></i></a>
                         </div>
                     </td>
                 </tr>
@@ -246,17 +200,24 @@
             </tbody>
         </table>
     </div>
+    <div class="px-4 py-3 border-top d-flex justify-content-between align-items-center">
+        <span class="text-muted" style="font-size: 0.8rem;">
+            Menampilkan {{ $patients->firstItem() ?? 0 }}–{{ $patients->lastItem() ?? 0 }} dari {{ $patients->total() }} data
+        </span>
+        <div>
+            {{ $patients->links() }}
+        </div>
+    </div>
     @else
     <div class="dp-empty">
         <div class="icon-wrap"><i class="bi bi-person-x"></i></div>
         @if(request('q'))
             <h6>Tidak ditemukan</h6>
-            <p>Tidak ada pasien dengan kata kunci &ldquo;{{ request('q') }}&rdquo;</p>
-            <a href="{{ route('patients.index') }}" class="btn-dp-ghost"><i class="bi bi-arrow-counterclockwise me-1"></i>Reset Pencarian</a>
+            <p>Tidak ada pasien terdaftar dengan kata kunci &ldquo;{{ request('q') }}&rdquo;</p>
+            <a href="{{ route('patients.index') }}" class="btn btn-sm btn-light border"><i class="bi bi-arrow-counterclockwise me-1"></i>Reset Pencarian</a>
         @else
-            <h6>Belum ada data pasien</h6>
-            <p>Silakan tambahkan pasien baru.</p>
-            <a href="{{ route('patients.create') }}" class="btn-dp-primary"><i class="bi bi-person-plus me-1"></i>Tambah Pasien</a>
+            <h6>Belum ada data pasien terdaftar</h6>
+            <p>Pasien baru wajib melalui pendaftaran via WhatsApp Admin RSI Sakinah.</p>
         @endif
     </div>
     @endif

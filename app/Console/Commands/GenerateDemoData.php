@@ -226,9 +226,7 @@ class GenerateDemoData extends Command
                         'tanggal_daftar'     => $today,
                         'tanggal_kunjungan'  => $today,
                         'kode_booking'       => $kodeBooking,
-                        'status_booking'     => 'used',
                         'nomor_antrian'      => $nomorAntrian,
-                        'status'             => 'menunggu',
                         'created_by'         => $petugas->id,
                     ]);
 

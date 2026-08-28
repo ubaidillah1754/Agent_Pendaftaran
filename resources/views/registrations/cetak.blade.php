@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cetak Tracer – {{ $registration->kode_booking }}</title>
+    <title>Tracer – {{ $registration->nomor_antrian }} ({{ $registration->kode_booking }})</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -59,22 +59,6 @@
             position: relative;
             overflow: hidden;
         }
-        .header::after {
-            content: '';
-            position: absolute;
-            right: -30px; top: -30px;
-            width: 120px; height: 120px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.07);
-        }
-        .header::before {
-            content: '';
-            position: absolute;
-            right: 30px; top: 20px;
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.05);
-        }
 
         .header-logo {
             display: flex;
@@ -91,15 +75,12 @@
             color: #fff;
             flex-shrink: 0;
         }
-        .logo-text {
-            color: #fff;
-        }
+        .logo-text { color: #fff; }
         .logo-text .rs-name {
             font-family: 'Amiri', serif;
             font-size: .95rem;
             font-weight: 700;
             line-height: 1.2;
-            letter-spacing: .01em;
         }
         .logo-text .rs-tagline {
             font-size: .6rem;
@@ -135,14 +116,14 @@
 
         /* ── NOMOR ANTRIAN HERO ── */
         .antrian-hero {
-            padding: 16px 20px 10px;
+            padding: 16px 20px 12px;
             text-align: center;
             background: var(--green-soft);
             border-bottom: 1.5px dashed var(--border);
             position: relative;
         }
         .antrian-label {
-            font-size: .58rem;
+            font-size: .65rem;
             font-weight: 700;
             letter-spacing: .14em;
             text-transform: uppercase;
@@ -151,11 +132,17 @@
         }
         .antrian-number {
             font-family: 'Amiri', serif;
-            font-size: 3.2rem;
+            font-size: 3.4rem;
             font-weight: 700;
             color: var(--green-dark);
             line-height: 1;
             letter-spacing: .01em;
+        }
+        .booking-code {
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-top: 4px;
         }
 
         /* ── SECTION TITLE ── */
@@ -171,11 +158,6 @@
             align-items: center;
             gap: 5px;
         }
-        .section-title svg {
-            width: 11px; height: 11px;
-            fill: var(--green);
-            flex-shrink: 0;
-        }
 
         /* ── INFO GRID ── */
         .info-grid {
@@ -188,12 +170,8 @@
             padding: 6px 0;
             border-bottom: 1px solid #EEF4F1;
         }
-        .info-item.full {
-            grid-column: 1 / -1;
-        }
-        .info-item:last-child, .info-item.full:last-child {
-            border-bottom: none;
-        }
+        .info-item.full { grid-column: 1 / -1; }
+        .info-item:last-child, .info-item.full:last-child { border-bottom: none; }
         .info-label {
             font-size: .56rem;
             font-weight: 600;
@@ -222,7 +200,6 @@
             font-size: .66rem;
         }
 
-        /* ── PERFORATED SEPARATOR ── */
         .separator-dashed {
             border: none;
             border-top: 2px dashed var(--border);
@@ -232,38 +209,21 @@
         /* ── FOOTER ── */
         .footer {
             margin-top: auto;
-            padding: 10px 20px 14px;
+            padding: 12px 20px 16px;
             border-top: 1.5px solid var(--green-soft);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
         }
         .footer-msg {
-            font-size: .65rem;
+            font-size: .68rem;
             color: var(--muted);
             line-height: 1.5;
         }
         .footer-msg strong {
             display: block;
             color: var(--ink);
-            font-size: .67rem;
+            font-size: .7rem;
             margin-bottom: 2px;
         }
-        .footer-qr {
-            width: 52px; height: 52px;
-            background: var(--green-soft);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .footer-qr svg {
-            width: 32px; height: 32px;
-        }
 
-        /* ── WATERMARK ── */
         .watermark {
             position: absolute;
             bottom: 70px; right: 18px;
@@ -271,64 +231,25 @@
             font-size: 4rem;
             font-weight: 700;
             color: rgba(15, 123, 99, .04);
-            letter-spacing: .1em;
             pointer-events: none;
             user-select: none;
-            white-space: nowrap;
         }
 
-        /* ── BOTTOM STRIP ── */
         .bottom-strip {
             height: 5px;
             background: linear-gradient(90deg, var(--green-dark), var(--green), var(--gold), var(--green));
         }
 
-        /* ── PRINT ── */
         @media print {
             html, body { margin: 0; padding: 0; background: #fff; }
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-                color-adjust: exact !important;
             }
             .page { box-shadow: none; border-radius: 0; }
-            .header {
-                background: linear-gradient(135deg, #0A5644 0%, #0F7B63 60%, #14966E 100%) !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .antrian-hero {
-                background: #E6F6F0 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .perforated {
-                background: linear-gradient(135deg, #F4F8F6 25%, transparent 25%),
-                            linear-gradient(225deg, #F4F8F6 25%, transparent 25%) !important;
-                background-size: 14px 14px !important;
-                background-color: #0F7B63 !important;
-                background-position: 0 0, 7px 0 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .bottom-strip {
-                background: linear-gradient(90deg, #0A5644, #0F7B63, #B8912E, #0F7B63) !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .info-value.badge {
-                background: #E6F6F0 !important;
-                color: #0A5644 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .section-title {
-                color: #0F7B63 !important;
-                border-bottom-color: #E6F6F0 !important;
-            }
+            .no-print-bar { display: none !important; }
         }
 
-        /* Screen preview styling */
         @media screen {
             body { min-height: 100vh; padding: 24px 0; background: #e5eae8; }
             .page {
@@ -358,15 +279,11 @@
             }
             .no-print-bar:hover { background: var(--green); }
         }
-        @media print {
-            .no-print-bar { display: none; }
-        }
     </style>
 </head>
 <body>
     <div class="page">
 
-        {{-- ── WATERMARK ── --}}
         <div class="watermark">RSI</div>
 
         {{-- ── HEADER ── --}}
@@ -384,27 +301,26 @@
                 </div>
             </div>
             <div class="header-meta">
-                <strong>TIKET ANTRIAN</strong>
+                <strong>TRACER PENDAFTARAN</strong>
                 Rawat Jalan<br>
                 {{ now()->translatedFormat('d F Y') }}<br>
                 {{ now()->format('H:i') }} WIB
             </div>
         </div>
 
-        {{-- ── PERFORATED EDGE ── --}}
         <div class="perforated"></div>
 
-        {{-- ── KODE BOOKING ── --}}
+        {{-- ── NOMOR ANTRIAN & KODE BOOKING ── --}}
         <div class="antrian-hero">
-            <div class="antrian-label">Kode Booking</div>
-            <div class="antrian-number">{{ $registration->kode_booking }}</div>
+            <div class="antrian-label">Nomor Antrean</div>
+            <div class="antrian-number">{{ $registration->nomor_antrian }}</div>
+            <div class="booking-code">
+                Kode Booking: <span style="font-family:monospace; letter-spacing:1px;">{{ $registration->kode_booking }}</span>
+            </div>
         </div>
 
         {{-- ── INFO PASIEN ── --}}
-        <div class="section-title">
-            <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 10a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0H3z"/></svg>
-            Informasi Pasien
-        </div>
+        <div class="section-title">Informasi Pasien</div>
         <div class="info-grid">
             <div class="info-item full">
                 <div class="info-label">Nama Pasien</div>
@@ -442,10 +358,7 @@
         <hr class="separator-dashed">
 
         {{-- ── INFO KUNJUNGAN ── --}}
-        <div class="section-title">
-            <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5h8a1 1 0 010 2H6a1 1 0 010-2z"/></svg>
-            Informasi Kunjungan
-        </div>
+        <div class="section-title">Informasi Kunjungan</div>
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">Poli Tujuan</div>
@@ -459,33 +372,21 @@
                 <div class="info-label">Dokter</div>
                 <div class="info-value">{{ $registration->doctor->nama_dokter }}</div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Jadwal</div>
+            <div class="info-item full">
+                <div class="info-label">Jadwal Praktik</div>
                 <div class="info-value" style="font-weight:500;">
-                    {{ $registration->tanggal_kunjungan->translatedFormat('d F Y') }} <br>
                     {{ $registration->doctorSchedule->hari }},
-                    {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }}
+                    {{ substr($registration->doctorSchedule->jam_mulai,0,5) }}–{{ substr($registration->doctorSchedule->jam_selesai,0,5) }} WIB
                 </div>
             </div>
-
         </div>
 
         {{-- ── FOOTER ── --}}
-        @php
-            $hasKodeBooking = !empty($registration->kode_booking);
-            $infoUrl = route('info.pendaftaran');
-            $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&format=png&data=' . urlencode($infoUrl);
-        @endphp
         <div class="footer">
             <div class="footer-msg">
                 <strong>Petunjuk Pasien</strong>
-                Harap menunggu di ruang tunggu poli yang bersangkutan.<br>
-                Patuhi protokol kesehatan &amp; antri sesuai nomor.
-                <br><span style="color:var(--green); font-weight:600;">Scan QR untuk portal layanan pasien.</span>
-            </div>
-            <div style="text-align:center; flex-shrink:0;">
-                <img src="{{ $qrUrl }}" alt="QR Info Pendaftaran" width="60" height="60" style="border-radius:6px; border:1px solid var(--border);"><br>
-                <span style="font-size:.5rem; color:var(--muted); display:block; margin-top:3px;">Scan QR Code</span>
+                Harap menunggu panggilan sesuai urutan nomor antrean di ruang tunggu poli tujuan.<br>
+                Patuhi protokol kesehatan dan tata tertib RS Islam Sakinah.
             </div>
         </div>
 
@@ -502,9 +403,7 @@
     </button>
 
     <script>
-        // Auto-print saat halaman dibuka
         window.addEventListener('load', function() {
-            // sedikit delay agar font Google Fonts termuat dulu
             setTimeout(function() {
                 window.print();
             }, 800);

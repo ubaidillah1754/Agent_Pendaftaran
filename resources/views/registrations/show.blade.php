@@ -21,7 +21,6 @@
 <div class="row g-4 justify-content-center">
 <div class="col-lg-8">
 
-    {{-- ===== Header: date pill, kept consistent with other pages ===== --}}
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <div></div>
         <span class="badge d-flex align-items-center" style="background:#eff6ff;color:var(--primary);font-weight:600;padding:.55rem .9rem;">
@@ -29,15 +28,18 @@
         </span>
     </div>
 
-    <!-- Nomor Antrian Hero -->
+    <!-- Nomor Antrean & Kode Booking Hero -->
     <div class="card mb-4 fade-in text-center" style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;border:none;border-radius:16px;position:relative;overflow:hidden;">
         <div style="position:absolute;inset:0;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.08'%3E%3Crect x='16' y='16' width='32' height='32' transform='rotate(45 32 32)'/%3E%3Crect x='16' y='16' width='32' height='32'/%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
         <div class="card-body py-4" style="position:relative;z-index:1;">
-            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;opacity:.7;">
-                <i class="bi bi-ticket-perforated me-1"></i>KODE BOOKING
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;opacity:.8;">
+                <i class="bi bi-ticket-perforated me-1"></i>NOMOR ANTREAN
             </div>
-            <div style="font-size:5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->kode_booking }}</div>
-            <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.82rem;opacity:.8;">
+            <div style="font-size:4.5rem;font-weight:900;line-height:1;letter-spacing:.05em;">{{ $registration->nomor_antrian }}</div>
+            <div class="mt-2" style="font-size:.9rem;opacity:.9;">
+                Kode Booking: <code style="color:#fef08a;font-weight:700;font-size:1.1rem;">{{ $registration->kode_booking }}</code>
+            </div>
+            <div class="mt-3 d-flex align-items-center justify-content-center gap-2" style="font-size:.85rem;opacity:.9;">
                 <i class="bi bi-hospital"></i>{{ $registration->department->nama_poli }}
                 <span>&middot;</span>
                 <i class="bi bi-calendar-event"></i>{{ $registration->tanggal_kunjungan->format('d F Y') }}
@@ -89,7 +91,6 @@
                     </div>
                     <div class="info-row"><span class="label">Tgl Kunjungan</span><span class="value" style="font-weight:400;color:var(--primary);">{{ $registration->tanggal_kunjungan->format('d M Y') }}</span></div>
                     <div class="info-row"><span class="label">Tgl Daftar</span><span class="value" style="font-weight:400;">{{ $registration->tanggal_daftar->format('d M Y') }}</span></div>
-
                     <div class="info-row"><span class="label">Petugas</span><span class="value" style="font-weight:400;">{{ $registration->createdBy->name }}</span></div>
                     <div class="info-row"><span class="label">Waktu Daftar</span><span class="value" style="font-weight:400;">{{ $registration->created_at->format('d M Y H:i') }}</span></div>
                 </div>
@@ -97,43 +98,12 @@
         </div>
     </div>
 
-    <div class="mt-3 d-flex gap-2 flex-wrap align-items-center">
+    <div class="mt-4 d-flex gap-2 flex-wrap align-items-center">
         <a href="{{ route('registrations.index') }}" class="btn" style="background:var(--bg);color:#64766D;border-radius:10px;">
             <i class="bi bi-arrow-left me-1"></i>Kembali
         </a>
         
         <div class="ms-auto d-flex gap-2 flex-wrap">
-            @if(Auth::user()->isAdmin())
-                @if($registration->status === 'menunggu')
-                    <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
-                        @csrf @method('PATCH')
-                        <input type="hidden" name="status" value="diperiksa">
-                        <button type="submit" class="btn btn-primary h-100 px-4 fw-bold">
-                            <i class="bi bi-megaphone me-1"></i>Tandai Diperiksa
-                        </button>
-                    </form>
-                @elseif($registration->status === 'diperiksa')
-                    <form action="{{ route('registrations.status', $registration) }}" method="POST" class="d-inline">
-                        @csrf @method('PATCH')
-                        <input type="hidden" name="status" value="selesai">
-                        <button type="submit" class="btn" style="background:#ecfdf5;color:#047857;border-radius:10px;">
-                            <i class="bi bi-check-circle me-1"></i>Tandai Selesai
-                        </button>
-                    </form>
-                @endif
-            @endif
-
-            {{-- Koreksi status dihapus sesuai permintaan --}}
-
-            @if($registration->status === 'menunggu')
-            <form action="{{ route('registrations.batal', $registration) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan pendaftaran ini?')">
-                @csrf @method('PATCH')
-                <button type="submit" class="btn" style="background:#fef2f2;color:#ef4444;border-radius:10px;">
-                    <i class="bi bi-x-circle me-1"></i>Batalkan
-                </button>
-            </form>
-            @endif
-            
             <a href="{{ route('patients.show', $registration->patient) }}" class="btn" style="background:#eff6ff;color:var(--primary);border-radius:10px;">
                 <i class="bi bi-person me-1"></i>Profil Pasien
             </a>

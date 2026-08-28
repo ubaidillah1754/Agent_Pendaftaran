@@ -405,37 +405,37 @@
                 <div>
                     <div class="stat-label">Pendaftaran Hari Ini</div>
                     <div class="stat-value">{{ $stats['total_pendaftaran_hari_ini'] }}</div>
-                    <div class="stat-sub">Total pasien hari ini</div>
+                    <div class="stat-sub">Total kunjungan hari ini</div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3 fade-in fade-in-delay-1">
             <div class="stat-card stat-card-b">
-                <div class="stat-icon" aria-hidden="true"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-icon" aria-hidden="true"><i class="bi bi-people-fill"></i></div>
                 <div>
-                    <div class="stat-label">Menunggu</div>
-                    <div class="stat-value">{{ $stats['menunggu'] }}</div>
-                    <div class="stat-sub">Antrian menunggu</div>
+                    <div class="stat-label">Total Pasien</div>
+                    <div class="stat-value">{{ $stats['total_pasien'] }}</div>
+                    <div class="stat-sub">Pasien terdaftar</div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3 fade-in fade-in-delay-2">
             <div class="stat-card stat-card-c">
-                <div class="stat-icon" aria-hidden="true"><i class="bi bi-check2-all"></i></div>
+                <div class="stat-icon" aria-hidden="true"><i class="bi bi-person-badge-fill"></i></div>
                 <div>
-                    <div class="stat-label">Selesai Dilayani</div>
-                    <div class="stat-value">{{ $stats['selesai'] }}</div>
-                    <div class="stat-sub">Selesai hari ini</div>
+                    <div class="stat-label">Dokter Aktif</div>
+                    <div class="stat-value">{{ $stats['total_dokter'] }}</div>
+                    <div class="stat-sub">Dokter di sistem</div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3 fade-in fade-in-delay-3">
             <div class="stat-card stat-card-d">
-                <div class="stat-icon" aria-hidden="true"><i class="bi bi-calendar-event"></i></div>
+                <div class="stat-icon" aria-hidden="true"><i class="bi bi-building"></i></div>
                 <div>
-                    <div class="stat-label">Pasien Terjadwal</div>
-                    <div class="stat-value">{{ $stats['terjadwal'] }}</div>
-                    <div class="stat-sub">Jadwal mendatang</div>
+                    <div class="stat-label">Poli Tersedia</div>
+                    <div class="stat-value">{{ $stats['total_poli'] }}</div>
+                    <div class="stat-sub">Departemen aktif</div>
                 </div>
             </div>
         </div>

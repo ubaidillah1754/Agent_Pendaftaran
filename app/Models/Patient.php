@@ -52,12 +52,11 @@ class Patient extends Model
         return $this->hasMany(Registration::class);
     }
 
-    /** Pendaftaran aktif (hari ini, status menunggu/diperiksa) */
-    public function pendaftaranAktif()
+    /** Pendaftaran hari ini */
+    public function pendaftaranHariIni(): HasMany
     {
         return $this->hasMany(Registration::class)
-            ->whereDate('tanggal_kunjungan', today())
-            ->whereIn('status', ['menunggu', 'diperiksa']);
+            ->whereDate('tanggal_kunjungan', today());
     }
 
     /** Transaksi poin yang diperoleh dari pendaftaran pasien baru ini */

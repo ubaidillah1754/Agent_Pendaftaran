@@ -926,21 +926,11 @@
                 <span class="nav-icon-box"><i class="bi bi-speedometer2" aria-hidden="true"></i></span> Dashboard
             </a>
 
-            <a href="{{ route('info.pendaftaran') }}" target="_blank"
-                class="nav-link {{ request()->routeIs('info.pendaftaran') ? 'active' : '' }}">
-                <span class="nav-icon-box"><i class="bi bi-window-sidebar" aria-hidden="true"></i></span> Portal Publik
-            </a>
-
-            <div class="sidebar-label">Pendaftaran</div>
-            @php
-                $pendaftaranRoute = route('registrations.index');
-            @endphp
-            <a href="{{ $pendaftaranRoute }}"
-                class="nav-link {{ request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
-                @if(request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
+            <a href="{{ route('registrations.index') }}"
+                class="nav-link {{ (request()->routeIs('registrations.*') || request()->routeIs('patients.*')) && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
+                @if((request()->routeIs('registrations.*') || request()->routeIs('patients.*')) && !request()->routeIs('registrations.riwayat')) aria-current="page" @endif>
                 <span class="nav-icon-box"><i class="bi bi-clipboard2-plus" aria-hidden="true"></i></span> Pendaftaran
             </a>
-
 
             @if(auth()->user()->isPetugas())
             <a href="{{ route('registrations.riwayat') }}"
@@ -949,21 +939,6 @@
                 <span class="nav-icon-box"><i class="bi bi-clock-history" aria-hidden="true"></i></span> Riwayat Saya
             </a>
             @endif
-
-            {{-- Menu Data Pasien & Monitor Antrian disembunyikan (di luar scope utama aplikasi) --}}
-           <!--
-<a href="#"
-    class="nav-link disabled-link"
-    style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
-    <span class="nav-icon-box"><i class="bi bi-people" aria-hidden="true"></i></span> Data Pasien
-</a>
-
-<a href="#"
-    class="nav-link disabled-link"
-    style="pointer-events: none; opacity: 0.6; cursor: not-allowed;">
-    <span class="nav-icon-box"><i class="bi bi-list-ol" aria-hidden="true"></i></span> Monitor Antrian
-</a>
--->
 
             @if(auth()->user()->isPetugas())
                 <div class="sidebar-label">Poin & Reward</div>
@@ -1017,10 +992,7 @@
                     @if(request()->routeIs('departments.*')) aria-current="page" @endif>
                     <span class="nav-icon-box"><i class="bi bi-person-badge" aria-hidden="true"></i></span> Data Poli
                 </a>
-<<<<<<< HEAD
 
-=======
->>>>>>> 569cc376552b6c9f93b3260f55d99593c74713f3
                 <a href="{{ route('doctors.index') }}"
                     class="nav-link {{ request()->routeIs('doctors.*') ? 'active' : '' }}"
                     @if(request()->routeIs('doctors.*')) aria-current="page" @endif>

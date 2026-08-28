@@ -18,9 +18,7 @@ class Registration extends Model
         'tanggal_daftar',
         'tanggal_kunjungan',
         'kode_booking',
-        'status_booking',
         'nomor_antrian',
-        'status',
         'created_by',
     ];
 
@@ -74,22 +72,10 @@ class Registration extends Model
         return $query->whereDate('tanggal_daftar', today());
     }
 
-    /** Filter berdasarkan status */
-    public function scopeByStatus($query, string $status)
-    {
-        return $query->where('status', $status);
-    }
-
     /** Filter berdasarkan poli */
     public function scopeByDepartment($query, int $departmentId)
     {
         return $query->where('department_id', $departmentId);
-    }
-
-    /** Hanya yang menunggu atau sedang diperiksa (antrean aktif) */
-    public function scopeAktif($query)
-    {
-        return $query->whereIn('status', ['menunggu', 'diperiksa']);
     }
 
     /** Antrean hari ini untuk department tertentu yang sudah punya nomor antrean */
@@ -98,46 +84,7 @@ class Registration extends Model
         return $query
             ->where('department_id', $departmentId)
             ->where('tanggal_kunjungan', $tanggal)
-            ->whereNotNull('nomor_antrian')
-            ->whereNotIn('status', ['batal']);
-    }
-
-    // ─── Accessor ───────────────────────────────────────────────────────────
-
-    /** Label status antrean */
-    public function getStatusLabelAttribute(): string
-    {
-        return match ($this->status) {
-            'menunggu'   => 'Menunggu',
-            'diperiksa'  => 'Diperiksa',
-            'selesai'    => 'Selesai',
-            'batal'      => 'Batal',
-            default      => ucfirst($this->status),
-        };
-    }
-
-    /** Kelas badge Bootstrap berdasarkan status antrean */
-    public function getStatusBadgeAttribute(): string
-    {
-        return match ($this->status) {
-            'menunggu'   => 'warning',
-            'diperiksa'  => 'primary',
-            'selesai'    => 'success',
-            'batal'      => 'danger',
-            default      => 'secondary',
-        };
-    }
-
-    /** Label status booking */
-    public function getStatusBookingLabelAttribute(): string
-    {
-        return match ($this->status_booking) {
-            'pending'   => 'Belum Digunakan',
-            'used'      => 'Sudah Digunakan',
-            'expired'   => 'Expired',
-            'cancelled' => 'Dibatalkan',
-            default     => ucfirst($this->status_booking ?? 'pending'),
-        };
+            ->whereNotNull('nomor_antrian');
     }
 
     // ─── Static Helper ──────────────────────────────────────────────────────
@@ -185,8 +132,7 @@ class Registration extends Model
             ->where('tanggal_kunjungan', $tanggal)
             ->whereNotNull('nomor_antrian')
             ->where('nomor_antrian', 'like', $prefix . '-%')
-            ->whereNotIn('status', ['batal'])
-            ->lockForUpdate()  // pesimistic lock untuk request bersamaan
+            ->lockForUpdate()  // pessimistic lock untuk request bersamaan
             ->max(DB::raw("CAST(SUBSTRING(nomor_antrian, 5) AS UNSIGNED)"));
 
         $urutan = ($lastNomor ?? 0) + 1;
@@ -196,18 +142,5 @@ class Registration extends Model
         }
 
         return $prefix . '-' . str_pad($urutan, 3, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * Daftar transisi status antrean yang valid.
-     */
-    public static function transisiStatusValid(): array
-    {
-        return [
-            'menunggu'  => ['diperiksa', 'batal'],
-            'diperiksa' => ['selesai', 'menunggu'],
-            'selesai'   => [],
-            'batal'     => [],
-        ];
     }
 }

@@ -13,17 +13,10 @@ use App\Http\Controllers\Admin\MerchandiseController as AdminMerchandiseControll
 use App\Http\Controllers\Admin\PointRedemptionController as AdminPointRedemptionController;
 use App\Http\Controllers\Admin\PointAdjustmentController as AdminPointAdjustmentController;
 use App\Http\Controllers\Admin\PointReportController as AdminPointReportController;
-use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
-// ── Public Routes (tanpa login) ──────────────────────────────────────────────
+// ── Root Route ───────────────────────────────────────────────────────────────
 Route::get('/', function () { return redirect()->route('login'); });
-Route::get('/info-pendaftaran', [PublicController::class, 'index'])->name('info.pendaftaran');
-Route::get('/jadwal-dokter', [PublicController::class, 'jadwal'])->name('public.jadwal');
-Route::get('/cek-pendaftaran', [PublicController::class, 'cek'])->name('public.cek');
-Route::post('/cek-pendaftaran', [PublicController::class, 'prosesCek'])->name('public.cek.post');
-Route::post('/ambil-antrean', [PublicController::class, 'ambilAntrean'])->name('public.ambil.antrean');
-Route::get('/tracer/{kode_booking}', [PublicController::class, 'tracer'])->name('public.tracer');
 
 // ── Auth Routes (tamu saja) ──────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -81,68 +74,45 @@ Route::middleware('auth')->group(function () {
             ]);
 
         // Toggle status aktif dokter/jadwal/poli (AJAX)
-        Route::patch('doctors/{doctor}/toggle-active',        [DoctorController::class, 'toggleActive'])->name('doctors.toggle-active');
-        Route::patch('departments/{department}/toggle-active',[DepartmentController::class, 'toggleActive'])->name('departments.toggle-active');
+        Route::patch('doctors/{doctor}/toggle-active',         [DoctorController::class, 'toggleActive'])->name('doctors.toggle-active');
+        Route::patch('departments/{department}/toggle-active', [DepartmentController::class, 'toggleActive'])->name('departments.toggle-active');
         Route::patch('doctor-schedules/{doctorSchedule}/toggle-active', [DoctorScheduleController::class, 'toggleActive'])->name('doctor-schedules.toggle-active');
     });
 
-    // ── Manajemen Pasien (Admin + Petugas) ───────────────────────────────────
+    // ── Data Pasien Terdaftar (Admin + Petugas) ─────────────────────────────────
     Route::resource('patients', PatientController::class)
+        ->only(['index', 'show'])
         ->names([
-            'index'   => 'patients.index',
-            'create'  => 'patients.create',
-            'store'   => 'patients.store',
-            'show'    => 'patients.show',
-            'edit'    => 'patients.edit',
-            'update'  => 'patients.update',
-            'destroy' => 'patients.destroy',
+            'index' => 'patients.index',
+            'show'  => 'patients.show',
         ]);
-
-    // Cetak tracer pasien (standalone print page)
-    Route::get('patients/{patient}/tracer', [PatientController::class, 'tracer'])
-        ->name('patients.tracer');
 
     // ── Pendaftaran Rawat Jalan ───────────────────────────────────────────────
     Route::get('registrations/riwayat-saya', [RegistrationController::class, 'riwayat'])
         ->name('registrations.riwayat')
         ->middleware('role:petugas');
 
-    // Batalkan pendaftaran
-    Route::patch('registrations/{registration}/batal', [RegistrationController::class, 'batal'])
-        ->name('registrations.batal');
-        
-    // Update status pendaftaran
-    Route::patch('registrations/{registration}/status', [RegistrationController::class, 'updateStatus'])
-        ->name('registrations.status');
-        
-    // Cetak antrian
+    // Cetak antrian / tracer
     Route::get('registrations/{registration}/cetak', [RegistrationController::class, 'cetak'])
         ->name('registrations.cetak');
 
-    // Panggil pasien berikutnya secara atomik
-    Route::post('registrations/panggil-berikutnya', [RegistrationController::class, 'panggilBerikutnya'])
-        ->name('registrations.panggil-berikutnya');
-
     Route::resource('registrations', RegistrationController::class)
+        ->only(['index', 'create', 'store', 'show', 'destroy'])
         ->names([
             'index'   => 'registrations.index',
             'create'  => 'registrations.create',
             'store'   => 'registrations.store',
             'show'    => 'registrations.show',
-            'edit'    => 'registrations.edit',
-            'update'  => 'registrations.update',
             'destroy' => 'registrations.destroy',
         ]);
 
     // ── AJAX Endpoints ────────────────────────────────────────────────────────
     Route::prefix('ajax')->name('ajax.')->group(function () {
-        Route::get('doctors',       [AjaxController::class, 'getDoctors'])->name('doctors');
-        Route::get('schedules',     [AjaxController::class, 'getSchedules'])->name('schedules');
-        Route::get('kuota',         [AjaxController::class, 'getKuota'])->name('kuota');
-        Route::get('cari-pasien',   [AjaxController::class, 'cariPasien'])->name('cari-pasien');
+        Route::get('doctors',     [AjaxController::class, 'getDoctors'])->name('doctors');
+        Route::get('schedules',   [AjaxController::class, 'getSchedules'])->name('schedules');
+        Route::get('kuota',       [AjaxController::class, 'getKuota'])->name('kuota');
+        Route::get('cari-pasien', [AjaxController::class, 'cariPasien'])->name('cari-pasien');
     });
-
-
 
     // ══════════════════════════════════════════════════════════════════════════
     // SISTEM POIN & REWARD (PETUGAS)
@@ -182,26 +152,4 @@ Route::middleware('auth')->group(function () {
         // Laporan Rekapitulasi Poin, Ledger & Reward
         Route::get('/poin/laporan', [AdminPointReportController::class, 'index'])->name('reports.index');
     });
-});
-
-Route::get('/tools/update-kode-poli', function () {
-    $map = [
-        'Poli Umum' => 'UM',
-        'Poli Gigi' => 'GG',
-        'Poli Anak' => 'AN',
-        'Poli Kandungan' => 'KD',
-        'Poli Jantung' => 'JN',
-        'Poli Paru' => 'PR',
-        'Poli THT' => 'TH',
-        'Poli Urologi' => 'UR',
-        'Poli Gizi' => 'GZ',
-    ];
-    $count = 0;
-    foreach (\App\Models\Department::all() as $dept) {
-        if (isset($map[$dept->nama_poli])) {
-            $dept->update(['kode_poli' => $map[$dept->nama_poli]]);
-            $count++;
-        }
-    }
-    return "Berhasil update {$count} departemen.";
 });

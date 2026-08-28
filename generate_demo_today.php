@@ -82,10 +82,8 @@ for ($i = 0; $i < 10; $i++) {
             'doctor_schedule_id' => $jadwal->id,
             'tanggal_daftar'     => $today,
             'tanggal_kunjungan'  => $today,
-            'status'             => 'menunggu',
-            'status_booking'     => 'pending',
+            'nomor_antrian'      => Registration::generateNomorAntrian($jadwal->department_id, $today),
             'kode_booking'       => $kodeBooking,
-            'nomor_antrian'      => null,
             'created_by'         => $petugas ? $petugas->id : null,
         ]);
         $created++;

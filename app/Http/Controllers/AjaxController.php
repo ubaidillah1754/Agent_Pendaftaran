@@ -108,6 +108,8 @@ class AjaxController extends Controller
 
         $q = $request->q;
         $patients = Patient::where('nik', 'like', "%{$q}%")
+            ->orWhere('no_rm', 'like', "%{$q}%")
+            ->orWhere('nama_pasien', 'like', "%{$q}%")
             ->select('id', 'no_rm', 'nik', 'nama_pasien', 'tanggal_lahir', 'jenis_kelamin', 'jenis_pembayaran', 'alamat')
             ->limit(10)
             ->get()
