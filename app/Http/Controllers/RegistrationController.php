@@ -20,9 +20,16 @@ class RegistrationController extends Controller
 
     public function index(Request $request)
     {
+<<<<<<< HEAD
         // Petugas tidak punya akses ke halaman index, langsung ke form buat baru
         if (auth()->user()->isPetugas()) {
             return redirect()->route('registrations.create');
+=======
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user->isPetugas()) {
+            return $this->create($request);
+>>>>>>> 569cc376552b6c9f93b3260f55d99593c74713f3
         }
 
         $tanggal = $request->filled('tanggal') ? $request->tanggal : today()->toDateString();
@@ -156,6 +163,8 @@ class RegistrationController extends Controller
         $registration = DB::transaction(function () use ($validated, &$earnedPoints) {
             // ── Resolve Patient ───────────────────────────────────────────────
             if ($validated['mode_pasien'] === 'baru') {
+                /** @var \App\Models\User $user */
+                $user = Auth::user();
                 $patient = $this->patientService->createPatient([
                     'nik'              => $validated['nik'],
                     'nama_pasien'      => $validated['nama_pasien'],
@@ -164,7 +173,7 @@ class RegistrationController extends Controller
                     'alamat'           => $validated['alamat'],
                     'jenis_pembayaran' => $validated['jenis_pembayaran'],
                     'golongan_darah'   => 'Tidak Diketahui',
-                ], Auth::user());
+                ], $user);
 
                 $earnedPoints = (int) config('points.earn_per_new_patient', 10);
             } else {
@@ -293,8 +302,11 @@ class RegistrationController extends Controller
         $newStatus = $request->status;
         $currentStatus = $registration->status;
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         // Admin override untuk status selesai
-        if ($currentStatus === 'selesai' && !Auth::user()->isAdmin()) {
+        if ($currentStatus === 'selesai' && !$user->isAdmin()) {
             return back()->with('error', 'Hanya admin yang dapat mengubah pendaftaran yang sudah selesai.');
         }
 
@@ -314,6 +326,7 @@ class RegistrationController extends Controller
     /** Riwayat pendaftaran milik petugas yang login */
     public function riwayat(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $query = Registration::with(['patient', 'department', 'doctor'])

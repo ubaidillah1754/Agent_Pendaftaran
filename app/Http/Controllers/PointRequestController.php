@@ -97,15 +97,21 @@ class PointRequestController extends Controller
                 'admin_note'  => null,
             ]);
 
-            // Tambahkan poin ke petugas via PetugasPoint
-            // Gunakan tabel petugas_points agar terintegrasi dengan sistem totalPoints() yang ada
-            \App\Models\PetugasPoint::create([
-                'user_id'         => $pointRequest->user_id,
-                'registration_id' => null,   // tidak terkait pendaftaran
-                'department_id'   => null,   // tidak terkait poli
-                'points'          => $pointRequest->points,
-                'point_request_id'=> $pointRequest->id,
-            ]);
+            // Tambahkan poin ke petugas via PointService (sistem baru)
+            // PointService::earn() akan update point_balance di tabel users secara atomik
+            $pointService = app(\App\Services\PointService::class);
+            $reference    = 'EARN-REQ-' . $pointRequest->id;
+            $description  = "Poin disetujui dari pengajuan manual (ID #{$pointRequest->id}): {$pointRequest->reason}";
+
+            $pointService->earn(
+                user: \App\Models\User::findOrFail($pointRequest->user_id),
+                amount: $pointRequest->points,
+                sourceType: \App\Models\PointRequest::class,
+                sourceId: $pointRequest->id,
+                reference: $reference,
+                description: $description,
+                creator: \App\Models\User::find(Auth::id()),
+            );
         });
 
         return back()->with('success',

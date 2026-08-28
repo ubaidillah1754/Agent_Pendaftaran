@@ -933,7 +933,7 @@
 
             <div class="sidebar-label">Pendaftaran</div>
             @php
-                $pendaftaranRoute = auth()->user()->isAdmin() ? route('registrations.index') : route('registrations.create');
+                $pendaftaranRoute = route('registrations.index');
             @endphp
             <a href="{{ $pendaftaranRoute }}"
                 class="nav-link {{ request()->routeIs('registrations.*') && !request()->routeIs('registrations.riwayat') ? 'active' : '' }}"
@@ -1017,7 +1017,10 @@
                     @if(request()->routeIs('departments.*')) aria-current="page" @endif>
                     <span class="nav-icon-box"><i class="bi bi-person-badge" aria-hidden="true"></i></span> Data Poli
                 </a>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 569cc376552b6c9f93b3260f55d99593c74713f3
                 <a href="{{ route('doctors.index') }}"
                     class="nav-link {{ request()->routeIs('doctors.*') ? 'active' : '' }}"
                     @if(request()->routeIs('doctors.*')) aria-current="page" @endif>
@@ -1060,6 +1063,12 @@
                 <div class="flex-1 overflow-hidden">
                     <div class="user-name text-truncate">{{ auth()->user()->name }}</div>
                     <div class="user-role">{{ ucfirst(auth()->user()->role) }}</div>
+                    @if(auth()->user()->isPetugas())
+                        <div style="font-size:.68rem; margin-top:2px;">
+                            <i class="bi bi-star-fill" style="color:#B8912E; font-size:.6rem;"></i>
+                            <span style="color:#B8912E; font-weight:700;">{{ number_format(auth()->user()->point_balance) }} poin</span>
+                        </div>
+                    @endif
                 </div>
                 <form action="{{ route('logout') }}" method="POST" class="ms-auto">
                     @csrf
@@ -1101,7 +1110,7 @@
                     <span>{{ now()->translatedFormat('l, d F Y') }}</span>
                 </div>
                 @if(auth()->user()->isAdmin() || auth()->user()->isPetugas())
-                    <a href="{{ route('registrations.create') }}"
+                    <a href="{{ auth()->user()->isAdmin() ? route('registrations.create') : route('registrations.index') }}"
                         class="btn btn-brand btn-sm d-none d-md-flex align-items-center gap-1">
                         <i class="bi bi-plus-circle" aria-hidden="true"></i> Daftar Pasien
                     </a>
