@@ -278,8 +278,9 @@
         #topbar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 0 28px;
-            height: 72px;
+            padding: 16px 28px;
+            min-height: 72px;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -680,7 +681,7 @@
             }
 
             #topbar {
-                padding: 0 16px;
+                padding: 16px;
             }
 
             .topbar-accred {

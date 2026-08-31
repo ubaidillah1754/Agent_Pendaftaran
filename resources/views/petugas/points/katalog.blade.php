@@ -161,7 +161,26 @@
         </div>
     </div>
 
-    {{-- ── MODAL KONFIRMASI ── --}}
+    @empty
+    <div class="col-12">
+        <div class="kr-empty">
+            <div class="kr-empty-icon"><i class="bi bi-bag-x"></i></div>
+            <div class="kr-empty-title">
+                {{ request('q') ? 'Reward Tidak Ditemukan' : 'Belum Ada Reward' }}
+            </div>
+            <p class="kr-empty-sub">
+                {{ request('q') ? 'Coba kata kunci yang berbeda atau reset pencarian.' : 'Katalog reward akan segera tersedia. Pantau terus halaman ini!' }}
+            </p>
+            @if(request('q'))
+            <a href="{{ route('points.katalog') }}" class="kr-empty-btn">Reset Pencarian</a>
+            @endif
+        </div>
+    </div>
+    @endforelse
+</div>
+
+{{-- ── MODAL KONFIRMASI ── --}}
+@foreach($rewards as $reward)
     <div class="modal fade" id="krModal{{ $reward->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content kr-modal">
@@ -248,23 +267,7 @@
         document.getElementById('krRemain{{ $reward->id }}').textContent = remain.toLocaleString('id-ID') + ' Poin';
     }
     </script>
-    @empty
-    <div class="col-12">
-        <div class="kr-empty">
-            <div class="kr-empty-icon"><i class="bi bi-bag-x"></i></div>
-            <div class="kr-empty-title">
-                {{ request('q') ? 'Reward Tidak Ditemukan' : 'Belum Ada Reward' }}
-            </div>
-            <p class="kr-empty-sub">
-                {{ request('q') ? 'Coba kata kunci yang berbeda atau reset pencarian.' : 'Katalog reward akan segera tersedia. Pantau terus halaman ini!' }}
-            </p>
-            @if(request('q'))
-            <a href="{{ route('points.katalog') }}" class="kr-empty-btn">Reset Pencarian</a>
-            @endif
-        </div>
-    </div>
-    @endforelse
-</div>
+@endforeach
 
 {{-- Pagination --}}
 @if($rewards->hasPages())
